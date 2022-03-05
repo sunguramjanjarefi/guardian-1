@@ -32,3 +32,4 @@ export { ModelHelper } from './helpers/model-helper'
 export { ImportType } from './type/import.type';
 export { SchemaHelper } from './helpers/schema-helper';
 export { IMessageResponse, MessageResponse, MessageError, Response } from './models/message-response';
+export { SchemaCategory } from './type/schema-category.type';
