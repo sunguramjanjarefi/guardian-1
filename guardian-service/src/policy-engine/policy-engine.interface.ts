@@ -96,6 +96,8 @@ export interface IPolicyBlock {
     addTargetLink(link: any): void;
 
     runAction(event: IPolicyEvent<any>): Promise<any>;
+
+    updateDataState(user: IAuthUser, state: any): boolean;
 }
 
 export interface IPolicyInterfaceBlock extends IPolicyBlock {
