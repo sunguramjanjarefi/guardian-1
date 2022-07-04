@@ -340,19 +340,13 @@ export class PolicyComponentsUtils {
 
     public static CheckPermission(block: AnyBlockType, user: IAuthUser, userRole: PolicyRole): boolean {
         if (block) {
-            console.log(block.defaultActive, block.isActive(user), PolicyComponentsUtils.IfHasPermission(block.uuid, userRole, user))
-            return (
-                block.defaultActive &&
-                block.isActive(user) &&
-                PolicyComponentsUtils.IfHasPermission(block.uuid, userRole, user)
-            );
+            return (block.isActive(user) && PolicyComponentsUtils.IfHasPermission(block.uuid, userRole, user));
         } else {
             return false;
         }
     }
 
     public static CheckPermissionTree(block: AnyBlockType, user: IAuthUser, userRole: PolicyRole): boolean {
-        console.log(PolicyComponentsUtils.CheckPermission(block, user, userRole));
         if (PolicyComponentsUtils.CheckPermission(block, user, userRole)) {
             if (block.parent) {
                 return PolicyComponentsUtils.CheckPermissionTree(block.parent, user, userRole);

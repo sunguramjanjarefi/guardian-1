@@ -33,7 +33,7 @@ export function ContainerBlock(options: Partial<PolicyBlockDecoratorOptions>) {
                 const ref = PolicyComponentsUtils.GetBlockRef<IPolicyContainerBlock>(this);
                 const currentRole = await PolicyComponentsUtils.GetUserRole(ref.policyId, user);
                 const children = ref.children.map(child => {
-                    if (PolicyComponentsUtils.CheckPermission(child, user, currentRole)) {
+                    if (child.defaultActive && PolicyComponentsUtils.CheckPermission(child, user, currentRole)) {
                         return {
                             uiMetaData: child.options.uiMetaData,
                             content: child.blockType,
