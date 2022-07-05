@@ -475,7 +475,7 @@ export class PolicyEngineService {
                     const data = await block.getData(userFull, block.uuid);
                     return new MessageResponse(data);
                 } else {
-                    return new MessageError(new Error('Permission denied'));
+                    return new MessageResponse(null);
                 }
             } catch (error) {
                 new Logger().error(error, ['GUARDIAN_SERVICE']);
@@ -493,7 +493,7 @@ export class PolicyEngineService {
                     const data = await block.getData(userFull, blockId, null);
                     return new MessageResponse(data);
                 } else {
-                    return new MessageError(new Error('Permission denied'));
+                    return new MessageResponse(null);
                 }
             } catch (error) {
                 new Logger().error(error, ['GUARDIAN_SERVICE']);

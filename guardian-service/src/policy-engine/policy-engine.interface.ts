@@ -189,6 +189,10 @@ export interface IPolicyRequestBlock extends IPolicyBlock {
     getSources(user: IAuthUser): Promise<any[]>
 }
 
+export interface IPolicyValidatorBlock extends IPolicyBlock {
+    run(event: IPolicyEvent<any>): Promise<any>;
+}
+
 export type AnyBlockType =
     IPolicyBlock
     | IPolicyInterfaceBlock
@@ -197,4 +201,5 @@ export type AnyBlockType =
     | IPolicyAddonBlock
     | IPolicyCalculateBlock
     | IPolicyCalculateAddon
-    | IPolicyRequestBlock;
+    | IPolicyRequestBlock
+    | IPolicyValidatorBlock;
