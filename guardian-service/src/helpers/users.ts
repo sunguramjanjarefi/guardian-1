@@ -195,6 +195,24 @@ export class Users extends ServiceRequestsBase {
         if (!userFull) {
             throw new Error('User not found');
         }
+
+        return this.getHederaAccountByUser(userFull);
+    }
+
+    public async getHederaAccountByUser(userFull: IAuthUser): Promise<{
+        /**
+         * Account id
+         */
+        hederaAccountId: string;
+        /**
+         * Account key
+         */
+        hederaAccountKey: string;
+        /**
+         * DID
+         */
+        did: string;
+    }> {
         const userID = userFull.hederaAccountId;
         const userDID = userFull.did;
         if (!userDID || !userID) {

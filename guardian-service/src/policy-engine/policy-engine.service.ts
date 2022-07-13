@@ -657,8 +657,11 @@ export class PolicyEngineService {
                 }
                 new Logger().info(`Import policy by file`, ['GUARDIAN_SERVICE']);
                 const userFull = await this.users.getUser(user.username);
+                if (!userFull) {
+                    throw new Error('User not found');
+                }
                 const policyToImport = await PolicyImportExportHelper.parseZipFile(Buffer.from(zip.data));
-                await PolicyImportExportHelper.importPolicy(policyToImport, userFull.did, versionOfTopicId);
+                await PolicyImportExportHelper.importPolicy(policyToImport, userFull, versionOfTopicId);
                 const policies = await getMongoRepository(Policy).find({ owner: userFull.did });
                 return new MessageResponse(policies);
             } catch (error) {
@@ -719,9 +722,13 @@ export class PolicyEngineService {
         this.channel.response<any, any>(PolicyEngineEvents.POLICY_IMPORT_MESSAGE, async (msg) => {
             try {
                 const { messageId, user, versionOfTopicId } = msg;
-                const userFull = await this.users.getUser(user.username);
                 if (!messageId) {
                     throw new Error('Policy ID in body is empty');
+                }
+                
+                const userFull = await this.users.getUser(user.username);
+                if (!userFull) {
+                    throw new Error('User not found');
                 }
 
                 const root = await this.users.getHederaAccount(userFull.did);
@@ -737,7 +744,7 @@ export class PolicyEngineService {
                 }
 
                 const policyToImport = await PolicyImportExportHelper.parseZipFile(message.document);
-                await PolicyImportExportHelper.importPolicy(policyToImport, userFull.did, versionOfTopicId);
+                await PolicyImportExportHelper.importPolicy(policyToImport, userFull, versionOfTopicId);
                 const policies = await getMongoRepository(Policy).find({ owner: userFull.did });
                 return new MessageResponse(policies);
             } catch (error) {
