@@ -56,27 +56,29 @@ export class MessageBrokerChannel {
         // console.log('MQ subscribed: %s', target);
         const sub = this.channel.subscribe(target, { queue: process.env.SERVICE_CHANNEL });
         const fn = async (_sub: Subscription) => {
-            console.log('      response 1', eventType);
+            console.log('      response 0', eventType);
             for await (const m of _sub) {
-                console.log('      response 2', eventType, m.data);
+                console.log('      response 1', eventType);
+
+                const messageId = m.headers.get('messageId');
+
+                console.log('      response 2', eventType, messageId);
 
                 let responseMessage: IMessageResponse<TResponse>;
                 try {
                     const payload = JSON.parse(StringCodec().decode(m.data));
-                    console.log('      response 3', eventType, payload);
+                    console.log('      response 3', eventType, messageId);
                     responseMessage = await handleFunc(payload);
-                    console.log('      response 4', eventType, payload);
-                    if (eventType === 'get-block-data') throw '123';
+                    console.log('      response 4', eventType, messageId);
                 } catch (error) {
+                    console.log('      response 5', eventType, messageId);
                     responseMessage = new MessageError(error, error.code);
                 }
-
-                const messageId = m.headers.get('messageId');
 
                 const head = headers();
                 head.append('messageId', messageId);
 
-                console.log('      response 5', eventType, messageId);
+                console.log('      response 6', eventType, messageId);
 
                 this.channel.publish('response-message', StringCodec().encode(JSON.stringify(responseMessage)), { headers: head });
 
@@ -121,17 +123,22 @@ export class MessageBrokerChannel {
             // And then, implement async processing of operation.
             // const msg = await this.channel.request(eventType, StringCodec().encode(stringPayload), { timeout: 300000 });
             console.log('      request 1', eventType);
-            await this.channel.request(eventType, StringCodec().encode(stringPayload), {
-                timeout: timeout || MQ_TIMEOUT,
-                headers: head
-            });
 
-            return new Promise((resolve) => {
+            const result = new Promise<IMessageResponse<TResponse>>((resolve) => {
                 reqMap.set(messageId, (data) => {
                     resolve(data);
                     reqMap.delete(messageId);
                 });
             });
+
+            console.log('      request 2', eventType);
+
+            await this.channel.request(eventType, StringCodec().encode(stringPayload), {
+                timeout: timeout || MQ_TIMEOUT,
+                headers: head
+            });
+
+            return result;
 
         } catch (error) {
             // Nats no subscribe error
