@@ -58,15 +58,17 @@ export class Workers extends ServiceRequestsBase {
      */
     public initListeners() {
         this.channel.response(WorkerEvents.QUEUE_GET, async (msg: IWorkerRequest) => {
+            console.log('-->', 'QUEUE_GET');
             const itemIndex = this.queue.findIndex(_item => {
                 return (_item.priority >= msg.minPriority) && (_item.priority <= msg.maxPriority)
             });
             if (itemIndex === -1) {
+                console.log('<--', 'QUEUE_GET');
                 return new MessageResponse(null);
             }
             const item = this.queue[itemIndex];
             this.queue.splice(itemIndex, 1);
-
+            console.log('<--', 'QUEUE_GET');
             return new MessageResponse(item || null);
         });
 

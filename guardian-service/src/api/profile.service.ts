@@ -342,10 +342,14 @@ async function createUserProfile(profile: any, notifier: INotifier): Promise<str
 export function profileAPI(channel: MessageBrokerChannel, apiGatewayChannel: MessageBrokerChannel) {
     ApiResponse(channel, MessageAPI.GET_BALANCE, async (msg) => {
         try {
+            console.log('+++++++ GET_BALANCE');
+            console.log('++ 1');
             const { username } = msg;
             const wallet = new Wallet();
             const users = new Users();
+            console.log('++ 2');
             const user = await users.getUser(username);
+            console.log('++ 3');
 
             if (!user) {
                 return new MessageResponse(null);
@@ -355,9 +359,14 @@ export function profileAPI(channel: MessageBrokerChannel, apiGatewayChannel: Mes
                 return new MessageResponse(null);
             }
 
+            console.log('++ 4');
             const key = await wallet.getKey(user.walletToken, KeyType.KEY, user.did);
+            console.log('++ 5');
             const client = HederaSDKHelper.client(user.hederaAccountId, key);
+            console.log('++ 6');
             const balance = await HederaSDKHelper.balance(client, client.operatorAccountId);
+            console.log('++ 7');
+
             return new MessageResponse({
                 balance,
                 unit: 'Hbar',
@@ -375,13 +384,15 @@ export function profileAPI(channel: MessageBrokerChannel, apiGatewayChannel: Mes
 
     ApiResponse(channel, MessageAPI.GET_USER_BALANCE, async (msg) => {
         try {
+            console.log('------- GET_USER_BALANCE');
+            console.log('-- 1');
             const { username } = msg;
 
             const wallet = new Wallet();
             const users = new Users();
-
+            console.log('-- 2');
             const user = await users.getUser(username);
-
+            console.log('-- 3');
             if (!user) {
                 return new MessageResponse('Invalid Account');
             }
@@ -389,10 +400,13 @@ export function profileAPI(channel: MessageBrokerChannel, apiGatewayChannel: Mes
             if (!user.hederaAccountId) {
                 return new MessageResponse('Invalid Hedera Account Id');
             }
-
+            console.log('-- 4');
             const key = await wallet.getKey(user.walletToken, KeyType.KEY, user.did);
+            console.log('-- 5');
             const client = new HederaSDKHelper(user.hederaAccountId, key);
+            console.log('-- 6');
             const balance = await client.balance(user.hederaAccountId);
+            console.log('-- 7');
             return new MessageResponse(balance);
         } catch (error) {
             new Logger().error(error, ['GUARDIAN_SERVICE']);
@@ -462,3 +476,4 @@ export function profileAPI(channel: MessageBrokerChannel, apiGatewayChannel: Mes
         return new MessageResponse({ taskId });
     });
 }
+

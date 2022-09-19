@@ -345,6 +345,7 @@ export class Guardians extends ServiceRequestsBase {
      * @param username
      */
     public async getUserBalance(username: string): Promise<string> {
+        console.log('------ GET_USER_BALANCE');
         return await this.request<string>(MessageAPI.GET_USER_BALANCE, { username });
     }
 
@@ -353,6 +354,7 @@ export class Guardians extends ServiceRequestsBase {
      * @param username
      */
     public async getBalance(username: string): Promise<string> {
+        console.log('+++++++ GET_BALANCE');
         return await this.request<string>(MessageAPI.GET_BALANCE, { username });
     }
 

@@ -31,7 +31,7 @@ export class HeaderComponent implements OnInit {
     commonLinksDisabled: boolean = false;
 
     menuIcon: 'expand_more' | 'account_circle' = 'expand_more';
-    testUsers$: Observable<any[]>;
+    testUsers$!: Observable<any[]>;
     balance: string;
     balanceType: string;
     ws!: any;
@@ -49,7 +49,6 @@ export class HeaderComponent implements OnInit {
     ) {
         this.balance = 'N\\A';
         this.balanceType = '';
-        this.testUsers$ = this.otherService.getAllUsers();
 
         this.linksConfig[UserRole.USER] = [{
             name: "Profile",
@@ -184,6 +183,7 @@ export class HeaderComponent implements OnInit {
             const isLogin = !!user;
             const role = user ? user.role : null;
             const username = user ? user.username : null;
+            this.testUsers$ = this.otherService.getAllUsers();
             this.setStatus(isLogin, role, username);
             this.authState.updateState(isLogin);
         }, () => {

@@ -14,6 +14,10 @@ export interface IMessageResponse<T> {
      * Response error message
      */
     readonly error: string;
+    /**
+     * Message id
+     */
+    readonly id: any;
 }
 
 /**
@@ -32,8 +36,14 @@ export class MessageResponse<T> implements IMessageResponse<T> {
      * Response error message
      */
     public readonly error: string;
+    /**
+     * Message id
+     */
+    public readonly id: any;
 
     constructor(body: T, code: number = 200) {
+        this.id = Date.now();
+
         this.code = code;
         this.body = body;
         this.error = null;
@@ -56,8 +66,14 @@ export class BinaryMessageResponse implements IMessageResponse<string> {
      * Response error message
      */
     public readonly error: string;
+    /**
+     * Message id
+     */
+    public readonly id: any;
 
     constructor(body: ArrayBuffer, code: number = 200) {
+        this.id = Date.now();
+
         this.code = code;
         this.body = Buffer.from(body).toString('base64');
         this.error = null;
@@ -88,8 +104,14 @@ export class MessageError<T> implements IMessageResponse<T>, Error {
      * Error message
      */
     public message: string;
+    /**
+     * Message id
+     */
+    public readonly id: any;
 
     constructor(error: string | Error, code: number = 500) {
+        this.id = Date.now();
+
         this.code = code;
         this.body = null;
         this.error = typeof error === 'string' ? error : error.message;
@@ -115,8 +137,13 @@ export class MessageInitialization<T> implements IMessageResponse<T> {
      * Message error
      */
     public readonly error: string;
+    /**
+     * Message id
+     */
+    public readonly id: any;
 
     constructor() {
+        this.id = Date.now();
         this.code = 0;
         this.body = null;
         this.error = 'Initialization';

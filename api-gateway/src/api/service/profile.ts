@@ -121,8 +121,10 @@ profileAPI.put('/push/:username', async (req: AuthenticatedRequest, res: Respons
 
 profileAPI.get('/:username/balance', async (req: Request, res: Response) => {
     try {
+        console.log('------ User balance');
         const guardians = new Guardians();
         const balance = await guardians.getUserBalance(req.params.username);
+        console.log('8888');
         res.json(balance);
     } catch (error) {
         new Logger().error(error, ['API_GATEWAY']);

@@ -49,6 +49,8 @@ export abstract class ServiceRequestsBase {
      * @param params
      */
     public async request<T>(entity: string, params?: unknown): Promise<T> {
+        const id = Date.now();
+        console.log('-->', id, entity);
         let response: IMessageResponse<T>;
         try {
             response = await this.channel.request<unknown, T>([this.target, entity].join('.'), params);
@@ -61,6 +63,7 @@ export abstract class ServiceRequestsBase {
         if (response.code !== 200) {
             throw new ServiceError(this.target, entity, response.error, response.code);
         }
+        console.log('<--', id, entity, response.id);
         return response.body;
     }
     /**

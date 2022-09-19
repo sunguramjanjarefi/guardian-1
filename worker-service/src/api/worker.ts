@@ -19,6 +19,7 @@ import Blob from 'cross-blob';
 function rejectTimeout(t: number): Promise<void> {
     return new Promise((_, reject) => {
         setTimeout(() => {
+            console.log('Timeout 1');
             reject(new Error('Timeout error'));
         }, t);
     })
@@ -135,6 +136,7 @@ export class Worker {
      */
     private async request<T extends any>(entity: string, params?: IWorkerRequest | ITaskResult, type?: string): Promise<T> {
         try {
+            console.log('-->', entity);
             const response = await this.channel.request<any, T>(`guardians.${entity}`, params);
             if (!response) {
                 throw new Error('Server is not available');
@@ -142,6 +144,7 @@ export class Worker {
             if (response.error) {
                 throw new Error(response.error);
             }
+            console.log('<--', entity);
             return response.body;
         } catch (error) {
             throw new Error(`Guardian (${entity}) send: ` + error);
@@ -171,6 +174,7 @@ export class Worker {
         try {
             switch (task.type) {
                 case WorkerTaskType.ADD_FILE: {
+                        console.log('ADD_FILE 1');
                         let fileContent = Buffer.from(task.data.payload.content, 'base64');
                         const data = await this.channel.request<any, any>(ExternalMessageEvents.IPFS_BEFORE_UPLOAD_CONTENT, task.data.payload);
                         if (data && data.body) {
@@ -180,6 +184,7 @@ export class Worker {
                         const r = await this.ipfsClient.addFiile(blob);
                         this.channel.publish(ExternalMessageEvents.IPFS_ADDED_FILE, r);
                         result.data = r;
+                        console.log('ADD_FILE 2');
                     }
                     break;
 
@@ -249,6 +254,7 @@ export class Worker {
                 ]);
                 resolve(result as ITaskResult);
             } catch (e) {
+                console.log('Timeout 2');
                 const error = {
                     id: this.currentTaskId,
                     error: 'Unknown error'
@@ -299,7 +305,7 @@ export class Worker {
 
         this.currentTaskId = task.id;
 
-        this.logger.info(`Task started: ${this.currentTaskId}`, [this._channelName]);
+        this.logger.info(`Task started: ${task.id}, ${task.type}`, [this._channelName]);
 
         const result = await this.processTaskWithTimeout(task);
 

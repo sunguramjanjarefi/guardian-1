@@ -54,6 +54,7 @@ export class WebSocketsService {
     private registerMessageHandler(): void {
         this.channel.response<IUpdateBlockMessage, any>('update-block', async (msg) => {
             this.wss.clients.forEach((client: any) => {
+                console.log('update-block');
                 if (this.checkUserByDid(client, msg)) {
                     this.send(client, {
                         type: 'update-event',
@@ -121,6 +122,7 @@ export class WebSocketsService {
     private registerConnection(): void {
         this.wss.on('connection', async (ws: any, req: IncomingMessage) => {
             ws.user = await this.getUserByUrl(req.url);
+            console.log('=== connection', ws.user);
             ws.on('message', async (data: Buffer) => {
                 const message = data.toString();
                 if (message === 'ping') {
@@ -151,6 +153,7 @@ export class WebSocketsService {
                     } else {
                         ws.user = null;
                     }
+                    console.log('=== UPDATE_PROFILE', ws.user, token, type);
                     break;
                 case MessageAPI.GET_STATUS:
                     const logger = new Logger();
@@ -230,6 +233,7 @@ export class WebSocketsService {
      * @private
      */
     private checkUserByDid(client: any, msg: any): boolean {
+        console.log(client?.user?.did, msg?.user);
         if(client && client.user) {
             if(msg && msg.user) {
                 return (client.user.did === msg.user.did || msg.user.virtual);

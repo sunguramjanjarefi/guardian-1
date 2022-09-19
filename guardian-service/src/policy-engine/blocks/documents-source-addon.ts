@@ -29,14 +29,14 @@ export class DocumentsSourceAddon {
      * Block state field
      * @private
      */
-     @StateField()
-     private state;
+    @StateField()
+    private state;
 
-     constructor() {
-         if (!this.state) {
-             this.state = {};
-         }
-     }
+    constructor() {
+        if (!this.state) {
+            this.state = {};
+        }
+    }
 
     /**
      * Set block data
@@ -164,6 +164,11 @@ export class DocumentsSourceAddon {
             case 'source':
                 data = (countResult) ? [] : 0;
                 break;
+            case 'groups':
+                filters.policyId = ref.policyId;
+                otherOptions.fields = ['username', 'did', 'role', 'groupLabel', 'uuid']
+                data = await ref.databaseServer.getGroups(filters, otherOptions, countResult);
+                break;
             // @deprecated 2022-10-01
             case 'root-authorities':
                 data = await PolicyUtils.getAllStandardRegistryAccounts(ref, countResult);
@@ -172,14 +177,14 @@ export class DocumentsSourceAddon {
                 throw new BlockActionError(`dataType "${ref.options.dataType}" is unknown`, ref.blockType, ref.uuid)
         }
 
-        if(!countResult) {
+        if (!countResult) {
             for (const dataItem of data as IPolicyDocument[]) {
                 if (ref.options.viewHistory) {
 
                     dataItem.history = (await ref.databaseServer.getDocumentStates({
                         documentId: dataItem.id
                     }, {
-                        orderBy: {'created': 'DESC'}
+                        orderBy: { 'created': 'DESC' }
                     })).map(item => {
                         return {
                             status: item.status,
@@ -355,7 +360,8 @@ export class DocumentsSourceAddon {
                 'root-authorities',
                 'standard-registries',
                 'approve',
-                'source'
+                'source',
+                'groups'
             ];
             if (types.indexOf(ref.options.dataType) === -1) {
                 resultsContainer.addBlockError(ref.uuid, 'Option "dataType" must be one of ' + types.join(','));

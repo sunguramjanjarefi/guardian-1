@@ -193,6 +193,8 @@ export class InterfaceDocumentsSource {
                 return await ref.databaseServer.getVpDocumentsByAggregation(aggregation);
             case 'approve':
                 return await ref.databaseServer.getApprovalDocumentsByAggregation(aggregation);
+            case 'groups':
+                return await ref.databaseServer.getGroupsByAggregation(aggregation);
             default:
                 return [];
         }

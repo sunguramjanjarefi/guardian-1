@@ -393,14 +393,14 @@ export class PolicyComponentsUtils {
                 EventActor.EventInitiator
             );
         }
-        if (instance.parent?.blockClassName === 'ContainerBlock') {
-            const parent = instance.parent as IPolicyContainerBlock;
-            PolicyComponentsUtils.RegisterLink(
-                instance, PolicyOutputEventType.RefreshEvent,
-                parent, PolicyInputEventType.RefreshEvent,
-                EventActor.EventInitiator
-            );
-        }
+        // if (instance.parent?.blockClassName === 'ContainerBlock') {
+        //     const parent = instance.parent as IPolicyContainerBlock;
+        //     PolicyComponentsUtils.RegisterLink(
+        //         instance, PolicyOutputEventType.RefreshEvent,
+        //         parent, PolicyInputEventType.RefreshEvent,
+        //         EventActor.EventInitiator
+        //     );
+        // }
         if (instance.parent?.blockType === 'interfaceStepBlock') {
             PolicyComponentsUtils.RegisterLink(
                 instance, PolicyOutputEventType.RunEvent,

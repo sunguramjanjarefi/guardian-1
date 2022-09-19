@@ -560,9 +560,7 @@ export class DatabaseServer {
 
     /**
      * Get Vc Documents
-     * @param filters
-     * @param options
-     * @param countResult
+     * @param aggregation
      * @virtual
      */
     public async getVcDocumentsByAggregation(aggregation: any[]): Promise<VcDocumentCollection[]> {
@@ -570,11 +568,17 @@ export class DatabaseServer {
     }
 
     /**
+     * Get Groups
+     * @param aggregation
+     * @virtual
+     */
+    public async getGroupsByAggregation(aggregation: any[]): Promise<PolicyRolesCollection[]> {
+        return await this.aggregate(PolicyRolesCollection, aggregation);
+    }
+
+    /**
      * Get Vp Documents
-     * @param filters
-     *
-     * @param options
-     * @param countResult
+     * @param aggregation
      * @virtual
      */
     public async getVpDocumentsByAggregation(aggregation: any[]): Promise<VpDocumentCollection[]> {
@@ -583,10 +587,7 @@ export class DatabaseServer {
 
     /**
      * Get Did Documents
-     * @param filters
-     *
-     * @param options
-     * @param countResult
+     * @param aggregation
      * @virtual
      */
     public async getDidDocumentsByAggregation(aggregation: any[]): Promise<DidDocumentCollection[]> {
@@ -595,9 +596,7 @@ export class DatabaseServer {
 
     /**
      * Get Approval Documents
-     * @param filters
-     * @param countResult
-     * @param options
+     * @param aggregation
      * @virtual
      */
     public async getApprovalDocumentsByAggregation(aggregation: any[]): Promise<ApprovalDocumentCollection[]> {
@@ -670,6 +669,20 @@ export class DatabaseServer {
      */
     public async getDocumentStates(filters: any, options?: any): Promise<DocumentState[]> {
         return await this.find(DocumentState, filters, options);
+    }
+
+    /**
+     * Get Groups
+     * @param filters
+     * @param options
+     * @param countResult
+     * @virtual
+     */
+    public async getGroups(filters: any, options?: any, countResult?: boolean): Promise<PolicyRolesCollection[] | number> {
+        if (countResult) {
+            return await this.count(PolicyRolesCollection, filters, options);
+        }
+        return await this.find(PolicyRolesCollection, filters, options);
     }
 
     /**
@@ -872,11 +885,11 @@ export class DatabaseServer {
      *
      * @virtual
      */
-     public async getActiveGroupByUser(policyId: string, did: string): Promise<PolicyRolesCollection> {
+    public async getActiveGroupByUser(policyId: string, did: string): Promise<PolicyRolesCollection> {
         if (!did) {
             return null;
         }
-        return await this.findOne(PolicyRolesCollection, { policyId, did , active: true });
+        return await this.findOne(PolicyRolesCollection, { policyId, did, active: true });
     }
 
     /**

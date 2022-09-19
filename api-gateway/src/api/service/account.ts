@@ -90,29 +90,43 @@ accountAPI.get('/standard-registries', authorizationHelper, async (req: Request,
 
 accountAPI.get('/balance', async (req: Request, res: Response) => {
     try {
+        console.log('+++++++  User balance');
+        
         const authHeader = req.headers.authorization;
+        console.log('++ 1');
         const users = new Users();
         if (authHeader) {
+            console.log('++ 2');
             const token = authHeader.split(' ')[1];
+            console.log('++ 3');
             try {
+                console.log('++ 4');
                 const user = await users.getUserByToken(token) as any;
+                console.log('++ 5');
                 if (user) {
+                    console.log('++ 6');
                     const guardians = new Guardians();
+                    console.log('++ 7');
                     const balance = await guardians.getBalance(user.username);
+                    console.log('++ 8');
                     res.json(balance);
                     return;
                 } else {
+                    console.log('++ 9');
                     res.json('null');
                     return;
                 }
             } catch (error) {
+                console.log('++ 10');
                 res.json('null');
                 return;
             }
         }
+        console.log('++ 11');
         res.json('null');
     } catch (error) {
         new Logger().error(error, ['API_GATEWAY']);
+        console.log('++ 12');
         res.json('null');
     }
 });

@@ -38,6 +38,7 @@ export abstract class ServiceRequestsBase {
      */
     public async request<T extends any>(entity: string, params?: any, type?: string): Promise<T> {
         try {
+            console.log('---->', entity);
             const response = await this.channel.request<any, T>(`${this.target}.${entity}`, params);
             if (!response) {
                 throw new Error('Server is not available');
@@ -45,6 +46,7 @@ export abstract class ServiceRequestsBase {
             if (response.error) {
                 throw new Error(response.error);
             }
+            console.log('<----', entity);
             return response.body;
         } catch (error) {
             throw new Error(`Guardian (${entity}) send: ` + error);
