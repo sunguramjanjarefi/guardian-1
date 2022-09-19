@@ -101,6 +101,8 @@ export class MessageBrokerChannel {
      */
     public async request<T, TResponse>(eventType: string, payload: T, timeout?: number): Promise<IMessageResponse<TResponse>> {
         try {
+            console.log('      request 0', [...reqMap.keys()]);
+
             const messageId = GenerateUUIDv4();
             const head = headers();
             head.append('messageId', messageId);
@@ -124,22 +126,25 @@ export class MessageBrokerChannel {
             // const msg = await this.channel.request(eventType, StringCodec().encode(stringPayload), { timeout: 300000 });
             console.log('      request 1', eventType);
 
-            const result = new Promise<IMessageResponse<TResponse>>((resolve) => {
+            return new Promise<IMessageResponse<TResponse>>((resolve, reject) => {
+                console.log('      request 1.1', eventType);
                 reqMap.set(messageId, (data) => {
+                    console.log('      request 3', eventType);
                     resolve(data);
                     reqMap.delete(messageId);
                 });
+                console.log('      request 2', eventType);
+                this.channel.request(eventType, StringCodec().encode(stringPayload), {
+                    timeout: timeout || MQ_TIMEOUT,
+                    headers: head
+                }).then(() => {
+                    console.log('      request 3', eventType);
+                }, (error) => {
+                    console.log('      request 4', eventType);
+                    reqMap.delete(messageId);
+                    reject(error);
+                });
             });
-
-            console.log('      request 2', eventType);
-
-            await this.channel.request(eventType, StringCodec().encode(stringPayload), {
-                timeout: timeout || MQ_TIMEOUT,
-                headers: head
-            });
-
-            return result;
-
         } catch (error) {
             // Nats no subscribe error
             if (error.code === '503') {
