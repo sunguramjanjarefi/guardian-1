@@ -56,22 +56,31 @@ export class MessageBrokerChannel {
         // console.log('MQ subscribed: %s', target);
         const sub = this.channel.subscribe(target, { queue: process.env.SERVICE_CHANNEL });
         const fn = async (_sub: Subscription) => {
+            console.log('      response 0', eventType);
             for await (const m of _sub) {
-                const payload = JSON.parse(StringCodec().decode(m.data));
+                console.log('      response 1', eventType);
+
+                const messageId = m.headers.get('messageId');
+
+                console.log('      response 2', eventType, messageId);
 
                 let responseMessage: IMessageResponse<TResponse>;
                 try {
+                    const payload = JSON.parse(StringCodec().decode(m.data));
+                    console.log('      response 3', eventType, messageId);
                     responseMessage = await handleFunc(payload);
+                    console.log('      response 4', eventType, messageId);
                 } catch (error) {
+                    console.log('      response 5', eventType, messageId);
                     responseMessage = new MessageError(error, error.code);
                 }
-
-                const messageId = m.headers.get('messageId');
 
                 const head = headers();
                 head.append('messageId', messageId);
 
-                this.channel.publish('response-message', StringCodec().encode(JSON.stringify(responseMessage)), {headers: head});
+                console.log('      response 6', eventType, messageId);
+
+                this.channel.publish('response-message', StringCodec().encode(JSON.stringify(responseMessage)), { headers: head });
 
                 m.respond(new Uint8Array(0));
             }
@@ -113,17 +122,23 @@ export class MessageBrokerChannel {
             // NOTE: If get NATS TIMEOUT error to quckly resolve just uncomment next line.
             // And then, implement async processing of operation.
             // const msg = await this.channel.request(eventType, StringCodec().encode(stringPayload), { timeout: 300000 });
-            await this.channel.request(eventType, StringCodec().encode(stringPayload), {
-                timeout: timeout || MQ_TIMEOUT,
-                headers: head
-            });
+            console.log('      request 1', eventType);
 
-            return new Promise((resolve) => {
+            const result = new Promise<IMessageResponse<TResponse>>((resolve) => {
                 reqMap.set(messageId, (data) => {
                     resolve(data);
                     reqMap.delete(messageId);
                 });
             });
+
+            console.log('      request 2', eventType);
+
+            await this.channel.request(eventType, StringCodec().encode(stringPayload), {
+                timeout: timeout || MQ_TIMEOUT,
+                headers: head
+            });
+
+            return result;
 
         } catch (error) {
             // Nats no subscribe error

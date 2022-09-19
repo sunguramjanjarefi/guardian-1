@@ -195,6 +195,7 @@ export class RequestVcDocumentBlock {
         output: [PolicyOutputEventType.RunEvent, PolicyOutputEventType.RefreshEvent]
     })
     async setData(user: IPolicyUser, _data: IPolicyDocument): Promise<any> {
+        console.log('SET_BLOCK_DATA request 1')
         const ref = PolicyComponentsUtils.GetBlockRef(this);
         ref.log(`setData`);
 
@@ -208,22 +209,24 @@ export class RequestVcDocumentBlock {
         }
 
         try {
+            console.log('SET_BLOCK_DATA request 2')
             await this.changeActive(user, false);
-
+            console.log('SET_BLOCK_DATA request 3')
             const hederaAccount = await PolicyUtils.getHederaAccount(ref, user.did);
-
+            console.log('SET_BLOCK_DATA request 4')
             const document = _data.document;
             const documentRef = await this.getRelationships(ref, _data.ref);
-
+            console.log('SET_BLOCK_DATA request 5')
             const credentialSubject = document;
             const schemaIRI = ref.options.schema;
             const idType = ref.options.idType;
-
+            console.log('SET_BLOCK_DATA request 6')
             const schema = await this.getSchema();
-
+            console.log('SET_BLOCK_DATA request 7')
             const id = await this.generateId(
                 idType, user, hederaAccount.hederaAccountId, hederaAccount.hederaAccountKey
             );
+            console.log('SET_BLOCK_DATA request 8')
             const _vcHelper = new VcHelper();
 
             if (id) {
@@ -239,20 +242,22 @@ export class RequestVcDocumentBlock {
             if (ref.dryRun) {
                 _vcHelper.addDryRunContext(credentialSubject);
             }
-
+            console.log('SET_BLOCK_DATA request 9')
             const res = await _vcHelper.verifySubject(credentialSubject);
-
+            console.log('SET_BLOCK_DATA request 10')
             if (!res.ok) {
                 throw new BlockActionError(JSON.stringify(res.error), ref.blockType, ref.uuid);
             }
-
+            console.log('SET_BLOCK_DATA request 11')
             const groupContext = await PolicyUtils.getGroupContext(ref, user);
+            console.log('SET_BLOCK_DATA request 12')
             const vc = await _vcHelper.createVC(
                 user.did,
                 hederaAccount.hederaAccountKey,
                 credentialSubject,
                 groupContext
             );
+            console.log('SET_BLOCK_DATA request 13')
             const accounts = PolicyUtils.getHederaAccounts(vc, hederaAccount.hederaAccountId, schema);
 
             let item = PolicyUtils.createVC(ref, user, vc);
@@ -263,12 +268,15 @@ export class RequestVcDocumentBlock {
 
             const state = { data: item };
 
+            console.log('SET_BLOCK_DATA request 14')
             const valid = await this.validateDocuments(user, state);
+            console.log('SET_BLOCK_DATA request 15')
             if (!valid) {
                 throw new BlockActionError('Invalid document', ref.blockType, ref.uuid);
             }
-
+            console.log('SET_BLOCK_DATA request 16')
             await this.changeActive(user, true);
+            console.log('SET_BLOCK_DATA request 17')
             ref.triggerEvents(PolicyOutputEventType.RunEvent, user, state);
             ref.triggerEvents(PolicyOutputEventType.RefreshEvent, user, state);
         } catch (error) {

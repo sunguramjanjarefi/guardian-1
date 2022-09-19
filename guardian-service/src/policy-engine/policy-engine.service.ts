@@ -1097,16 +1097,22 @@ export class PolicyEngineService {
 
         this.channel.response<any, any>(PolicyEngineEvents.SET_BLOCK_DATA, async (msg) => {
             try {
+                console.log('SET_BLOCK_DATA 1')
                 const { user, blockId, policyId, data } = msg;
-
+                console.log('SET_BLOCK_DATA 2')
                 const policyInstance = PolicyComponentsUtils.GetPolicyInstance(policyId);
+                console.log('SET_BLOCK_DATA 3')
                 const block = PolicyComponentsUtils.GetBlockByUUID<IPolicyInterfaceBlock>(blockId);
-                const userFull = await this.getUser(policyInstance, user);
-
+                console.log('SET_BLOCK_DATA 4')
+                const userFull = await this.policyEngine.getUser(policyInstance, user);
+                console.log('SET_BLOCK_DATA 5')
                 if (block && (await block.isAvailable(userFull))) {
+                    console.log('SET_BLOCK_DATA 6')
                     const result = await block.setData(userFull, data);
+                    console.log('SET_BLOCK_DATA 7')
                     return new MessageResponse(result);
                 } else {
+                    console.log('SET_BLOCK_DATA 8')
                     return new MessageError(new Error('Permission denied'));
                 }
             } catch (error) {

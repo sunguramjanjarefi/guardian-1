@@ -420,15 +420,8 @@ export class RegisteredBlocks {
             header: BlockHeaders.UIComponents,
             factory: DocumentsSourceBlockComponent,
             property: DocumentSourceComponent,
-            allowedChildren: [{
-                type: BlockType.FiltersAddon,
-                group: BlockGroup.UnGrouped
-            }, {
-                type: BlockType.DocumentsSourceAddon,
-                group: BlockGroup.UnGrouped
-            }, {
-                type: BlockType.PaginationAddon,
-                group: BlockGroup.UnGrouped
+            allowedChildren: [...allowedChildrenStepContainerBlocks, {
+                type: BlockType.PaginationAddon
             }]
         });
         this.registerBlock({
@@ -445,6 +438,14 @@ export class RegisteredBlocks {
                 type: BlockType.DocumentValidatorBlock,
                 group: BlockGroup.UnGrouped
             }]
+        });
+        this.registerBlock({
+            type: BlockType.MultiSignBlock,
+            icon: 'done_all',
+            group: BlockGroup.Documents,
+            header: BlockHeaders.UIComponents,
+            factory: MultiSignBlockComponent,
+            property: null,
         });
 
         // Documents, Server Blocks
