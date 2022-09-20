@@ -56,29 +56,19 @@ export class MessageBrokerChannel {
         // console.log('MQ subscribed: %s', target);
         const sub = this.channel.subscribe(target, { queue: process.env.SERVICE_CHANNEL });
         const fn = async (_sub: Subscription) => {
-            console.log('      response 0', eventType);
             for await (const m of _sub) {
-                console.log('      response 1', eventType);
-
                 const messageId = m.headers.get('messageId');
-
-                console.log('      response 2', eventType, messageId);
 
                 let responseMessage: IMessageResponse<TResponse>;
                 try {
                     const payload = JSON.parse(StringCodec().decode(m.data));
-                    console.log('      response 3', eventType, messageId);
                     responseMessage = await handleFunc(payload);
-                    console.log('      response 4', eventType, messageId);
                 } catch (error) {
-                    console.log('      response 5', eventType, messageId);
                     responseMessage = new MessageError(error, error.code);
                 }
 
                 const head = headers();
                 head.append('messageId', messageId);
-
-                console.log('      response 6', eventType, messageId);
 
                 this.channel.publish('response-message', StringCodec().encode(JSON.stringify(responseMessage)), { headers: head });
 
@@ -101,8 +91,6 @@ export class MessageBrokerChannel {
      */
     public request<T, TResponse>(eventType: string, payload: T, timeout?: number): Promise<IMessageResponse<TResponse>> {
         try {
-            console.log('      request 0', [...reqMap.keys()]);
-
             const messageId = GenerateUUIDv4();
             const head = headers();
             head.append('messageId', messageId);
@@ -121,23 +109,15 @@ export class MessageBrokerChannel {
                     stringPayload = '{}';
             }
 
-            console.log('      request 1', eventType);
-
             return new Promise<IMessageResponse<TResponse>>((resolve, reject) => {
-                console.log('      request 1.1', eventType);
                 reqMap.set(messageId, (data) => {
-                    console.log('      request 3', eventType);
                     resolve(data);
                     reqMap.delete(messageId);
                 });
-                console.log('      request 2', eventType);
                 this.channel.request(eventType, StringCodec().encode(stringPayload), {
                     timeout: timeout || MQ_TIMEOUT,
                     headers: head
-                }).then(() => {
-                    console.log('      request 3', eventType);
-                }, (error) => {
-                    console.log('      request 4', eventType);
+                }).then(() => {}, (error) => {
                     reqMap.delete(messageId);
 
                     // Nats no subscribe error

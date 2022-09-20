@@ -252,9 +252,7 @@ policyAPI.get('/:policyId/blocks', async (req: AuthenticatedRequest, res: Respon
 policyAPI.get('/:policyId/blocks/:uuid', async (req: AuthenticatedRequest, res: Response) => {
     const engineService = new PolicyEngine();
     try {
-        console.log('--> get blocks/uuid');
         const data = await engineService.getBlockData(req.user, req.params.policyId, req.params.uuid);
-        console.log('  <-- get blocks/uuid');
         res.send(data);
     } catch (error) {
         new Logger().error(error, ['API_GATEWAY']);
@@ -265,9 +263,7 @@ policyAPI.get('/:policyId/blocks/:uuid', async (req: AuthenticatedRequest, res: 
 policyAPI.post('/:policyId/blocks/:uuid', async (req: AuthenticatedRequest, res: Response) => {
     const engineService = new PolicyEngine();
     try {
-        console.log('--> blocks/uuid');
         const data = await engineService.setBlockData(req.user, req.params.policyId, req.params.uuid, req.body);
-        console.log('  <-- blocks/uuid');
         res.send(data);
     } catch (error) {
         new Logger().error(error, ['API_GATEWAY']);

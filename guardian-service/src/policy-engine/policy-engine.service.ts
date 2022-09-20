@@ -422,23 +422,16 @@ export class PolicyEngineService {
 
         this.channel.response<any, any>(PolicyEngineEvents.POLICY_BLOCKS, async (msg) => {
             try {
-                console.log('POLICY_BLOCKS 1')
                 const { user, policyId } = msg;
 
                 const policyInstance = PolicyComponentsUtils.GetPolicyInstance(policyId);
-                console.log('POLICY_BLOCKS 1.2')
                 const block = this.policyEngine.getRoot(policyId);
-                console.log('POLICY_BLOCKS 1.3')
                 const userFull = await this.policyEngine.getUser(policyInstance, user);
-                console.log('POLICY_BLOCKS 1.4');
 
                 if (block && (await block.isAvailable(userFull))) {
-                    console.log('POLICY_BLOCKS 1.5')
                     const data = await block.getData(userFull, block.uuid);
-                    console.log('POLICY_BLOCKS 1.6')
                     return new MessageResponse(data);
                 } else {
-                    console.log('POLICY_BLOCKS 2')
                     return new MessageResponse(null);
                 }
             } catch (error) {
@@ -449,7 +442,6 @@ export class PolicyEngineService {
 
         this.channel.response<any, any>(PolicyEngineEvents.GET_BLOCK_DATA, async (msg) => {
             try {
-                console.log('GET_BLOCK_DATA 1');
                 const { user, blockId, policyId } = msg;
 
                 const policyInstance = PolicyComponentsUtils.GetPolicyInstance(policyId);
@@ -458,10 +450,8 @@ export class PolicyEngineService {
 
                 if (block && (await block.isAvailable(userFull))) {
                     const data = await block.getData(userFull, blockId, null);
-                    console.log('GET_BLOCK_DATA 2')
                     return new MessageResponse(data);
                 } else {
-                    console.log('GET_BLOCK_DATA 3')
                     return new MessageResponse(null);
                 }
             } catch (error) {
@@ -472,7 +462,6 @@ export class PolicyEngineService {
 
         this.channel.response<any, any>(PolicyEngineEvents.GET_BLOCK_DATA_BY_TAG, async (msg) => {
             try {
-                console.log('GET_BLOCK_DATA_BY_TAG 1')
                 const { user, tag, policyId } = msg;
 
                 const policyInstance = PolicyComponentsUtils.GetPolicyInstance(policyId);
@@ -481,10 +470,8 @@ export class PolicyEngineService {
 
                 if (block && (await block.isAvailable(userFull))) {
                     const data = await block.getData(userFull, block.uuid, null);
-                    console.log('GET_BLOCK_DATA_BY_TAG 2')
                     return new MessageResponse(data);
                 } else {
-                    console.log('GET_BLOCK_DATA_BY_TAG 3')
                     return new MessageResponse(null);
                 }
             } catch (error) {
@@ -495,22 +482,14 @@ export class PolicyEngineService {
 
         this.channel.response<any, any>(PolicyEngineEvents.SET_BLOCK_DATA, async (msg) => {
             try {
-                console.log('SET_BLOCK_DATA 1')
                 const { user, blockId, policyId, data } = msg;
-                console.log('SET_BLOCK_DATA 2')
                 const policyInstance = PolicyComponentsUtils.GetPolicyInstance(policyId);
-                console.log('SET_BLOCK_DATA 3')
                 const block = PolicyComponentsUtils.GetBlockByUUID<IPolicyInterfaceBlock>(blockId);
-                console.log('SET_BLOCK_DATA 4')
                 const userFull = await this.policyEngine.getUser(policyInstance, user);
-                console.log('SET_BLOCK_DATA 5')
                 if (block && (await block.isAvailable(userFull))) {
-                    console.log('SET_BLOCK_DATA 6')
                     const result = await block.setData(userFull, data);
-                    console.log('SET_BLOCK_DATA 7')
                     return new MessageResponse(result);
                 } else {
-                    console.log('SET_BLOCK_DATA 8')
                     return new MessageError(new Error('Permission denied'));
                 }
             } catch (error) {
