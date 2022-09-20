@@ -99,7 +99,7 @@ export class MessageBrokerChannel {
      * @param timeout timeout in milliseconds, this will overwrite default env var MQ_TIMEOUT varlue @default 30000
      * @returns MessageResponse or Error response
      */
-    public async request<T, TResponse>(eventType: string, payload: T, timeout?: number): Promise<IMessageResponse<TResponse>> {
+    public request<T, TResponse>(eventType: string, payload: T, timeout?: number): Promise<IMessageResponse<TResponse>> {
         try {
             console.log('      request 0', [...reqMap.keys()]);
 
@@ -121,9 +121,6 @@ export class MessageBrokerChannel {
                     stringPayload = '{}';
             }
 
-            // NOTE: If get NATS TIMEOUT error to quckly resolve just uncomment next line.
-            // And then, implement async processing of operation.
-            // const msg = await this.channel.request(eventType, StringCodec().encode(stringPayload), { timeout: 300000 });
             console.log('      request 1', eventType);
 
             return new Promise<IMessageResponse<TResponse>>((resolve, reject) => {
@@ -150,17 +147,22 @@ export class MessageBrokerChannel {
                         return;
                     }
                     console.error(error.message, error.stack, error);
+
                     reject(error);
                 });
             });
         } catch (error) {
-            // Nats no subscribe error
-            if (error.code === '503') {
-                console.warn('No listener for message event type =  %s', eventType);
-                return;
-            }
-            console.error(error.message, error.stack, error);
-            throw error;
+            return new Promise<IMessageResponse<TResponse>>((resolve, reject) => {
+                // Nats no subscribe error
+                if (error.code === '503') {
+                    console.warn('No listener for message event type =  %s', eventType);
+                    resolve(null);
+                    return;
+                }
+
+                console.error(error.message, error.stack, error);
+                reject(error);
+            });
         }
     }
 
