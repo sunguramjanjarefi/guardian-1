@@ -142,6 +142,14 @@ export class MessageBrokerChannel {
                 }, (error) => {
                     console.log('      request 4', eventType);
                     reqMap.delete(messageId);
+
+                    // Nats no subscribe error
+                    if (error.code === '503') {
+                        console.warn('No listener for message event type =  %s', eventType);
+                        resolve(null);
+                        return;
+                    }
+                    console.error(error.message, error.stack, error);
                     reject(error);
                 });
             });
