@@ -169,7 +169,7 @@ export class MultiSignBlock {
         ref.triggerEvents(PolicyOutputEventType.RefreshEvent, user, null);
 
         PolicyComponentsUtils.ExternalEventFn(new ExternalEvent(ExternalEventType.Set, ref, user, {
-            documents: ExternalDocuments(document)
+            documents: ExternalDocuments(sourceDoc)
         }));
     }
 
