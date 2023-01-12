@@ -96,4 +96,9 @@ export interface SchemaField {
      * Comment
      */
     comment?: string;
+
+    /**
+     * Is field private
+     */
+    isPrivate?: boolean;
 }

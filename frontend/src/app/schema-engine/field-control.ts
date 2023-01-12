@@ -14,7 +14,7 @@ export const SYSTEM_FIELDS = [
 
 export class FieldControl {
     public readonly name: string;
-    
+
     public controlKey: FormControl;
     public controlTitle: FormControl;
     public controlDescription: FormControl;
@@ -24,6 +24,7 @@ export class FieldControl {
     public controlUnit: FormControl;
     public controlRemoteLink: FormControl;
     public controlEnum: FormArray;
+    public controlPrivate: FormControl;
     private readonly _defaultFieldMap!: any;
     private _entityType!: FormControl;
 
@@ -40,7 +41,7 @@ export class FieldControl {
         this.name = `field${Date.now()}${Math.floor(Math.random() * 1000000)}`;
         if (field) {
             this.controlKey = new FormControl(field.name, [
-                Validators.required, 
+                Validators.required,
                 this.keyValidator(),
                 this.fieldSystemKeyValidator()
             ]);
@@ -54,13 +55,14 @@ export class FieldControl {
             this.controlArray = new FormControl(field.isArray);
             this.controlUnit = new FormControl(field.unit);
             this.controlRemoteLink = new FormControl(field.remoteLink);
+            this.controlPrivate = new FormControl(field.isPrivate);
             this.controlEnum = new FormArray([]);
             field.enum?.forEach(item => {
                 this.controlEnum.push(new FormControl(item))
             });
         } else {
             this.controlKey = new FormControl(name || this.name, [
-                Validators.required, 
+                Validators.required,
                 this.keyValidator(),
                 this.fieldSystemKeyValidator()
             ]);
@@ -75,6 +77,7 @@ export class FieldControl {
             this.controlUnit = new FormControl('');
             this.controlRemoteLink = new FormControl('');
             this.controlEnum = new FormArray([]);
+            this.controlPrivate = new FormControl(false);
         }
         this._entityType.valueChanges
             .pipe(takeUntil(destroyEvent))
@@ -115,6 +118,10 @@ export class FieldControl {
         return this.controlUnit.value;
     }
 
+    public get isPrivate(): boolean {
+        return this.controlPrivate.value;
+    }
+
     public createGroup(): FormGroup {
         return new FormGroup({
             controlKey: this.controlKey,
@@ -125,7 +132,8 @@ export class FieldControl {
             fieldArray: this.controlArray,
             fieldUnit: this.controlUnit,
             controlRemoteLink: this.controlRemoteLink,
-            controlEnum: this.controlEnum
+            controlEnum: this.controlEnum,
+            controlPrivate: this.controlPrivate,
         });
     }
 
@@ -141,6 +149,7 @@ export class FieldControl {
             const unit = group.fieldUnit;
             const remoteLink = group.controlRemoteLink;
             const enumArray = group.controlEnum;
+            const isPrivate = group.controlPrivate;
             return {
                 key,
                 title,
@@ -150,7 +159,8 @@ export class FieldControl {
                 isArray,
                 unit,
                 remoteLink,
-                enumArray
+                enumArray,
+                isPrivate,
             };
         } else {
             return null;

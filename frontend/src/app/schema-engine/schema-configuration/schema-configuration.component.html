@@ -23,6 +23,7 @@
             <mat-select *ngIf="!system" formControlName="entity" tabindex='-1'>
                 <mat-option value="NONE">Default</mat-option>
                 <mat-option value="VC">Verifiable Credential</mat-option>
+                <mat-option value="EVC">Encoded Verifiable Credential</mat-option>
             </mat-select>
         </mat-form-field>
     </div>
@@ -52,7 +53,7 @@
                 <div class="re-order-handler" cdkDragHandle>
                     <mat-icon>drag_handle</mat-icon>
                 </div>
-                <schema-field-configuration [form]="dataForm" [field]="field" [types]="types"
+                <schema-field-configuration [form]="dataForm" [field]="field" [types]="types" [private]="this.dataForm.value?.entity === 'EVC'"
                     [measureTypes]="measureTypes" [schemaTypes]="schemaTypes" [extended]="extended"
                     (remove)="onRemove(field)">
                 </schema-field-configuration>

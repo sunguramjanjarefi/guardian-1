@@ -16,6 +16,7 @@ import { DidRootKey } from './did-document';
 import { Issuer } from './issuer';
 import axios from 'axios';
 import { IPFS } from '@helpers/ipfs';
+import { BbsBlsSignature2020, Bls12381G2KeyPair, Bls12381G2Key2020 } from '@transmute/bbs-bls12381-signature-2020';
 
 /**
  * Suite interface
@@ -124,6 +125,20 @@ export class VCJS {
         const verificationMethod = document.getPrivateVerificationMethod();
         const key = await Ed25519VerificationKey2018.from(verificationMethod);
         return new Ed25519Signature2018({ key });
+    }
+
+    /**
+     * Create BBS Suite by DID
+     *
+     * @param {DidRootKey} document - DID document
+     *
+     * @returns {Ed25519Signature2018} - Ed25519Signature2018
+     */
+    public async createBBSSuite(document: DidRootKey): Promise<Ed25519Signature2018> {
+        const verificationMethod = document.getPrivateVerificationMethod();
+        const privateKey = Bls12381G2Key2020
+        const key = await Bls12381G2KeyPair.from(verificationMethod.privateKeyBase58);
+        return new BbsBlsSignature2020({ key });
     }
 
     /**
