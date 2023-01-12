@@ -1,0 +1,16 @@
+version: '3.3'
+
+services:
+  jmeter-container:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: jmeter-build
+
+  load-tests:
+    image: jmeter-build
+    volumes:
+      - ./test:/opt/apache-jmeter-5.4.3/test
+      - ./data:/opt/apache-jmeter-5.4.3/data
+      - ./results:/opt/apache-jmeter-5.4.3/output
+    command: ./run.sh

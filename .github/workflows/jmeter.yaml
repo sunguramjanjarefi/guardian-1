@@ -1,0 +1,116 @@
+
+name: Guardian-Load-Tests
+
+on:
+  # push:
+  #   branches:    
+  #     - '*'
+  workflow_dispatch:
+    inputs:
+      test:
+        required: true
+        type: choice
+        description: Test Name
+        default: "iREC"
+        options:  
+        - iREC
+      environment:
+        required: true
+        type: choice
+        description: Environment under test
+        default: "guardian-test.eastus.cloudapp.azure.com"
+        options: 
+        - guardian-test.eastus.cloudapp.azure.com
+      threads:
+        required: false
+        type: choice
+        description: Threads (not users)
+        default: "1"
+        options:
+        - "1"
+        - "2"
+        - "3"
+        - "4"
+        - "10"
+        - "15"
+        - "20"
+        - "25"
+        - "30"
+        - "35"
+        - "40"
+        - "50"
+        - "60"
+        - "70"
+        - "80"
+        - "90"
+        - "100"
+        - "150"
+        - "200"
+      rampup:
+        required: false
+        type: choice
+        description: Rump-up period (secs)
+        default: "0"
+        options:
+          - "0"
+          - "1"
+          - "10"
+          - "20"
+          - "30"
+          - "40"
+          - "50"
+          - "60"
+          - "120"
+          - "180"
+          - "240"
+          - "300"
+          - "360"
+          - "420"
+          - "480"
+          - "540"
+          - "600"
+          - "1800"
+          - "3600"
+          - "7200"
+          - "10800"
+          - "14400"
+      duration:
+        required: false
+        type: choice
+        description: Hold load for (secs)
+        default: "1"
+        options:
+          - "1"
+          - "5"
+          - "10"
+          - "20"
+          - "30"
+          - "40"
+          - "50"
+          - "60"
+          - "120"
+          - "180"
+          - "240"
+          - "300"
+          - "360"
+          - "420"
+          - "480"
+          - "540"
+          - "600"
+          - "1800"
+          - "3600"
+          - "7200"
+          - "10800"
+          - "14400"
+          - "86400"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Load Test for ${{ github.event.inputs.test }}
+        run: docker-compose down && docker-compose build && docker-compose run -e THREAD=${{ github.event.inputs.threads }} -e RUMPUP=${{ github.event.inputs.rampup }} -e DURATION=${{ github.event.inputs.duration }} -e TEST_NAME=${{ github.event.inputs.test }} -e ENVIRONMENT=${{ github.event.inputs.environment }} load-tests
+      - uses: actions/upload-artifact@v1
+        with:
+          name: JMeter-Test-Results TEST_NAME=${{ github.event.inputs.test }} THREAD=${{ github.event.inputs.threads }} RUMPUP=${{ github.event.inputs.rampup }} DURATION=${{ github.event.inputs.duration }} ENVIRONMENT=${{ github.event.inputs.environment }}
+          path: results/
