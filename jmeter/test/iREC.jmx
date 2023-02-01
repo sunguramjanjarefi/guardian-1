@@ -1790,7 +1790,7 @@
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
             <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-            <boolProp name="HTTPSampler.DO_MULTIPART_POST">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
             <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
             <stringProp name="HTTPSampler.connect_timeout"></stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
@@ -1974,18 +1974,23 @@
             <stringProp name="HTTPSampler.domain"></stringProp>
             <stringProp name="HTTPSampler.port"></stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
-            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
             <stringProp name="HTTPSampler.path">api/v1/policies/${policyId}/blocks/${create_device_form_uuid}</stringProp>
             <stringProp name="HTTPSampler.method">GET</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
             <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
             <boolProp name="HTTPSampler.DO_MULTIPART_POST">true</boolProp>
+            <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">true</boolProp>
             <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
             <stringProp name="HTTPSampler.connect_timeout">3000</stringProp>
             <stringProp name="HTTPSampler.response_timeout">10000</stringProp>
           </HTTPSamplerProxy>
           <hashTree>
+            <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
+              <stringProp name="ConstantTimer.delay">7000</stringProp>
+            </ConstantTimer>
+            <hashTree/>
             <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
               <collectionProp name="HeaderManager.headers">
                 <elementProp name="" elementType="Header">
@@ -2019,8 +2024,78 @@
               <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
             </JSONPostProcessor>
             <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract type" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">type</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.schema.type</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract context" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">context</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.schema.contextURL</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract field3 type" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">type3</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$..fields..[?(@.title==&quot;Registrant Details&quot;)].type</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract field3 context" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">context3</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$..fields..[?(@.title==&quot;Registrant Details&quot;)].context.context[0]</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract field4 type" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">type4</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$..fields..[?(@.title==&quot;Production Device Details&quot;)].type</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract field4 context" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">context4</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$..fields..[?(@.title==&quot;Production Device Details&quot;)].context.context[0]</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract field5 type" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">type5</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$..fields..[?(@.title==&quot;Energy Sources&quot;)].type</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract field5 context" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">context5</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$..fields..[?(@.title==&quot;Energy Sources&quot;)].context.context[0]</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract owner" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">owner</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.owner</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract ref" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">ref</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.data</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="CreateDevice" enabled="false">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="CreateDevice" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments">
@@ -2028,108 +2103,31 @@
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.value">{&#xd;
     &quot;document&quot;: {&#xd;
-        &quot;field0&quot;: &quot;&quot;,&#xd;
+        &quot;field0&quot;: &quot;${owner}&quot;,&#xd;
         &quot;field3&quot;: {&#xd;
-            &quot;type&quot;: &quot;&quot;,&#xd;
+            &quot;type&quot;: &quot;${type3}&quot;,&#xd;
             &quot;@context&quot;: [&#xd;
-                &quot;&quot;&#xd;
+            &quot;${context3}&quot;&#xd;
             ]&#xd;
         },&#xd;
         &quot;field4&quot;: {&#xd;
-            &quot;type&quot;: &quot;&quot;,&#xd;
+            &quot;type&quot;: &quot;${type4}&quot;,&#xd;
             &quot;@context&quot;: [&#xd;
-                &quot;&quot;&#xd;
+            &quot;${context4}&quot;&#xd;
             ]&#xd;
         },&#xd;
         &quot;field5&quot;: {&#xd;
-            &quot;type&quot;: &quot;&quot;,&#xd;
+            &quot;type&quot;: &quot;${type5}&quot;,&#xd;
             &quot;@context&quot;: [&#xd;
-                &quot;&quot;&#xd;
+            &quot;${context5}&quot;&#xd;
             ]&#xd;
         },&#xd;
-        &quot;type&quot;: &quot;&quot;,&#xd;
+            &quot;type&quot;: &quot;${type}&quot;,&#xd;
         &quot;@context&quot;: [&#xd;
-            &quot;&quot;&#xd;
+            &quot;${context}&quot;&#xd;
         ]&#xd;
     },&#xd;
-    &quot;ref&quot;: {&#xd;
-        &quot;_id&quot;: &quot;&quot;,&#xd;
-        &quot;owner&quot;: &quot;&quot;,&#xd;
-        &quot;assignedTo&quot;: null,&#xd;
-        &quot;assignedToGroup&quot;: null,&#xd;
-        &quot;hash&quot;: &quot;&quot;,&#xd;
-        &quot;document&quot;: {&#xd;
-            &quot;id&quot;: &quot;&quot;,&#xd;
-            &quot;type&quot;: [&#xd;
-                &quot;&quot;&#xd;
-            ],&#xd;
-            &quot;issuer&quot;: &quot;&quot;,&#xd;
-            &quot;issuanceDate&quot;: &quot;&quot;,&#xd;
-            &quot;@context&quot;: [&#xd;
-                &quot;&quot;&#xd;
-            ],&#xd;
-            &quot;credentialSubject&quot;: [&#xd;
-                {&#xd;
-                    &quot;field0&quot;: &quot;&quot;,&#xd;
-                    &quot;field1&quot;: {&#xd;
-                        &quot;type&quot;: &quot;&quot;,&#xd;
-                        &quot;@context&quot;: [&#xd;
-                            &quot;&quot;&#xd;
-                        ]&#xd;
-                    },&#xd;
-                    &quot;field2&quot;: {&#xd;
-                        &quot;type&quot;: &quot;&quot;,&#xd;
-                        &quot;@context&quot;: [&#xd;
-                            &quot;&quot;&#xd;
-                        ]&#xd;
-                    },&#xd;
-                    &quot;field3&quot;: {&#xd;
-                        &quot;type&quot;: &quot;&quot;,&#xd;
-                        &quot;@context&quot;: [&#xd;
-                            &quot;&quot;&#xd;
-                        ]&#xd;
-                    },&#xd;
-                    &quot;policyId&quot;: &quot;&quot;,&#xd;
-                    &quot;@context&quot;: [&#xd;
-                        &quot;&quot;&#xd;
-                    ],&#xd;
-                    &quot;id&quot;: &quot;&quot;,&#xd;
-                    &quot;type&quot;: &quot;&quot;&#xd;
-                }&#xd;
-            ],&#xd;
-            &quot;proof&quot;: {&#xd;
-                &quot;type&quot;: &quot;&quot;,&#xd;
-                &quot;created&quot;: &quot;&quot;,&#xd;
-                &quot;verificationMethod&quot;: &quot;&quot;,&#xd;
-                &quot;proofPurpose&quot;: &quot;&quot;,&#xd;
-                &quot;jws&quot;: &quot;&quot;&#xd;
-            }&#xd;
-        },&#xd;
-        &quot;createDate&quot;: &quot;&quot;,&#xd;
-        &quot;updateDate&quot;: &quot;&quot;,&#xd;
-        &quot;hederaStatus&quot;: &quot;ISSUE&quot;,&#xd;
-        &quot;signature&quot;: 0,&#xd;
-        &quot;type&quot;: &quot;registrant(Approved)&quot;,&#xd;
-        &quot;policyId&quot;: &quot;&quot;,&#xd;
-        &quot;tag&quot;: &quot;save_copy_application&quot;,&#xd;
-        &quot;option&quot;: {&#xd;
-            &quot;status&quot;: &quot;Approved&quot;&#xd;
-        },&#xd;
-        &quot;schema&quot;: &quot;&quot;,&#xd;
-        &quot;messageId&quot;: &quot;&quot;,&#xd;
-        &quot;topicId&quot;: &quot;&quot;,&#xd;
-        &quot;relationships&quot;: [&#xd;
-            &quot;&quot;&#xd;
-        ],&#xd;
-        &quot;comment&quot;: null,&#xd;
-        &quot;accounts&quot;: {&#xd;
-            &quot;default&quot;: &quot;&quot;&#xd;
-        },&#xd;
-        &quot;tokens&quot;: null,&#xd;
-        &quot;group&quot;: &quot;${group}&quot;,&#xd;
-        &quot;__sourceTag__&quot;: &quot;current_registrant&quot;,&#xd;
-        &quot;id&quot;: &quot;${doc_id}&quot;&#xd;
-    }&#xd;
+    &quot;ref&quot;: ${ref}&#xd;
 }</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
@@ -2276,7 +2274,8 @@
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">true</boolProp>
           <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
           <stringProp name="HTTPSampler.connect_timeout"></stringProp>
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
@@ -2301,10 +2300,35 @@
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
           <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract docId" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">docId</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.data[*].id</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract credentialId" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">credentialId</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.data..credentialSubject..id</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
+            <stringProp name="ConstantTimer.delay">5000</stringProp>
+          </ConstantTimer>
+          <hashTree/>
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="ApproveDevice" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments"/>
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&quot;document&quot;:{&quot;id&quot;:&quot;${docId}&quot;},&quot;status&quot;:&quot;SIGNED&quot;}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
           </elementProp>
           <stringProp name="HTTPSampler.domain"></stringProp>
           <stringProp name="HTTPSampler.port"></stringProp>
@@ -2341,6 +2365,56 @@
           </ResponseAssertion>
           <hashTree/>
         </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GetDevices" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
+          <stringProp name="HTTPSampler.path">api/v1/policies/${policyId}/tag/devices_grid/blocks</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">authorization</stringProp>
+                <stringProp name="Header.value">bearer ${accessTokenUser}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract refIssue" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">refIssue</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.data[*]</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
+            <stringProp name="ConstantTimer.delay">5000</stringProp>
+          </ConstantTimer>
+          <hashTree/>
+        </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GetIDCreate ssueRequest" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
             <collectionProp name="Arguments.arguments"/>
@@ -2350,6 +2424,229 @@
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
           <stringProp name="HTTPSampler.path">api/v1/policies/${policyId}/tag/create_issue_request_form</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">authorization</stringProp>
+                <stringProp name="Header.value">bearer ${accessTokenUser}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract create_issue_request_form_uuid" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">create_issue_request_form_uuid</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.id</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GetIssueSchema" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
+          <stringProp name="HTTPSampler.path">api/v1/policies/${policyId}/tag/create_issue_request_form/blocks</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">true</boolProp>
+          <boolProp name="HTTPSampler.BROWSER_COMPATIBLE_MULTIPART">true</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout">3000</stringProp>
+          <stringProp name="HTTPSampler.response_timeout">10000</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
+            <stringProp name="ConstantTimer.delay">5000</stringProp>
+          </ConstantTimer>
+          <hashTree/>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">authorization</stringProp>
+                <stringProp name="Header.value">bearer ${accessTokenUser}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract doc_id" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">doc_id</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.id</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract group" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">group</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.group</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract IssueType" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">IssueType</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.schema.type</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract IssueContext" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">IssueContext</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.schema.contextURL</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract field2 type" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">type2</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$..fields..[?(@.title==&quot;Registrant Details&quot;)].context.type</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract field2 context" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">context2</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$..fields..[?(@.title==&quot;Registrant Details&quot;)].context.context[0]</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract issueField3Type type" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">issueField3Type</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$..fields..[?(@.title==&quot;Production Device\/Production Group&quot;)].context.type</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract issueField3 context" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">issueField3Context</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$..fields..[?(@.title==&quot;Production Device\/Production Group&quot;)].context.context[0]</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="CreateIssueRequest" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+    &quot;document&quot;: {&#xd;
+    	   &quot;field0&quot;:  &quot;${owner}&quot;,&#xd;
+    	   &quot;field1&quot;:  &quot;${credentialId}&quot;,&#xd;
+        &quot;field2&quot;: {&#xd;
+            &quot;type&quot;: &quot;${type2}&quot;,&#xd;
+            &quot;@context&quot;: [&#xd;
+            &quot;${context2}&quot;&#xd;
+            ]&#xd;
+        },&#xd;
+        &quot;field3&quot;: {&#xd;
+            &quot;type&quot;: &quot;${issueField3Type}&quot;,&#xd;
+            &quot;@context&quot;: [&#xd;
+            &quot;${issueField3Context}&quot;&#xd;
+            ]&#xd;
+        },&#xd;
+        &quot;field6&quot;: &quot;2022-05-01&quot;,&#xd;
+        &quot;field7&quot;: 123,&#xd;
+        &quot;field8&quot;: &quot;2022-05-31&quot;,&#xd;
+        &quot;field17&quot;: &quot;${usernameUser}&quot;,&#xd;
+        &quot;field18&quot;: &quot;${hederaAccountIDUser}&quot;,&#xd;
+            &quot;type&quot;: &quot;${IssueType}&quot;,&#xd;
+        &quot;@context&quot;: [&#xd;
+            &quot;${IssueContext}&quot;&#xd;
+        ]&#xd;
+    },&#xd;
+    &quot;ref&quot;: ${refIssue}&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">api/v1/policies/${policyId}/tag/create_issue_request_form/blocks</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="" elementType="Header">
+                <stringProp name="Header.name">authorization</stringProp>
+                <stringProp name="Header.value">bearer ${accessTokenUser}</stringProp>
+              </elementProp>
+            </collectionProp>
+          </HeaderManager>
+          <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49586">200</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message"></stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">16</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
+            <stringProp name="ConstantTimer.delay">5000</stringProp>
+          </ConstantTimer>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GetIssueRequestGridUUID" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain"></stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
+          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">api/v1/policies/${policyId}/tag/issue_requests_grid(evident)</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -2379,23 +2676,30 @@
             <intProp name="Assertion.test_type">16</intProp>
           </ResponseAssertion>
           <hashTree/>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract create_issue_request_form_uuid" enabled="true">
-            <stringProp name="JSONPostProcessor.referenceNames">create_issue_request_form_uuid</stringProp>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract approve_issue_grid_uuid" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">approve_issue_grid_uuid</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.id</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
             <stringProp name="JSONPostProcessor.defaultValues">NOT_FOUND</stringProp>
           </JSONPostProcessor>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="CreateIssueRequest" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments"/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="ApproveIssueRequest" enabled="true">
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&quot;document&quot;:{&quot;id&quot;:&quot;${_id}&quot;},&quot;tag&quot;: &quot;Option_0&quot;}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
           </elementProp>
           <stringProp name="HTTPSampler.domain"></stringProp>
           <stringProp name="HTTPSampler.port"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">api/v1/policies/${policyId}/blocks/${create_issue_request_form_uuid} </stringProp>
+          <stringProp name="HTTPSampler.path">api/v1/policies/${policyId}/tag/approve_issue_requests_btn/blocks</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
