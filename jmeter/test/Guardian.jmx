@@ -3967,6 +3967,42 @@ vars.put(&quot;systemSchemaUUID&quot;, UUID.randomUUID().toString());</stringPro
             </collectionProp>
           </HeaderManager>
           <hashTree/>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Upload artifact. " enabled="true">
+            <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
+              <collectionProp name="HTTPFileArgs.files">
+                <elementProp name="../data/iRec Policy 2.policy" elementType="HTTPFileArg">
+                  <stringProp name="File.mimetype">multipart/form-data</stringProp>
+                  <stringProp name="File.path">../data/iRec Policy 2.policy</stringProp>
+                  <stringProp name="File.paramname">files</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="filedetails" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                  <stringProp name="Argument.value">{&quot;serviceRequestId&quot;:&quot;RandomNumber&quot;,&quot;filedetails&quot;:[{&quot;fileName&quot;:&quot;iRec Policy 2.policy&quot;,&quot;fileUniqueName&quot;:&quot;Randomnumber-a575d680-ceb0-11e9-a25d-2590f89b0ed0.policy&quot;,&quot;fileType&quot;:&quot;binary/octet-stream&quot;,&quot;fileSize&quot;:1117730,&quot;status&quot;:&quot;New&quot;}]}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                  <stringProp name="Argument.name">filedetails</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain"></stringProp>
+            <stringProp name="HTTPSampler.port"></stringProp>
+            <stringProp name="HTTPSampler.protocol"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.path">api/v1/artifact/${policyDraftId}</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">true</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+            <stringProp name="HTTPSampler.response_timeout"></stringProp>
+          </HTTPSamplerProxy>
+          <hashTree/>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Returns all artifacts." enabled="true">
             <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
               <collectionProp name="HTTPFileArgs.files">
@@ -4010,37 +4046,29 @@ vars.put(&quot;systemSchemaUUID&quot;, UUID.randomUUID().toString());</stringPro
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
           </HTTPSamplerProxy>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Upload artifact. " enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Delete artifact." enabled="true">
             <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
               <collectionProp name="HTTPFileArgs.files">
-                <elementProp name="../data/iRec Policy 2.policy" elementType="HTTPFileArg">
-                  <stringProp name="File.mimetype">multipart/form-data</stringProp>
-                  <stringProp name="File.path">../data/iRec Policy 2.policy</stringProp>
-                  <stringProp name="File.paramname">files</stringProp>
+                <elementProp name="" elementType="HTTPFileArg">
+                  <stringProp name="File.path"></stringProp>
+                  <stringProp name="File.paramname"> </stringProp>
+                  <stringProp name="File.mimetype"> </stringProp>
                 </elementProp>
               </collectionProp>
             </elementProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="filedetails" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">{&quot;serviceRequestId&quot;:&quot;RandomNumber&quot;,&quot;filedetails&quot;:[{&quot;fileName&quot;:&quot;iRec Policy 2.policy&quot;,&quot;fileUniqueName&quot;:&quot;Randomnumber-a575d680-ceb0-11e9-a25d-2590f89b0ed0.policy&quot;,&quot;fileType&quot;:&quot;binary/octet-stream&quot;,&quot;fileSize&quot;:1117730,&quot;status&quot;:&quot;New&quot;}]}</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                  <stringProp name="Argument.name">filedetails</stringProp>
-                </elementProp>
-              </collectionProp>
+              <collectionProp name="Arguments.arguments"/>
             </elementProp>
             <stringProp name="HTTPSampler.domain"></stringProp>
             <stringProp name="HTTPSampler.port"></stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">api/v1/artifact/${policyDraftId}</stringProp>
-            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <stringProp name="HTTPSampler.path">api/v1/artifact/</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
             <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-            <boolProp name="HTTPSampler.DO_MULTIPART_POST">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
             <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
             <stringProp name="HTTPSampler.connect_timeout"></stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
@@ -4068,25 +4096,6 @@ vars.put(&quot;systemSchemaUUID&quot;, UUID.randomUUID().toString());</stringPro
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Returns all contracts." enabled="true">
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
-              <collectionProp name="Arguments.arguments"/>
-            </elementProp>
-            <stringProp name="HTTPSampler.domain"></stringProp>
-            <stringProp name="HTTPSampler.port"></stringProp>
-            <stringProp name="HTTPSampler.protocol"></stringProp>
-            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">api/v1/contracts</stringProp>
-            <stringProp name="HTTPSampler.method">GET</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-            <stringProp name="HTTPSampler.response_timeout"></stringProp>
-          </HTTPSamplerProxy>
           <hashTree/>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Creates new contract." enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
@@ -4161,7 +4170,7 @@ vars.put(&quot;systemSchemaUUID&quot;, UUID.randomUUID().toString());</stringPro
             </JSONPostProcessor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Add new contract user." enabled="false">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Add new contract user." enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments">
@@ -4178,7 +4187,7 @@ vars.put(&quot;systemSchemaUUID&quot;, UUID.randomUUID().toString());</stringPro
             <stringProp name="HTTPSampler.port"></stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">api/v1/contracts/0.0.49176956/user</stringProp>
+            <stringProp name="HTTPSampler.path">api/v1/contracts/${contractIdSecond}/user</stringProp>
             <stringProp name="HTTPSampler.method">POST</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -4189,7 +4198,7 @@ vars.put(&quot;systemSchemaUUID&quot;, UUID.randomUUID().toString());</stringPro
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
           </HTTPSamplerProxy>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Update contract status." enabled="false">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Returns all contracts." enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
               <collectionProp name="Arguments.arguments"/>
             </elementProp>
@@ -4197,7 +4206,26 @@ vars.put(&quot;systemSchemaUUID&quot;, UUID.randomUUID().toString());</stringPro
             <stringProp name="HTTPSampler.port"></stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">api/v1/contracts/${contractIdFirst}/user</stringProp>
+            <stringProp name="HTTPSampler.path">api/v1/contracts</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+            <stringProp name="HTTPSampler.response_timeout"></stringProp>
+          </HTTPSamplerProxy>
+          <hashTree/>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Update contract status." enabled="true">
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="HTTPSampler.domain"></stringProp>
+            <stringProp name="HTTPSampler.port"></stringProp>
+            <stringProp name="HTTPSampler.protocol"></stringProp>
+            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+            <stringProp name="HTTPSampler.path">api/v1/contracts/${contractIdSecond}/status</stringProp>
             <stringProp name="HTTPSampler.method">POST</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -4239,19 +4267,19 @@ vars.put(&quot;systemSchemaUUID&quot;, UUID.randomUUID().toString());</stringPro
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
           </HTTPSamplerProxy>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Returns all contracts pairs." enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Returns all contracts pairs." enabled="false">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
               <collectionProp name="Arguments.arguments">
                 <elementProp name="baseTokenId" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">0.0.49179655</stringProp>
+                  <stringProp name="Argument.value">contractIdFirst</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                   <stringProp name="Argument.name">baseTokenId</stringProp>
                 </elementProp>
                 <elementProp name="oppositeTokenId" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">0.0.49179656</stringProp>
+                  <stringProp name="Argument.value">contractIdSecond</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                   <stringProp name="Argument.name">oppositeTokenId</stringProp>
@@ -4311,7 +4339,7 @@ vars.put(&quot;systemSchemaUUID&quot;, UUID.randomUUID().toString());</stringPro
               <collectionProp name="Arguments.arguments">
                 <elementProp name="contractId" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">0.0.49176956</stringProp>
+                  <stringProp name="Argument.value">${contractIdFirst}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                   <boolProp name="HTTPArgument.use_equals">true</boolProp>
                   <stringProp name="Argument.name">contractId</stringProp>
