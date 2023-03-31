@@ -83,13 +83,20 @@ export class BlockTreeGenerator extends NatsService {
         this.connection.subscribe([policyId, subject].join('-'), {
             queue: this.messageQueueName,
             callback: async (error, msg) => {
-                const pId = msg.headers.get('policyId');
-                if (pId === policyId) {
+                try {
+                    const pId = msg.headers.get('policyId');
+                    if (pId === policyId) {
+                        const messageId = msg.headers.get('messageId');
+                        const head = headers();
+                        head.append('messageId', messageId);
+                        const respond = await cb(await this.codec.decode(msg.data), msg.headers);
+                        msg.respond(await this.codec.encode(respond), {headers: head});
+                    }
+                } catch (e) {
                     const messageId = msg.headers.get('messageId');
                     const head = headers();
                     head.append('messageId', messageId);
-                    const respond = await cb(await this.codec.decode(msg.data), msg.headers);
-                    msg.respond(await this.codec.encode(respond), {headers: head});
+                    msg.respond(await this.codec.encode({error: e.message}), {headers: head})
                 }
             }
         });

@@ -2,6 +2,8 @@ import { WorkerTaskType } from '@guardian/interfaces';
 import { Workers } from '@helpers/workers';
 import { Logger, MessageResponse, RunFunctionAsync, SettingsContainer } from '@guardian/common';
 import { DatabaseServer } from '@database-modules';
+import { NatsConnection } from 'nats';
+import { GuardiansService } from '@helpers/guardians';
 
 /**
  * Transaction log level
@@ -227,7 +229,7 @@ export class TransactionLogger {
      * @param channel
      */
     public static workerSubscribe(channel: any): void {
-        channel.response('guardians.transaction-log-event', async (data: any) => {
+        new GuardiansService().getMessages('transaction-log-event', async (data: any) => {
             RunFunctionAsync(async () => {
                 switch (data.type) {
                     case 'start-log': {
@@ -269,9 +271,10 @@ export class TransactionLogger {
 
     /**
      * Init logger
-     * @param channel
+     * @param cn
+     * @param lvl
      */
-    public static init(channel: any, lvl: TransactionLogLvl): void {
+    public static init(cn: NatsConnection, lvl: TransactionLogLvl): void {
         TransactionLogger.setLogLevel(lvl);
         TransactionLogger.setLogFunction((types: string[], date: string, duration: string, name: string, attr?: string[]) => {
             const log = new Logger();
@@ -294,6 +297,6 @@ export class TransactionLogger {
         TransactionLogger.setVirtualTransactionFunction(async (date: string, id: string, type: string, operatorId?: string) => {
             await DatabaseServer.setVirtualTransaction(id, type, operatorId);
         });
-        TransactionLogger.workerSubscribe(channel);
+        TransactionLogger.workerSubscribe(cn);
     }
 }

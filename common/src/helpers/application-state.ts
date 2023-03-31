@@ -55,7 +55,6 @@ export class ApplicationState extends NatsService {
      */
     public getState(): ApplicationStates {
         return this.state;
-        return ApplicationStates.READY;
     }
 
     /**

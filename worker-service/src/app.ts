@@ -16,7 +16,6 @@ Promise.all([
 ]).then(async values => {
     const channelName = (process.env.SERVICE_CHANNEL || `worker.${Date.now()}`).toUpperCase()
     const [cn] = values;
-    const channel = new MessageBrokerChannel(cn, 'worker');
 
     const logger = new Logger();
     logger.setConnection(cn);
@@ -24,16 +23,17 @@ Promise.all([
     await state.setServiceName('WORKER').setConnection(cn).init();
     await state.updateState(ApplicationStates.STARTED);
 
-    HederaSDKHelper.setTransactionLogSender(async (data) => {
-        await channel.request(`guardians.transaction-log-event`, data);
-    });
-
     const settingsContainer = new SettingsContainer();
     settingsContainer.setConnection(cn);
     await settingsContainer.init('IPFS_STORAGE_API_KEY');
 
     await state.updateState(ApplicationStates.INITIALIZING);
     const w = new Worker();
+
+    HederaSDKHelper.setTransactionLogSender(async (data) => {
+        await state.sendMessage(`transaction-log-event`, data);
+    });
+
     await w.setConnection(cn).init();
 
     const validator = new ValidateConfiguration();

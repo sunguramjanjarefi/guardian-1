@@ -152,7 +152,7 @@ Promise.all([
         }
     }
     MessageServer.setLang(process.env.MESSAGE_LANG);
-    TransactionLogger.init(channel, process.env.LOG_LEVEL as TransactionLogLvl);
+    TransactionLogger.init(cn, process.env.LOG_LEVEL as TransactionLogLvl);
 
     IPFS.setChannel(channel);
     new ExternalEventChannel().setChannel(channel);
