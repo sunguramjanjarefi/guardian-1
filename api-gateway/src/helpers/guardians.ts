@@ -1248,8 +1248,7 @@ export class Guardians extends NatsService {
      * @param owner
      */
     public async exportModuleFile(uuid: string, owner: string) {
-        const file =  await this.sendMessage(MessageAPI.MODULE_EXPORT_FILE, { uuid, owner }) as any;
-        return Buffer.from(file, 'base64');
+        return await this.sendMessage(MessageAPI.MODULE_EXPORT_FILE, { uuid, owner });
     }
 
     /**
