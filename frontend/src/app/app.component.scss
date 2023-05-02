@@ -143,6 +143,7 @@ body {
         margin-right: 8px;
         margin-left: 2px;
     }
+
     .g-dialog-title-btn {
         width: 46px;
         height: 46px;
@@ -151,8 +152,33 @@ body {
         top: -12px;
         cursor: pointer;
         border-radius: 8px;
+
         &:hover {
             background: rgb(0 0 0 / 5%);
+        }
+    }
+
+    @media (max-width: 810px) {
+        .g-dialog-header {
+            width: 90%;
+            padding: 22px 0;
+            box-shadow: none;
+            margin: 0 auto;
+        }
+
+        .g-dialog-title {
+            font-family: 'Roboto';
+            font-style: normal;
+            font-weight: 600 !important;
+            font-size: 24px !important;
+            line-height: 28px;
+            color: #222222 !important;
+            order: 2;
+        }
+
+        .g-dialog-cancel {
+            order: 3;
+            margin-right: 0 !important;
         }
     }
 }
@@ -175,7 +201,7 @@ body {
 }
 
 ::ng-deep body .mat-input-element:disabled {
-    color: rgba(0,0,0,.54);
+    color: rgba(0, 0, 0, .54);
 }
 
 ::ng-deep body .mat-checkbox-disabled.mat-checkbox-checked .mat-checkbox-background {

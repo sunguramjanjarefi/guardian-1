@@ -117,6 +117,7 @@ a.go-back-link mat-icon {
     color: #fff;
     font-weight: 500;
 }
+
 .debug-user[active='true'] .debug-user-did {
     color: #fff;
     font-weight: normal;
@@ -195,6 +196,7 @@ a.go-back-link mat-icon {
     color: #646464;
     cursor: pointer;
     user-select: none;
+    white-space: nowrap;
 }
 
 .dry-run-btn:hover {
@@ -327,6 +329,7 @@ a.go-back-link mat-icon {
     overflow: hidden;
     box-sizing: border-box;
 }
+
 .btn-settings:hover {
     text-decoration: underline;
 }
@@ -338,7 +341,7 @@ a.go-back-link mat-icon {
     font-size: 22px;
 }
 
-.document-table .mat-column-createDate  {
+.document-table .mat-column-createDate {
     width: 260px;
 }
 
@@ -435,12 +438,39 @@ a.go-back-link mat-icon {
 @media (max-width: 810px) {
     .policy-header {
         position: sticky;
-        top: 0 /*var(--header-height)*/;
+        top: 0
+            /*var(--header-height)*/
+        ;
         box-shadow: none;
         border: none;
     }
 
+    .policy-header[policy-status='DRY-RUN'] {
+        top: 40px;
+    }
+
     .dry-run-content {
         top: var(--header-height);
+    }
+
+    .dry-run-btn {
+        padding: 6px 4px;
+        font-size: 12px;
+    }
+
+    .dry-run-action-btn {
+        padding: 2px 6px 4px 6px;
+    }
+
+    .dry-run-group-btn {
+        padding: 2px 24px 4px 6px;
+    }
+
+    .dry-run-action-btn span {
+        display: none;
+    }
+
+    .dry-run-group-btn span {
+        display: none;
     }
 }

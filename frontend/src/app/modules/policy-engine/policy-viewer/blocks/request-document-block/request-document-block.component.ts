@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { IUser } from '@guardian/interfaces';
 import { PolicyEngineService } from 'src/app/services/policy-engine.service';
@@ -21,6 +21,7 @@ export class RequestDocumentBlockComponent implements OnInit {
     @Input('policyId') policyId!: string;
     @Input('static') static!: any;
     @ViewChild("dialogTemplate") dialogTemplate!: TemplateRef<any>;
+    @ViewChild("attachDialogTemplate") attachDialogTemplate!: TemplateRef<any>;
 
     isExist = false;
     disabled = false;
@@ -28,6 +29,7 @@ export class RequestDocumentBlockComponent implements OnInit {
     socket: any;
     dialogLoading: boolean = false;
     dataForm: FormGroup;
+    attachForm: FormGroup;
     schema: any;
     hideFields: any;
     type!: string;
@@ -35,6 +37,7 @@ export class RequestDocumentBlockComponent implements OnInit {
     dialogContent: any;
     dialogClass: any;
     dialogRef: any;
+    attachDialogRef: any;
     ref: any;
     title: any;
     description: any;
@@ -46,6 +49,8 @@ export class RequestDocumentBlockComponent implements OnInit {
     buttonClass: any;
     user!: IUser;
     restoreData: any;
+    attachDocuments: any[];
+    selectedDocument: any;
 
     public innerWidth: any;
     public innerHeight: any;
@@ -60,6 +65,11 @@ export class RequestDocumentBlockComponent implements OnInit {
         private changeDetectorRef: ChangeDetectorRef
     ) {
         this.dataForm = fb.group({});
+        this.attachForm = fb.group({
+            type: ['text', Validators.required],
+            value: ['', Validators.required],
+        });
+        this.attachDocuments = [];
     }
 
     ngOnInit(): void {
@@ -257,6 +267,8 @@ export class RequestDocumentBlockComponent implements OnInit {
     }
 
     onDialog() {
+        this.restoreData = {};
+        this.attachDocuments = [];
         this.dataForm.reset();
         if (this.needPreset && this.rowDocument) {
             this.preset(this.rowDocument);
@@ -284,7 +296,8 @@ export class RequestDocumentBlockComponent implements OnInit {
             this.dialogRef = this.dialog.open(this.dialogTemplate, {
                 width: '850px',
                 disableClose: true,
-                data: this
+                data: this,
+                panelClass: 'g-dialog',
             });
         }
     }
@@ -307,5 +320,57 @@ export class RequestDocumentBlockComponent implements OnInit {
         if (data.dataForm.valid || !this.loading || !this.dialogLoading) {
             data.onSubmit();
         }
+    }
+
+    onAttach() {
+        if (this.innerWidth <= 810) {
+            const bodyStyles = window.getComputedStyle(document.body);
+            const headerHeight: number = parseInt(bodyStyles.getPropertyValue('--header-height'));
+            this.attachDialogRef = this.dialog.open(this.attachDialogTemplate, {
+                width: `100vw`,
+                maxWidth: '100vw',
+                height: `${this.innerHeight - headerHeight}px`,
+                position: {
+                    'bottom': '0'
+                },
+                panelClass: 'g-dialog',
+                hasBackdrop: true, // Shadows beyond the dialog
+                closeOnNavigation: true,
+                autoFocus: false,
+                data: this
+            });
+        } else {
+            this.attachDialogRef = this.dialog.open(this.attachDialogTemplate, {
+                width: '850px',
+                disableClose: true,
+                data: this,
+                panelClass: 'g-dialog',
+            });
+        }
+    }
+
+    onAttachCancel() {
+        if (this.attachDialogRef) {
+            this.attachDialogRef.close();
+            this.attachDialogRef = null;
+        }
+    }
+
+    onAttachSubmit() {
+        if (this.attachForm.valid) {
+            this.attachDocuments.push(this.attachForm.value);
+        }
+        if (this.attachDialogRef) {
+            this.attachDialogRef.close();
+            this.attachDialogRef = null;
+        }
+    }
+
+    onEditDoc(item: any) {
+
+    }
+
+    onDeleteDoc(item: any) {
+
     }
 }

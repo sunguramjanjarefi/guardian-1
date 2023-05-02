@@ -1,13 +1,7 @@
 .content-page {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 0;
+    position: relative;
     display: block;
     background: #fff;
-    margin: 10px 5px 5px 5px;
-    box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
 }
 
 .content-dialog {
@@ -55,8 +49,8 @@
 }
 
 .form-dialog {
-    padding: 10px 40px 20px 40px;
-    max-height: 65vh;
+    padding: 10px 2px 0px 2px;
+    max-height: calc(100vh - 500px);
     overflow: auto;
     box-sizing: border-box;
 }
@@ -74,7 +68,7 @@
 }
 
 .schema-form {
-    max-height: calc(100vh - 580px);
+    max-height: calc(100vh - 600px);
     overflow: auto;
     margin-bottom: 24px;
     padding: 40px 40px 0px 40px;
@@ -88,7 +82,7 @@
     padding: 0 40px;
 }
 
-.form-page  .page-btns {
+.form-page .page-btns {
     padding: 0px 40px 40px 40px;
 }
 
@@ -116,8 +110,10 @@
 }
 
 .restore-data {
-    margin-top: 10px;
+    margin-top: 0px;
     margin-left: 40px;
+    margin-bottom: 20px;
+    margin-right: 40px;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -131,6 +127,32 @@
 
 .restore-data button mat-icon {
     margin-left: 3px;
+}
+
+.dialog-actions-container {
+    z-index: 400;
+    height: 65px;
+    padding-top: 15px;
+}
+
+.dialog-description {
+    padding: 10px 35px;
+    font-size: 500;
+}
+
+.attach-documents {
+    padding-bottom: 50px;
+    position: relative;
+}
+
+.attach-documents::after {
+    content: '';
+    position: absolute;
+    height: 2px;
+    bottom: 10px;
+    left: 0px;
+    right: 0px;
+    border-top: 1px solid #c8c8c8;
 }
 
 @media (max-width: 810px) {
@@ -208,7 +230,7 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         column-gap: 10px;
-        
+
         background-color: white;
         margin-bottom: 0;
         padding: 20px 0;
@@ -234,4 +256,115 @@
         grid-row: 1;
         z-index: 305;
     }
+}
+
+.min-btn {
+    min-width: 200px;
+}
+
+.form-content {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.attach-documents-grid {
+    display: flex;
+    flex-direction: row;
+    padding-top: 30px;
+}
+
+.attach-document {
+    width: 64px;
+    height: 76px;
+    padding: 6px;
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+}
+
+.attach-document:hover {
+    background: #f1f1f1;
+    border-radius: 8px;
+}
+
+.attach-document svg {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    width: 52px;
+    height: 64px;
+    pointer-events: none;
+    fill: #666666;
+}
+
+.attach-document-type {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    pointer-events: none;
+    color: var(--button-primary-color);
+    transform: translate(-50%, -50%);
+    text-transform: uppercase;
+    color: #666666;
+}
+
+.attach-document-edit {
+    display: none;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    color: var(--button-primary-color);
+    text-transform: uppercase;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.attach-document-value {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+}
+
+.attach-document-delete {
+    display: none;
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    color: #eb0303;
+    width: 25px;
+    height: 25px;
+    overflow: hidden;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #eb0303;
+    box-sizing: border-box;
+    z-index: 2;
+    cursor: pointer;
+}
+
+.attach-document-delete:hover {
+    background: #eb0303;
+    color: #fff;
+}
+
+.attach-document[selected="true"] .attach-document-type {
+    display: none;
+}
+
+.attach-document[selected="true"] .attach-document-edit {
+    display: flex;
+}
+
+.attach-document[selected="true"] .attach-document-delete {
+    display: block;
+}
+
+.attach-document[selected="true"] svg {
+    fill: var(--button-primary-color);
 }

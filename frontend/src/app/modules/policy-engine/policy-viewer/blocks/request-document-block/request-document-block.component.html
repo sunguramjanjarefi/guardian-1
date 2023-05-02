@@ -5,7 +5,9 @@
     <ng-container *ngIf="type=='page'">
         <form *ngIf="schema" [formGroup]="dataForm" (ngSubmit)="onSubmit()" class="form-{{type}}">
             <h1 *ngIf="title" mat-dialog-title>{{title}}</h1>
-            <div *ngIf="description" class="description">{{description}}</div>
+            <div *ngIf="description" class="description" [style.padding]="innerWidth <= 810 ? '0 0' : '0 40px'">
+                {{description}}
+            </div>
             <div *ngIf="restoreData" class="restore-data">
                 <mat-icon>info</mat-icon><b>There is some data to restore. You can restore latest values:</b>
                 <button mat-raised-button aria-label="Restore Values" type="button" (click)="onRestoreClick()">
@@ -16,10 +18,13 @@
                 <app-schema-form [formGroup]="dataForm" [schema]="schema" [private-fields]="hideFields"
                     [preset]="presetDocument" [readonly-fields]="presetReadonlyFields" [disableSubmitBtn]="true">
                 </app-schema-form>
+                <ng-container *ngTemplateOutlet="attachTemplate"></ng-container>
             </div>
-            <button *ngIf="innerWidth <= 810" class="registrant-application-create-btn" mat-raised-button color="primary" type="submit" [disabled]="!dataForm.valid">Create</button>
+            <button *ngIf="innerWidth <= 810" class="registrant-application-create-btn" mat-raised-button
+                color="primary" type="submit" [disabled]="!dataForm.valid">Submit</button>
             <div *ngIf="innerWidth > 810" class="page-btns">
-                <button mat-raised-button color="primary" type="submit" [disabled]="!dataForm.valid">Ok</button>
+                <button mat-raised-button color="primary" type="submit" class="min-btn"
+                    [disabled]="!dataForm.valid">Submit</button>
             </div>
         </form>
     </ng-container>
@@ -30,39 +35,109 @@
 </div>
 
 <ng-template #dialogTemplate let-data>
-    <div>
-        <h1 mat-dialog-title class="title">{{data.dialogContent}}</h1>
-        <div class="description">
-            {{description}}
+    <div class="g-dialog-content">
+        <div class="g-dialog-header">
+            <div class="g-dialog-cancel">
+                <div class="g-dialog-cancel-btn" (click)="data.onCancel()">
+                    <mat-icon>close</mat-icon>
+                </div>
+            </div>
+            <div class="g-dialog-title">
+                {{data.dialogContent}}
+            </div>
         </div>
-        <div *ngIf="restoreData" class="restore-data">
-            <mat-icon>info</mat-icon><b>There is some data to restore. You can restore latest values:</b>
-            <button mat-raised-button aria-label="Restore Values" type="button" (click)="onRestoreClick()">
-                Restore Values<mat-icon>restore</mat-icon>
-            </button>
-        </div>
-        <div *ngIf="data.schema" mat-dialog-content class="body-dialog-template">
+        <div class="g-dialog-body">
             <div *ngIf="dialogLoading || disabled" class="loading-dialog">
                 <mat-spinner></mat-spinner>
             </div>
-            <form [formGroup]="dataForm" (ngSubmit)="data.onSubmit()">
-                <div class="form-{{data.type}}">
-                    <app-schema-form [formGroup]="data.dataForm" [schema]="data.schema" [readonly-fields]="presetReadonlyFields"
-                        [private-fields]="data.hideFields" [preset]="presetDocument" [comesFromDialog]="true"
-                        (cancelBtnEvent)="handleCancelBtnEvent($event, data)" (submitBtnEvent)="handleSubmitBtnEvent($event, data)">
-                    </app-schema-form>
-                </div>
-                <div *ngIf="innerWidth > 810" class="dialog-actions-container" style="z-index: 400">
-                    <div mat-dialog-actions>
-                        <button mat-raised-button id="ok-btn" color="primary" type="submit"
-                            [disabled]="!data.dataForm.valid || loading || dialogLoading">Ok</button>
-                        <button mat-button type="button" id="cancel-btn" (click)="data.onCancel()">Cancel</button>
+            <div *ngIf="restoreData" class="restore-data">
+                <mat-icon>info</mat-icon><b>There is some data to restore. You can restore latest values:</b>
+                <button mat-raised-button aria-label="Restore Values" type="button" (click)="onRestoreClick()">
+                    Restore Values<mat-icon>restore</mat-icon>
+                </button>
+            </div>
+            <div *ngIf="description" class="dialog-description"
+                [style.padding]="innerWidth <= 810 ? '0px 25px 20px' : '15px 35px'">
+                {{description}}
+            </div>
+            <div *ngIf="data.schema" [style.padding]="innerWidth <= 810 ? '20 0' : '0px 35px'">
+                <form [formGroup]="dataForm" (ngSubmit)="data.onSubmit()">
+                    <div class="form-{{data.type}}">
+                        <app-schema-form [formGroup]="data.dataForm" [schema]="data.schema"
+                            [readonly-fields]="presetReadonlyFields" [private-fields]="data.hideFields"
+                            [preset]="presetDocument" [comesFromDialog]="true"
+                            (cancelBtnEvent)="handleCancelBtnEvent($event, data)"
+                            (submitBtnEvent)="handleSubmitBtnEvent($event, data)">
+                        </app-schema-form>
+                        <ng-container *ngTemplateOutlet="attachTemplate"></ng-container>
                     </div>
-                </div>
-            </form>
+                    <div *ngIf="innerWidth > 810" class="dialog-actions-container">
+                        <button mat-raised-button id="ok-btn" color="primary" type="submit" class="min-btn"
+                            [disabled]="!data.dataForm.valid || loading || dialogLoading">Submit</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div *ngIf="!data.schema" mat-dialog-actions>
-            <button mat-button type="button" (click)="data.onCancel()">Cancel</button>
+    </div>
+</ng-template>
+
+<ng-template #attachDialogTemplate let-data>
+    <div class="g-dialog-content">
+        <div class="g-dialog-header">
+            <div class="g-dialog-cancel">
+                <div class="g-dialog-cancel-btn" (click)="data.onAttachCancel()">
+                    <mat-icon>close</mat-icon>
+                </div>
+            </div>
+            <div class="g-dialog-title">
+                Attach Document
+            </div>
+        </div>
+        <div class="g-dialog-body">
+            <div [style.padding]="innerWidth <= 810 ? '20 0' : '0px 35px'">
+                <form [formGroup]="attachForm" (ngSubmit)="data.onAttachSubmit()">
+                    <div class="form-content">
+                        <mat-form-field class="required-form-field" appearance="outline">
+                            <mat-label>* Document Type</mat-label>
+                            <mat-select formControlName="type">
+                                <mat-option value="text">TEXT</mat-option>
+                                <mat-option value="url">URL</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field class="example-full-width required-form-field" appearance="outline">
+                            <mat-label *ngIf="attachForm.value.type==='text'">* Text</mat-label>
+                            <mat-label *ngIf="attachForm.value.type==='url'">* URL</mat-label>
+                            <input matInput formControlName="value">
+                        </mat-form-field>
+                    </div>
+                    <div *ngIf="innerWidth > 810" class="dialog-actions-container">
+                        <button mat-raised-button id="ok-btn" color="primary" type="submit" class="min-btn"
+                            [disabled]="!data.attachForm.valid">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #attachTemplate>
+    <div class="attach-documents">
+        <button mat-raised-button aria-label="Attach" type="button" class="min-btn" (click)="onAttach()">
+            Attach Document
+        </button>
+        <div *ngIf="attachDocuments?.length" class="attach-documents-grid">
+            <div *ngFor="let item of attachDocuments" class="attach-document" [attr.selected]="item === selectedDocument" (click)="selectedDocument=item">
+                <svg xmlns="http://www.w3.org/2000/svg" height="64" width="52">
+                    <path
+                        d="M 4.8000007,64.000003 C 3.520001,64.000003 2.4,63.520013 1.4400001,62.560013 0.48000007,61.600013 0,60.480013 0,59.200013 V 4.800003 C 0,3.520001 0.48000007,2.400001 1.4400001,1.439999 2.4000001,0.479999 3.520001,0 4.8000007,0 H 34.48 L 52,17.520003 v 41.68001 c 0,1.28 -0.479997,2.4 -1.44,3.36 -0.960001,0.96 -2.080002,1.43999 -3.36,1.43999 z M 32.08,2.999999 H 3 v 58.000004 h 46 v -41.32 z" />
+                </svg>
+                <div class="attach-document-edit" (click)="onEditDoc(item)">Edit</div>
+                <div class="attach-document-type">{{item.type}}</div>
+                <div class="attach-document-value">{{item.value}}</div>
+                <div class="attach-document-delete" (click)="onDeleteDoc(item)">
+                    <mat-icon>close</mat-icon>
+                </div>
+            </div>
         </div>
     </div>
 </ng-template>
