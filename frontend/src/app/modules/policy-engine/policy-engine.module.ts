@@ -95,6 +95,9 @@ import { NewPolicyDialog } from './helpers/new-policy-dialog/new-policy-dialog.c
 import { PolicySettingsComponent } from './policy-configuration/policy-settings/policy-settings.component';
 import { ImportFileDialog } from './helpers/import-file-dialog/import-file-dialog.component';
 import { NewThemeDialog } from './helpers/new-theme-dialog/new-theme-dialog.component';
+import { PolicyWizardDialogComponent } from './helpers/policy-wizard-dialog/policy-wizard-dialog.component';
+import { StepTreeComponent } from './helpers/step-tree/step-tree.component';
+import { SeparateStepperComponent } from './helpers/separate-stepper/separate-stepper.component';
 
 @NgModule({
     declarations: [
@@ -173,7 +176,10 @@ import { NewThemeDialog } from './helpers/new-theme-dialog/new-theme-dialog.comp
         NewPolicyDialog,
         PolicySettingsComponent,
         ImportFileDialog,
-        NewThemeDialog
+        NewThemeDialog,
+        PolicyWizardDialogComponent,
+        StepTreeComponent,
+        SeparateStepperComponent
     ],
     imports: [
         CommonModule,

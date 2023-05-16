@@ -23,6 +23,8 @@ import { PolicyBlockModel, PolicyModel, PolicyModuleModel, PolicyStorage, Templa
 import { Options } from '../../structures/storage/config-options';
 import { PolicyTreeComponent } from '../policy-tree/policy-tree.component';
 import { ThemeService } from '../../../../services/theme.service';
+import { PolicyWizardDialogComponent } from '../../helpers/policy-wizard-dialog/policy-wizard-dialog.component';
+import { PolicyWizardService } from 'src/app/services/policy-wizard.service';
 
 enum OperationMode {
     none,
@@ -36,7 +38,8 @@ enum OperationMode {
 @Component({
     selector: 'app-policy-configuration',
     templateUrl: './policy-configuration.component.html',
-    styleUrls: ['./policy-configuration.component.scss']
+    styleUrls: ['./policy-configuration.component.scss'],
+    providers: [PolicyWizardService],
 })
 export class PolicyConfigurationComponent implements OnInit {
     public loading: boolean = true;
@@ -178,7 +181,8 @@ export class PolicyConfigurationComponent implements OnInit {
         private domSanitizer: DomSanitizer,
         private registeredService: RegisteredService,
         private modulesService: ModulesService,
-        private themeService: ThemeService
+        private themeService: ThemeService,
+        private wizardService: PolicyWizardService,
     ) {
         this.options = new Options();
         this.policyModel = new PolicyModel();
@@ -1171,5 +1175,50 @@ export class PolicyConfigurationComponent implements OnInit {
     public getLegendText(rule: ThemeRule): string {
         rule.updateLegend(this.openModule);
         return rule.legend;
+    }
+
+    policyWizard() {
+        const dialogRef = this.dialog.open(PolicyWizardDialogComponent, {
+            width: '1100px',
+            panelClass: 'g-dialog',
+            disableClose: true,
+            autoFocus: false,
+            data: {
+                policyDataForm: this.policyModel.getPolicyDataForm(),
+                schemas: this.schemas,
+                tokens: this.tokens,
+                state: localStorage.getItem('wizard_state_' + this.policyId)
+            }
+        });
+        dialogRef.afterClosed().subscribe(value => {
+            const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+                data: {
+                    dialogTitle: 'Save progress',
+                    dialogText: 'Do you want to save progress?'
+                },
+            });
+            dialogRef.afterClosed().subscribe(saveState => {
+                if (value.create) {
+                    this.policyModel.setPolicyDataForm(value?.config?.policy);
+                    const roles = value?.config?.roles;
+                    const policy = this.policyModel.getJSON();
+                    policy.policyRoles = roles.filter((role: string) => role !== 'OWNER')
+                    this.wizardService.createPolicyConfig(policy.config, value?.config);
+                    this.updatePolicyModel(policy);
+                }
+
+                if (!saveState) {
+                    localStorage.removeItem('wizard_state_' + this.policyId);
+                    return;
+                }
+                localStorage.setItem('wizard_state_' + this.policyId, JSON.stringify({
+                    data: value?.config,
+                    currentNode: value?.currentNode
+                }));
+            });
+
+
+
+        })
     }
 }
