@@ -1,5 +1,4 @@
-<div class="wizard-container" *ngIf="treeData"
-    [ngStyle]="{ 'height' : height || 'auto', 'max-height': height || 'auto' }">
+<div class="wizard-container" #wizardContainer *ngIf="treeData">
     <div class="wizard-steps-container" draggable="false" (mousedown)="onStartResizeDivider($event)">
         <div class="wizard-steps">
             <app-step-tree [treeData]="treeData.children" [currentNode]="currentNode"

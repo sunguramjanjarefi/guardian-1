@@ -647,6 +647,10 @@ export class Guardians extends NatsService {
         return await this.sendMessage(MessageAPI.CREATE_SCHEMA, item);
     }
 
+    public async cloneSchema(schemaId: string, owner: string, topicId: string): Promise<any> {
+        return await this.sendMessage(MessageAPI.CLONE_SCHEMA, {schemaId, owner, topicId});
+    }
+
     /**
      * Async create or update schema
      * @param {ISchema} item - schema

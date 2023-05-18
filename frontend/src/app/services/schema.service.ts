@@ -22,6 +22,13 @@ export class SchemaService {
         return this.http.post<any[]>(`${this.url}/${topicId}`, schema);
     }
 
+    public clone(schemaId: string, topicId: string): Observable<{ schemasMap: any[]}> {
+        return this.http.post<{ schemasMap: any[]}>(`${this.url}/clone/schema/`, {
+            schemaId,
+            topicId
+        });
+    }
+
     public pushCreate(schema: Schema, topicId: any): Observable<{ taskId: string, expectation: number }> {
         return this.http.post<{ taskId: string, expectation: number }>(`${this.url}/push/${topicId}`, schema);
     }

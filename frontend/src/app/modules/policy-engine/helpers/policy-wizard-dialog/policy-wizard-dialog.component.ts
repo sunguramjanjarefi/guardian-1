@@ -430,26 +430,29 @@ export class PolicyWizardDialogComponent implements OnInit {
         newNode.control = schemaRoleConfigForm;
         node.children.push(newNode);
 
-        const sub = this.policyRolesForm.valueChanges.subscribe((value) => {
-            if (!value.includes(role) && role !== 'OWNER') {
-                node.children.splice(node.children.indexOf(newNode), 1);
-                this.deleteControlsFromFormArray(
-                    schemaRoleConfigControl,
-                    schemaRoleConfigControl.controls.filter(
-                        (control) => control === schemaRoleConfigForm
-                    )
-                );
-                node.options.displayedInRoles =
-                    node.options.displayedInRoles.filter(
-                        (displayedRole: string) => value.includes(displayedRole)
+        const rolesSubscription = this.policyRolesForm.valueChanges.subscribe(
+            (value) => {
+                if (!value.includes(role) && role !== 'OWNER') {
+                    node.children.splice(node.children.indexOf(newNode), 1);
+                    this.deleteControlsFromFormArray(
+                        schemaRoleConfigControl,
+                        schemaRoleConfigControl.controls.filter(
+                            (control) => control === schemaRoleConfigForm
+                        )
                     );
-                dependencySchemaListener.unsubscribe();
-                isApproveEnableListener.unsubscribe();
-                initialRolesForListener.unsubscribe();
-                this.matTree.refreshTree();
-                sub.unsubscribe();
+                    node.options.displayedInRoles =
+                        node.options.displayedInRoles.filter(
+                            (displayedRole: string) =>
+                                value.includes(displayedRole)
+                        );
+                    dependencySchemaListener.unsubscribe();
+                    isApproveEnableListener.unsubscribe();
+                    initialRolesForListener.unsubscribe();
+                    this.matTree.refreshTree();
+                    rolesSubscription.unsubscribe();
+                }
             }
-        });
+        );
 
         return newNode;
     }
@@ -599,6 +602,7 @@ export class PolicyWizardDialogComponent implements OnInit {
             parent: node,
             template: this.schemaConfig,
             schema,
+            mintFields: schema.fields.filter(field => field.type === 'number'),
             control: schemaConfigControl,
             options: {
                 displayedInRoles: displayedInRoles || [],
@@ -652,21 +656,24 @@ export class PolicyWizardDialogComponent implements OnInit {
         };
         node.children.push(newNode);
 
-        const sub = this.policyRolesForm.valueChanges.subscribe((value) => {
-            if (!value.includes(trustChainRole)) {
-                node.children.splice(node.children.indexOf(newNode), 1);
-                this.deleteControlsFromFormArray(
-                    this.trustChainForm,
-                    trustChainRoleConfigControl
-                );
-                this.selectedTrustChainRoles =
-                    this.selectedTrustChainRoles.filter(
-                        (displayedRole: string) => value.includes(displayedRole)
+        const rolesSubscription = this.policyRolesForm.valueChanges.subscribe(
+            (value) => {
+                if (!value.includes(trustChainRole)) {
+                    node.children.splice(node.children.indexOf(newNode), 1);
+                    this.deleteControlsFromFormArray(
+                        this.trustChainForm,
+                        trustChainRoleConfigControl
                     );
-                this.matTree.refreshTree();
-                sub.unsubscribe();
+                    this.selectedTrustChainRoles =
+                        this.selectedTrustChainRoles.filter(
+                            (displayedRole: string) =>
+                                value.includes(displayedRole)
+                        );
+                    this.matTree.refreshTree();
+                    rolesSubscription.unsubscribe();
+                }
             }
-        });
+        );
     }
 
     deleteControlsFromFormArray(

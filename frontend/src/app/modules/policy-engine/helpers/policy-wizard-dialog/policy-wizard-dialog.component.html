@@ -15,8 +15,7 @@
         </div>
     </div>
     <div class="g-dialog-body">
-        <app-separate-stepper [height]="'600px'" [(currentNode)]="currentNode"
-            [treeData]="treeData"></app-separate-stepper>
+        <app-separate-stepper [(currentNode)]="currentNode" [treeData]="treeData"></app-separate-stepper>
     </div>
 </div>
 
@@ -71,12 +70,12 @@
     <mat-form-field appearance="outline" class="full-width">
         <mat-label>Which schemas will be used in policy?</mat-label>
         <mat-select [value]="selectedSchemas" (selectionChange)="onSelectedSchemasChange($event.value)" multiple>
-            <mat-option *ngFor="let schema of schemas" [value]="schema">{{schema.name}}</mat-option>
+            <mat-option *ngFor="let schema of schemas" [value]="schema">{{schema.name}} ({{schema.topicId}})</mat-option>
         </mat-select>
     </mat-form-field>
 </ng-template>
 
-<ng-template #schemaConfig let-control="control" let-schema="schema" let-options="options">
+<ng-template #schemaConfig let-control="control" let-schema="schema" let-options="options" let-mintFields="mintFields">
     <form [formGroup]="control">
         <mat-form-field appearance="outline" class="full-width">
             <mat-label>Which users will see grid?</mat-label>
@@ -107,10 +106,20 @@
         </mat-form-field>
 
         <ng-container
-            *ngTemplateOutlet="infoBtn; context: {formControl : control.get('isApproveEnable'), helpSrc: '/assets/approve.gif', title: 'Approve/Reject functionality'}"></ng-container>
+            *ngTemplateOutlet="infoBtn; context: {
+                formControl : control.get('isApproveEnable'),
+                helpSrc: '/assets/approve.gif',
+                title: 'Approve/Reject functionality',
+                visible: true}">
+        </ng-container>
 
         <ng-container
-            *ngTemplateOutlet="infoBtn; context: {formControl : control.get('isMintSchema'), helpSrc: '/assets/approve.gif', title: 'Is Schema Mint?'}"></ng-container>
+            *ngTemplateOutlet="infoBtn; context: {
+                formControl : control.get('isMintSchema'),
+                helpSrc: '/assets/approve.gif',
+                title: 'Is Schema Mint?',
+                visible: true}">
+        </ng-container>
     </form>
     <form [formGroup]="control.get('mintOptions')" *ngIf="control.get('isMintSchema')?.value">
         <mat-form-field appearance="outline">
@@ -123,7 +132,7 @@
         <mat-form-field appearance="outline" class="contract-form-base-token">
             <mat-label>Field:</mat-label>
             <mat-select formControlName="rule">
-                <mat-option *ngFor="let schemaField of schema.fields"
+                <mat-option *ngFor="let schemaField of mintFields"
                     [value]="schemaField.name">{{schemaField.description}}</mat-option>
             </mat-select>
         </mat-form-field>
@@ -134,7 +143,12 @@
     let-approveEnable="approveEnable" let-dependencySchema="dependencySchema">
     <form [formGroup]="control">
         <ng-container
-            *ngTemplateOutlet="infoBtn; context: {formControl : control.get('isApprover'), helpSrc: '/assets/approve.gif', title: 'Is Approver?'}"></ng-container>
+            *ngTemplateOutlet="infoBtn; context: {
+            formControl : control.get('isApprover'),
+            helpSrc: '/assets/approve.gif',
+            title: 'Is Approver?',
+            visible: approveEnable}">
+        </ng-container>
 
         <mat-form-field appearance="outline" class="full-width"
             *ngIf="control.get('isApprover').value && initialSchemaFor.length">
@@ -146,7 +160,12 @@
         </mat-form-field>
 
         <ng-container
-            *ngTemplateOutlet="infoBtn; context: {formControl : control.get('isCreator'), helpSrc: '/assets/approve.gif', title: 'Is Creator?'}"></ng-container>
+            *ngTemplateOutlet="infoBtn; context: {
+            formControl : control.get('isCreator'),
+            helpSrc: '/assets/approve.gif',
+            title: 'Is Creator?',
+            visible: true}">
+        </ng-container>
 
         <ng-container
             *ngTemplateOutlet="roleGridColumns; context: {gridColumns: control.get('gridColumns')?.value , fields, approveEnable, dependencySchema }"></ng-container>
@@ -194,8 +213,8 @@
 <ng-template #trustChainConfig>
     <mat-form-field appearance="outline" class="full-width">
         <mat-label>Roles</mat-label>
-        <mat-select [value]="selectedTrustChainRoles"
-            (selectionChange)="onSelectedTrustChainRolesChange($event.value)" multiple>
+        <mat-select [value]="selectedTrustChainRoles" (selectionChange)="onSelectedTrustChainRolesChange($event.value)"
+            multiple>
             <mat-option *ngFor="let role of policyRolesForm.value" [value]="role">{{role}}</mat-option>
         </mat-select>
     </mat-form-field>
@@ -210,12 +229,17 @@
             </mat-select>
         </mat-form-field>
         <ng-container
-            *ngTemplateOutlet="infoBtn; context: {formControl : control.get('viewOnlyOwnDocuments'), helpSrc: '/assets/approve.gif', title: 'View only own documents?'}"></ng-container>
+            *ngTemplateOutlet="infoBtn; context: {
+            formControl : control.get('viewOnlyOwnDocuments'),
+            helpSrc: '/assets/approve.gif',
+            title: 'View only own documents?',
+            visible: true}">
+        </ng-container>
     </form>
 </ng-template>
 
-<ng-template #infoBtn let-formControl="formControl" let-helpSrc="helpSrc" let-title="title">
-    <div class="info-btn-container">
+<ng-template #infoBtn let-formControl="formControl" let-helpSrc="helpSrc" let-title="title" let-visible='visible'>
+    <div class="info-btn-container" *ngIf="visible">
         <button mat-mini-fab color="primary" [matMenuTriggerFor]="menu" class="info-btn">
             i
         </button>

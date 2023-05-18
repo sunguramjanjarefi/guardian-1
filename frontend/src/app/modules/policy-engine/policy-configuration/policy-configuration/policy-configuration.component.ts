@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Schema, SchemaHelper, Token } from '@guardian/interfaces';
+import { ISchema, Schema, SchemaHelper, Token } from '@guardian/interfaces';
 import * as yaml from 'js-yaml';
 import { forkJoin, Observable } from 'rxjs';
 import { ConfirmationDialogComponent } from 'src/app/modules/common/confirmation-dialog/confirmation-dialog.component';
@@ -56,6 +56,7 @@ export class PolicyConfigurationComponent implements OnInit {
     public currentBlock!: PolicyBlockModel | undefined;
 
     public schemas!: Schema[];
+    public allSchemas!: Schema[];
     public tokens!: Token[];
     public errors: any[] = [];
     public errorsCount: number = -1;
@@ -212,6 +213,10 @@ export class PolicyConfigurationComponent implements OnInit {
         }, (error) => {
             console.error(error);
         });
+
+        this.schemaService.getSchemas().subscribe(value => {
+            this.allSchemas = value.map((schema) => new Schema(schema));
+        })
     }
 
     public select(name: string) {
@@ -1185,7 +1190,7 @@ export class PolicyConfigurationComponent implements OnInit {
             autoFocus: false,
             data: {
                 policyDataForm: this.policyModel.getPolicyDataForm(),
-                schemas: this.schemas,
+                schemas: this.allSchemas,
                 tokens: this.tokens,
                 state: localStorage.getItem('wizard_state_' + this.policyId)
             }
@@ -1199,12 +1204,31 @@ export class PolicyConfigurationComponent implements OnInit {
             });
             dialogRef.afterClosed().subscribe(saveState => {
                 if (value.create) {
-                    this.policyModel.setPolicyDataForm(value?.config?.policy);
-                    const roles = value?.config?.roles;
-                    const policy = this.policyModel.getJSON();
-                    policy.policyRoles = roles.filter((role: string) => role !== 'OWNER')
-                    this.wizardService.createPolicyConfig(policy.config, value?.config);
-                    this.updatePolicyModel(policy);
+                    const schemaIris = value?.config.schemas.map((schema: { iri: any; }) => schema.iri);
+                    const schemasConfigs = this.allSchemas.filter(schemaConfig => schemaIris.includes(schemaConfig.iri));
+                    const schemasToCreate = schemasConfigs.filter(schema => schema.topicId && (schema.topicId !== this.policyModel.topicId));
+                    const schemaToCreateIris = schemasToCreate.map(schema => schema.iri);
+                    forkJoin(schemasToCreate.map(schemaToCreate => this.schemaService.clone(schemaToCreate.id, this.policyModel.topicId))).subscribe((result: any) => {
+                        const schemasMap: any[] = [].concat(...(result.map((res: { schemasMap: any; }) => res.schemasMap)));
+                        for (const schema of value?.config.schemas) {
+                            if(schemaToCreateIris.includes(schema.iri)) {
+                                const schemaMap = schemasMap.find(item => item.oldIRI === schema.iri);
+                                schema.iri = schemaMap.newIRI;
+                            }
+                        }
+                        for (const trustChainConfig of value?.config.trustChain) {
+                            if(schemaToCreateIris.includes(trustChainConfig.mintSchemaIri)) {
+                                const schemaMap = schemasMap.find(item => item.oldIRI === trustChainConfig.mintSchemaIri);
+                                trustChainConfig.mintSchemaIri = schemaMap.newIRI;
+                            }
+                        }
+                        this.policyModel.setPolicyDataForm(value?.config?.policy);
+                        const roles = value?.config?.roles;
+                        const policy = this.policyModel.getJSON();
+                        policy.policyRoles = roles.filter((role: string) => role !== 'OWNER')
+                        this.wizardService.createPolicyConfig(policy.config, value?.config);
+                        this.updatePolicyModel(policy);
+                    });
                 }
 
                 if (!saveState) {
@@ -1216,9 +1240,6 @@ export class PolicyConfigurationComponent implements OnInit {
                     currentNode: value?.currentNode
                 }));
             });
-
-
-
         })
     }
 }

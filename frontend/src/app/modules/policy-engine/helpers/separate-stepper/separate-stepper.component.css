@@ -1,7 +1,8 @@
 .wizard-container {
     display: flex;
     position: relative;
-    max-height: 600px;
+    height: 100%;
+    max-height: 100%;
 }
 
 .wizard-steps-container {
@@ -34,7 +35,6 @@
 .wizard-view-container {
     flex: 1;
     padding: 10px 30px 30px 30px;
-    overflow: scroll;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -43,9 +43,16 @@
 
 .wizard-view-content {
     width: 100%;
+    padding-right: 5px;
+    overflow-y: scroll;
+    position: relative;
 }
 
 .wizard-view-header {
+    z-index: 2;
+    background-color: white;
+    top: 0;
+    position: sticky;
     display: flex;
     align-items: center;
     justify-content: center;
