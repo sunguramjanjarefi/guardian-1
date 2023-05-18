@@ -152,16 +152,18 @@ export class PolicyEngine extends NatsService {
      * @param schemaIris Schema iris
      * @param policyTopicId Policy topic identifier
      */
-    private async setupPolicySchemas(
+    public async setupPolicySchemas(
         schemaIris: string[],
-        policyTopicId: string
+        policyTopicId: string,
+        owner: string
     ) {
         if (!Array.isArray(schemaIris)) {
             return;
         }
         const schemas = await DatabaseServer.getSchemas({
             iri: { $in: schemaIris },
-            topicId: { $eq: null }
+            topicId: { $eq: null },
+            owner
         });
         const users = new Users();
         for (const schema of schemas) {
@@ -300,7 +302,6 @@ export class PolicyEngine extends NatsService {
             newTopic.policyId = policy.id.toString();
             newTopic.policyUUID = policy.uuid;
             await DatabaseServer.updateTopic(newTopic);
-            await this.setupPolicySchemas(data?.policySchemas, newTopic.topicId);
         }
 
         for (const addedArtifact of addedArtifacts) {

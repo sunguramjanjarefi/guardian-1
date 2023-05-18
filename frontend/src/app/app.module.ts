@@ -69,6 +69,7 @@ import { CommonComponentsModule } from './modules/common/common-components.modul
 import { TagEngineModule } from './modules/tag-engine/tag-engine.module';
 import { SchemaEngineModule } from './modules/schema-engine/schema-engine.module';
 import { ThemeService } from './services/theme.service';
+import { WizardService } from './services/wizard.service';
 
 @NgModule({
     declarations: [
@@ -137,6 +138,7 @@ import { ThemeService } from './services/theme.service';
         MapService,
         TagsService,
         ThemeService,
+        WizardService,
         {
             provide: HTTP_INTERCEPTORS,
             useClass: HandleErrorsService,

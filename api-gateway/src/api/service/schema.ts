@@ -65,7 +65,6 @@ export async function createSchema(newSchema: ISchema, owner: string, topicId?: 
     return schemas;
 }
 
-
 /**
  * Async create new schema
  * @param {ISchema} newSchema
@@ -163,19 +162,6 @@ schemaAPI.post('/:topicId', permissionHelper(UserRole.STANDARD_REGISTRY), async 
                 : topicId
         );
         return res.status(201).json(SchemaUtils.toOld(schemas));
-    } catch (error) {
-        new Logger().error(error, ['API_GATEWAY']);
-        return next(error);
-    }
-});
-
-schemaAPI.post('/clone/schema/', permissionHelper(UserRole.STANDARD_REGISTRY), async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
-        const user = req.user;
-        const { schemaId, topicId } = req.body;
-        const guardians = new Guardians();
-        const importResult = (await guardians.cloneSchema(schemaId, user.did, topicId));
-        return res.status(201).json(importResult);
     } catch (error) {
         new Logger().error(error, ['API_GATEWAY']);
         return next(error);

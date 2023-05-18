@@ -35,6 +35,7 @@ import { artifactAPI } from '@api/service/artifact';
 import fileupload from 'express-fileupload';
 import { contractAPI } from '@api/service/contract';
 import { mapAPI } from '@api/service/map';
+import { wizardAPI } from '@api/service/wizard';
 
 const PORT = process.env.PORT || 3002;
 const RAW_REQUEST_LIMIT = process.env.RAW_REQUEST_LIMIT || '1gb';
@@ -92,6 +93,7 @@ Promise.all([
         app.use('/tags', authorizationHelper, tagsAPI);
         app.use('/map', mapAPI);
         app.use('/themes', authorizationHelper, themesAPI);
+        app.use('/wizard', authorizationHelper, wizardAPI)
 
         /**
          * @deprecated 2023-03-01

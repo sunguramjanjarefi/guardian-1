@@ -56,6 +56,7 @@ import { demoAPI } from '@api/demo.service';
 import { SecretManager } from '@guardian/common/dist/secret-manager';
 import { OldSecretManager } from '@guardian/common/dist/secret-manager/old-style/old-secret-manager';
 import { themeAPI } from '@api/theme.service';
+import { wizardAPI } from '@api/wizard.service';
 
 export const obj = {};
 
@@ -136,6 +137,7 @@ Promise.all([
         await analyticsAPI();
         await mapAPI();
         await themeAPI();
+        await wizardAPI();
     } catch (error) {
         console.error(error.message);
         process.exit(0);

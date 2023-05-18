@@ -20,10 +20,6 @@ import { Subject } from 'rxjs';
 import { RetireTokenDialogComponent } from 'src/app/components/retire-token-dialog/retire-token-dialog.component';
 import { SeparateStepperComponent } from '../separate-stepper/separate-stepper.component';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import {
-    IWizardSchemaConfig,
-    IWizardTrustChainConfig,
-} from 'src/app/services/policy-wizard.service';
 
 @Component({
     selector: 'app-policy-wizard-dialog',
@@ -72,85 +68,6 @@ export class PolicyWizardDialogComponent implements OnInit {
     destroy$: Subject<boolean> = new Subject<boolean>();
 
     preset: any;
-    // sampleConfig: any = {
-    //     policy: {
-    //         name: 'test123',
-    //         description: 'test2',
-    //         topicDescription: 'test1',
-    //     },
-    //     roles: ['reg'],
-    //     schemas: [
-    //         {
-    //             name: 'Organization',
-    //             iri: '#f4a93fe3-47c5-4248-bb68-588d14eb5736',
-    //             isApproveEnable: true,
-    //             isMintSchema: false,
-    //             mintOptions: {
-    //                 tokenId: '',
-    //                 rule: '',
-    //             },
-    //             dependencySchemaIri: '#f4a93fe3-47c5-4248-bb68-588d14eb5736',
-    //             relationshipsSchemaIri: '#f4a93fe3-47c5-4248-bb68-588d14eb5736',
-    //             initialRolesFor: ['OWNER', 'reg'],
-    //             rolesConfig: [
-    //                 {
-    //                     role: 'OWNER',
-    //                     isApprover: false,
-    //                     isCreator: false,
-    //                     approverRoleFor: null,
-    //                     gridColumns: [],
-    //                 },
-    //                 {
-    //                     role: 'reg',
-    //                     isApprover: false,
-    //                     isCreator: false,
-    //                     approverRoleFor: null,
-    //                     gridColumns: [],
-    //                 },
-    //             ],
-    //         },
-    //         {
-    //             name: 'Device',
-    //             iri: '#97ae1b9a-60c5-4221-8482-9ba9ef5b54c1',
-    //             isApproveEnable: false,
-    //             isMintSchema: false,
-    //             mintOptions: {
-    //                 tokenId: '',
-    //                 rule: '',
-    //             },
-    //             dependencySchemaIri: '',
-    //             relationshipsSchemaIri: '',
-    //             initialRolesFor: [],
-    //             rolesConfig: [],
-    //         },
-    //         {
-    //             name: 'Report',
-    //             iri: '#87906161-2399-48f0-bc47-c2b0204247d2',
-    //             isApproveEnable: false,
-    //             isMintSchema: true,
-    //             mintOptions: {
-    //                 tokenId: 'f36208d0-1fe1-40ce-aded-5bcfeecd0958',
-    //                 rule: 'field0',
-    //             },
-    //             dependencySchemaIri: '',
-    //             relationshipsSchemaIri: '',
-    //             initialRolesFor: [],
-    //             rolesConfig: [],
-    //         },
-    //     ],
-    //     trustChain: [
-    //         {
-    //             role: 'OWNER',
-    //             viewAll: true,
-    //             mintSchemaIri: '#87906161-2399-48f0-bc47-c2b0204247d2',
-    //         },
-    //         {
-    //             role: 'reg',
-    //             viewAll: false,
-    //             mintSchemaIri: '#87906161-2399-48f0-bc47-c2b0204247d2',
-    //         },
-    //     ],
-    // };
 
     constructor(
         public dialogRef: MatDialogRef<RetireTokenDialogComponent>,
@@ -166,17 +83,9 @@ export class PolicyWizardDialogComponent implements OnInit {
             this.policyForm.patchValue(data.policyDataForm);
             this.policyForm.get('policyTag')?.disable();
         }
-        if (data?.schemas) {
-            this.schemas = data?.schemas;
-        }
-        if (data?.tokens) {
-            this.tokens = data?.tokens;
-        }
-        if (data?.state) {
-            try {
-                this.preset = JSON.parse(data?.state);
-            } catch {}
-        }
+        this.schemas = data?.schemas || [];
+        this.tokens = data?.tokens || [];
+        this.preset = data?.state || [];
     }
 
     ngAfterViewInit() {
@@ -235,8 +144,8 @@ export class PolicyWizardDialogComponent implements OnInit {
         data: {
             policy: any;
             roles: string[];
-            schemas: IWizardSchemaConfig[];
-            trustChain: IWizardTrustChainConfig[];
+            schemas: any[];
+            trustChain: any[];
         },
         schemasNode: any,
         trustChainNode: any,
@@ -257,7 +166,7 @@ export class PolicyWizardDialogComponent implements OnInit {
                 const schemaNode: any = this.onSelectedSchemaChange(
                     schema,
                     schemasNode,
-                    schemaConfig.rolesConfig.map((item) => item.role)
+                    schemaConfig.rolesConfig.map((item: any) => item.role)
                 );
                 for (const roleConfig of schemaConfig.rolesConfig) {
                     const schemaRoleConfigControl = schemaNode.control.get(

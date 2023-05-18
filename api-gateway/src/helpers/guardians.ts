@@ -647,10 +647,6 @@ export class Guardians extends NatsService {
         return await this.sendMessage(MessageAPI.CREATE_SCHEMA, item);
     }
 
-    public async cloneSchema(schemaId: string, owner: string, topicId: string): Promise<any> {
-        return await this.sendMessage(MessageAPI.CLONE_SCHEMA, {schemaId, owner, topicId});
-    }
-
     /**
      * Async create or update schema
      * @param {ISchema} item - schema
@@ -1510,5 +1506,46 @@ export class Guardians extends NatsService {
     public async exportThemeFile(themeId: string, owner: string) {
         const file = await this.sendMessage(MessageAPI.THEME_EXPORT_FILE, { themeId, owner }) as any;
         return Buffer.from(file, 'base64');
+    }
+
+    /**
+     * Create policy by wizard
+     * @param config Config
+     * @returns Config
+     */
+    // tslint:disable-next-line:completed-docs
+    public async wizardPolicyCreate(config: any, owner: string): Promise<{ wizardConfig: any; policyId: string; }>  {
+        return await this.sendMessage(MessageAPI.WIZARD_POLICY_CREATE, {
+            owner,
+            config,
+        });
+    }
+
+    /**
+     * Create policy by wizard
+     * @param config Config
+     * @returns Config
+     */
+    public async wizardPolicyCreateAsync(config: any, owner: string, taskId: string) {
+        return await this.sendMessage(MessageAPI.WIZARD_POLICY_CREATE_ASYNC, {
+            owner,
+            config,
+            taskId
+        });
+    }
+
+    /**
+     * Get new policy config
+     * @param policyId Policy Identifier
+     * @param config Config
+     * @returns Config
+     */
+    // tslint:disable-next-line:completed-docs
+    public async wizardGetPolicyConfig(policyId: string, config: any, owner: string): Promise<{ wizardConfig: any; policyConfig: any; }> {
+        return await this.sendMessage(MessageAPI.WIZARD_GET_POLICY_CONFIG, {
+            policyId,
+            config,
+            owner,
+        });
     }
 }

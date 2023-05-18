@@ -24,7 +24,8 @@ import { Options } from '../../structures/storage/config-options';
 import { PolicyTreeComponent } from '../policy-tree/policy-tree.component';
 import { ThemeService } from '../../../../services/theme.service';
 import { PolicyWizardDialogComponent } from '../../helpers/policy-wizard-dialog/policy-wizard-dialog.component';
-import { PolicyWizardService } from 'src/app/services/policy-wizard.service';
+import { SelectorDialogComponent } from 'src/app/modules/common/selector-dialog/selector-dialog.component';
+import { WizardService } from 'src/app/services/wizard.service';
 
 enum OperationMode {
     none,
@@ -39,7 +40,6 @@ enum OperationMode {
     selector: 'app-policy-configuration',
     templateUrl: './policy-configuration.component.html',
     styleUrls: ['./policy-configuration.component.scss'],
-    providers: [PolicyWizardService],
 })
 export class PolicyConfigurationComponent implements OnInit {
     public loading: boolean = true;
@@ -57,6 +57,7 @@ export class PolicyConfigurationComponent implements OnInit {
 
     public schemas!: Schema[];
     public allSchemas!: Schema[];
+    public allPolicies!: any[];
     public tokens!: Token[];
     public errors: any[] = [];
     public errorsCount: number = -1;
@@ -183,7 +184,7 @@ export class PolicyConfigurationComponent implements OnInit {
         private registeredService: RegisteredService,
         private modulesService: ModulesService,
         private themeService: ThemeService,
-        private wizardService: PolicyWizardService,
+        private wizardService: WizardService,
     ) {
         this.options = new Options();
         this.policyModel = new PolicyModel();
@@ -216,6 +217,9 @@ export class PolicyConfigurationComponent implements OnInit {
 
         this.schemaService.getSchemas().subscribe(value => {
             this.allSchemas = value.map((schema) => new Schema(schema));
+        });
+        this.policyEngineService.all().subscribe(value => {
+            this.allPolicies = value;
         })
     }
 
@@ -1182,7 +1186,20 @@ export class PolicyConfigurationComponent implements OnInit {
         return rule.legend;
     }
 
-    policyWizard() {
+    removeWizardPreset(policyId: string) {
+        if (!policyId) {
+            return;
+        }
+        try {
+            const wizardStates = JSON.parse(
+                localStorage.getItem('wizard') || 'null'
+            );
+            delete wizardStates[policyId];
+            localStorage.setItem('wizard', JSON.stringify(wizardStates));
+        } catch {}
+    }
+
+    openWizardDialog(preset?: any) {
         const dialogRef = this.dialog.open(PolicyWizardDialogComponent, {
             width: '1100px',
             panelClass: 'g-dialog',
@@ -1192,54 +1209,121 @@ export class PolicyConfigurationComponent implements OnInit {
                 policyDataForm: this.policyModel.getPolicyDataForm(),
                 schemas: this.allSchemas,
                 tokens: this.tokens,
-                state: localStorage.getItem('wizard_state_' + this.policyId)
-            }
+                state: preset,
+            },
         });
-        dialogRef.afterClosed().subscribe(value => {
+        dialogRef.afterClosed().subscribe((value) => {
             const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
                 data: {
                     dialogTitle: 'Save progress',
-                    dialogText: 'Do you want to save progress?'
+                    dialogText: 'Do you want to save progress?',
                 },
             });
-            dialogRef.afterClosed().subscribe(saveState => {
+            dialogRef.afterClosed().subscribe((saveState) => {
                 if (value.create) {
-                    const schemaIris = value?.config.schemas.map((schema: { iri: any; }) => schema.iri);
-                    const schemasConfigs = this.allSchemas.filter(schemaConfig => schemaIris.includes(schemaConfig.iri));
-                    const schemasToCreate = schemasConfigs.filter(schema => schema.topicId && (schema.topicId !== this.policyModel.topicId));
-                    const schemaToCreateIris = schemasToCreate.map(schema => schema.iri);
-                    forkJoin(schemasToCreate.map(schemaToCreate => this.schemaService.clone(schemaToCreate.id, this.policyModel.topicId))).subscribe((result: any) => {
-                        const schemasMap: any[] = [].concat(...(result.map((res: { schemasMap: any; }) => res.schemasMap)));
-                        for (const schema of value?.config.schemas) {
-                            if(schemaToCreateIris.includes(schema.iri)) {
-                                const schemaMap = schemasMap.find(item => item.oldIRI === schema.iri);
-                                schema.iri = schemaMap.newIRI;
+                    this.loading = true;
+                    this.wizardService
+                        .getPolicyConfig(this.policyId, value.config)
+                        .subscribe((result) => {
+                            this.loading = false;
+                            this.policyModel.setPolicyDataForm(
+                                value?.config?.policy
+                            );
+                            const roles = value?.config?.roles;
+                            const policy = this.policyModel.getJSON();
+                            policy.policyRoles = roles.filter(
+                                (role: string) => role !== 'OWNER'
+                            );
+                            policy.config = result.policyConfig;
+                            this.updatePolicyModel(policy);
+                            if (saveState) {
+                                this.setWizardPreset(this.policyId, {
+                                    data: result?.wizardConfig,
+                                    currentNode: value?.currentNode,
+                                });
                             }
-                        }
-                        for (const trustChainConfig of value?.config.trustChain) {
-                            if(schemaToCreateIris.includes(trustChainConfig.mintSchemaIri)) {
-                                const schemaMap = schemasMap.find(item => item.oldIRI === trustChainConfig.mintSchemaIri);
-                                trustChainConfig.mintSchemaIri = schemaMap.newIRI;
-                            }
-                        }
-                        this.policyModel.setPolicyDataForm(value?.config?.policy);
-                        const roles = value?.config?.roles;
-                        const policy = this.policyModel.getJSON();
-                        policy.policyRoles = roles.filter((role: string) => role !== 'OWNER')
-                        this.wizardService.createPolicyConfig(policy.config, value?.config);
-                        this.updatePolicyModel(policy);
+                        });
+                }
+
+                if (saveState) {
+                    this.setWizardPreset(this.policyId, {
+                        data: value?.config,
+                        currentNode: value?.currentNode,
                     });
                 }
 
                 if (!saveState) {
-                    localStorage.removeItem('wizard_state_' + this.policyId);
+                    this.removeWizardPreset(this.policyId);
                     return;
                 }
-                localStorage.setItem('wizard_state_' + this.policyId, JSON.stringify({
-                    data: value?.config,
-                    currentNode: value?.currentNode
-                }));
             });
-        })
+        });
+    }
+
+    setWizardPreset(policyId: string, preset: any) {
+        if (!preset || !policyId) {
+            return;
+        }
+        try {
+            const wizardStates = JSON.parse(
+                localStorage.getItem('wizard') || 'null'
+            );
+            wizardStates[policyId] = preset;
+            localStorage.setItem('wizard', JSON.stringify(wizardStates));
+        } catch {
+            const wizardStates: any = {};
+            wizardStates[policyId] = preset;
+            localStorage.setItem('wizard', JSON.stringify(wizardStates));
+        }
+    }
+
+    policyWizard() {
+        try {
+            const wizardStates = JSON.parse(
+                localStorage.getItem('wizard') || 'null'
+            );
+            if (wizardStates) {
+                const wizardPolicies = Object.keys(wizardStates);
+                if (!wizardPolicies.length) {
+                    this.openWizardDialog();
+                    return;
+                }
+                const options = this.allPolicies
+                    ?.filter((policy) => wizardPolicies.includes(policy.id))
+                    .map((policy) =>
+                        Object({
+                            name: policy.name,
+                            value: policy.id,
+                        })
+                    );
+                options?.unshift({
+                    name: 'New Policy',
+                });
+                const selectorDialog = this.dialog.open(
+                    SelectorDialogComponent,
+                    {
+                        width: '400px',
+                        data: {
+                            title: 'Restore progress',
+                            description: 'Choose policy',
+                            options,
+                        },
+                    }
+                );
+                selectorDialog.afterClosed().subscribe((value) => {
+                    if (!value?.ok) {
+                        return;
+                    }
+                    this.openWizardDialog(
+                        value?.result && wizardStates[value.result]
+                    );
+                });
+            } else {
+                this.openWizardDialog();
+            }
+        } catch (error) {
+            localStorage.removeItem('wizard');
+            this.openWizardDialog();
+        }
     }
 }

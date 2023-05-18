@@ -30,6 +30,7 @@ import {
     updateSchemaDefs
 } from './helpers/schema-helper';
 import {
+    exportSchemas,
     importSchemaByFiles,
     importSchemasByMessages,
     importTagsByFiles,
@@ -59,18 +60,6 @@ export async function schemaAPI(): Promise<void> {
             await createSchema(schemaObject, schemaObject.owner, emptyNotifier());
             const schemas = await DatabaseServer.getSchemas(null, { limit: 100 });
             return new MessageResponse(schemas);
-        } catch (error) {
-            new Logger().error(error, ['GUARDIAN_SERVICE']);
-            return new MessageError(error);
-        }
-    });
-
-    ApiResponse(MessageAPI.CLONE_SCHEMA, async (msg) => {
-        try {
-            const {schemaId, owner, topicId} = msg;
-            const relationships = await exportSchemas([schemaId]);
-            const importResult = await importSchemaByFiles(owner, relationships, topicId, emptyNotifier());
-            return new MessageResponse(importResult);
         } catch (error) {
             new Logger().error(error, ['GUARDIAN_SERVICE']);
             return new MessageError(error);
@@ -490,29 +479,6 @@ export async function schemaAPI(): Promise<void> {
             return new MessageError(error);
         }
     });
-
-    async function exportSchemas(ids: string[]) {
-        const schemas = await DatabaseServer.getSchemasByIds(ids);
-        const map: any = {};
-        const relationships: ISchema[] = [];
-        for (const schema of schemas) {
-            if (!map[schema.iri]) {
-                map[schema.iri] = schema;
-                relationships.push(schema);
-                const keys = getDefs(schema);
-                const defs = await DatabaseServer.getSchemas({
-                    where: { iri: { $in: keys } }
-                });
-                for (const element of defs) {
-                    if (!map[element.iri]) {
-                        map[element.iri] = element;
-                        relationships.push(element);
-                    }
-                }
-            }
-        }
-        return relationships;
-    }
 
     ApiResponse(MessageAPI.INCREMENT_SCHEMA_VERSION, async (msg) => {
         try {

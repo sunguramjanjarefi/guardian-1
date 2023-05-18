@@ -70,7 +70,7 @@
     <mat-form-field appearance="outline" class="full-width">
         <mat-label>Which schemas will be used in policy?</mat-label>
         <mat-select [value]="selectedSchemas" (selectionChange)="onSelectedSchemasChange($event.value)" multiple>
-            <mat-option *ngFor="let schema of schemas" [value]="schema">{{schema.name}} ({{schema.topicId}})</mat-option>
+            <mat-option *ngFor="let schema of schemas" [value]="schema">{{schema.name}}{{schema.topicId ? ' (' + schema.topicId + ')' : ''}}</mat-option>
         </mat-select>
     </mat-form-field>
 </ng-template>
