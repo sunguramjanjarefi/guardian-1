@@ -47,11 +47,11 @@ If you build with docker [MongoDB V6](https://www.mongodb.com), [NodeJS V16](htt
    git clone https://github.com/hashgraph/guardian.git
    ```
 
-2. Update the following files with your Hedera Testnet account info (see prerequisites) as indicated. Please check complete steps to generate Operation ID and Operator Key by looking at link : [How to Create Operator ID and Operator Key](https://docs.hedera.com/guardian/getting-started/getting-started/how-to-create-operator-id-and-operator-key). There will be other steps in the Demo Usage Guide that will require the generation of Operator IDs and Operator Keys. It is important to mention that the Operator IDs and Operator Keys in the ./guardian/configs/.env.\<GUARDIAN_ENV\>.guardian.system will be used to generate demo accounts.
+2. Update the following files with your Hedera Testnet account info (see prerequisites). If you do not yet have an Operator Id and Operator Key, please follow these instructions : [How to Create Operator ID and Operator Key](https://docs.hedera.com/guardian/getting-started/getting-started/how-to-create-operator-id-and-operator-key). There will be other steps in the Demo Usage Guide that will require the generation of Operator IDs and Operator Keys. It is important to note that the Operator IDs and Operator Keys in the ./guardian/configs/.env.\<GUARDIAN_ENV\>.guardian.system will be used to generate demo accounts.
 
    For example:
 
-   in ./guardian/.env you may choose name of the Guardian platform. Leave the field empty or unspecified if you update a production environment to keep previous data (for more details read at https://github.com/IntellectEU/guardian/blob/feature/environment/docs/environments/Ecosystem-Envitonment.md)
+   in ./guardian/.env set the environment you wish to run the Guardian in. (This needs fixed. The link is broken and I dont know what this next statement means) Leave the field empty or unspecified if you update a production environment to keep previous data (for more details read at https://github.com/IntellectEU/guardian/blob/feature/environment/docs/environments/Ecosystem-Envitonment.md)
    ```plaintext
       GUARDIAN_ENV="develop"
    ```
