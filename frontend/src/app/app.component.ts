@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { AuthStateService } from './services/auth-state.service';
 import { MapService } from './services/map.service';
 import { WebSocketService } from './services/web-socket.service';
@@ -8,18 +8,20 @@ import './modules/policy-engine/policy-lang-modes/policy-json-lang.mode';
 import './modules/policy-engine/policy-lang-modes/policy-yaml-lang.mode';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
+import { AuthService } from './services/auth.service';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
     public title = 'guardian';
     public innerWidth: any;
 
     constructor(
         public authState: AuthStateService,
+        public authService: AuthService,
         public wsService: WebSocketService,
         public mapService: MapService,
         public httpClient: HttpClient,
@@ -53,7 +55,7 @@ export class AppComponent {
         `));
     }
 
-    ngOnInit(): void {
+    ngOnInit() {
         this.innerWidth = window.innerWidth;
         this.brandingService.loadBrandingData(this.innerWidth);
     }

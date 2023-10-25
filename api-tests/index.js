@@ -41,9 +41,9 @@ describe('Tests', async function () {
             prc.on('message', m => console.log(`[${p}]: ${m}`));
             processes.push(prc);
             console.info(`"${path.parse(p[0]).name}"`, 'was started');
-            await sleep(15000);
+            await sleep(25000);
         }
-        await sleep(10000);
+        await sleep(25000);
     })
 
     beforeEach(GenerateTokens);
