@@ -13,12 +13,12 @@ jobs:
       mongodb:
         image: mongo:6.0.3
         ports:
-          - 27017/tcp
+          - 27017:27017/tcp
 
       natsmq:
         image: nats:2.9.8
         ports:
-          - 4222/tcp
+          - 4222:4222/tcp
 
     strategy:
       matrix:
