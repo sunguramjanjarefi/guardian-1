@@ -31,15 +31,17 @@ describe('Tests', async function () {
             [path.resolve(path.join('..', 'api-gateway')), {GUARDIAN_ENV: 'develop'}]
         ];
         for (let p of pathArray) {
-            processes.push(
-                spawn('npm start', {
-                    cwd: p[0],
-                    shell: true,
-                    env: Object.assign(process.env, p[1])
-                })
-            )
+            const prc = spawn('npm start', {
+                cwd: p[0],
+                shell: true,
+                env: Object.assign(process.env, p[1])
+            });
+            prc.on('error', console.error);
+            prc.stdout.on('data', m => console.log(`[${path.parse(p[0]).name}]: ${m}`));
+            prc.on('message', m => console.log(`[${p}]: ${m}`));
+            processes.push(prc);
             console.info(`"${path.parse(p[0]).name}"`, 'was started');
-            await sleep(20000);
+            await sleep(15000);
         }
         await sleep(10000);
     })
