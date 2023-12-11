@@ -229,7 +229,7 @@ paths:
       tags: &ref_0
         - analytics
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
   /analytics/compare/policies:
     post:
       operationId: AnalyticsApi_comparePolicies
@@ -282,7 +282,7 @@ paths:
                 $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_0
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
   /analytics/compare/modules:
     post:
       operationId: AnalyticsApi_compareModules
@@ -325,7 +325,7 @@ paths:
                 $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_0
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
   /analytics/compare/schemas:
     post:
       operationId: AnalyticsApi_compareSchemas
@@ -366,7 +366,7 @@ paths:
                 $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_0
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
   /analytics/compare/documents:
     post:
       operationId: AnalyticsApi_compareDocuments
@@ -413,7 +413,7 @@ paths:
       description: >-
         Compare tools. Only users with the Standard Registry role are allowed to
         make the request.
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         description: Filters.
@@ -450,7 +450,7 @@ paths:
                 $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_0
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
   /analytics/compare/policies/export:
     post:
       operationId: AnalyticsApi_comparePoliciesExport
@@ -503,7 +503,7 @@ paths:
                 $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_0
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
   /analytics/compare/modules/export:
     post:
       operationId: AnalyticsApi_compareModulesExport
@@ -546,7 +546,7 @@ paths:
                 $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_0
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
   /analytics/compare/schemas/export:
     post:
       operationId: AnalyticsApi_compareSchemasExport
@@ -587,7 +587,7 @@ paths:
                 $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_0
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
   /analytics/compare/documents/export:
     post:
       operationId: AnalyticsApi_compareDocumentsExport
@@ -595,7 +595,7 @@ paths:
       description: >-
         Compare documents. Only users with the Standard Registry role are
         allowed to make the request.
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         description: Filters.
@@ -632,7 +632,7 @@ paths:
                 $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_0
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
   /analytics/compare/tools/export:
     post:
       operationId: AnalyticsApi_compareToolsExport
@@ -677,7 +677,7 @@ paths:
                 $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_0
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
   /analytics/search/blocks:
     post:
       operationId: AnalyticsApi_searchBlocks
@@ -685,7 +685,7 @@ paths:
       description: >-
         Search same blocks. Only users with the Standard Registry role are
         allowed to make the request.
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         description: Filters.
@@ -697,7 +697,7 @@ paths:
               Filter:
                 value:
                   uuid: ''
-                  config: { }
+                  config: {}
       responses:
         '200':
           description: Successful operation.
@@ -717,7 +717,7 @@ paths:
                 $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_0
       security:
-        - bearerAuth: [ ]
+        - bearerAuth: []
   /artifacts:
     get:
       tags:
@@ -2967,7 +2967,7 @@ paths:
       operationId: PolicyApi_getPolicyCategoriesAsync
       summary: Get all categories
       description: Get all categories
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           description: Successful operation.
@@ -2990,7 +2990,7 @@ paths:
       operationId: PolicyApi_getPoliciesByCategory
       summary: Get filtered policies
       description: Get policies by categories and text
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         description: Filters
@@ -3334,7 +3334,7 @@ paths:
       operationId: PolicyApi_getPolicyNavigation
       summary: Returns a policy navigation.
       description: Returns a policy navigation.
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           description: Successful operation.
@@ -3350,8 +3350,8 @@ paths:
                 $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_4
       security:
-        - bearerAuth: [ ]
-        - bearerAuth: [ ]
+        - bearerAuth: []
+        - bearerAuth: []
   /policies/{policyId}/groups:
     get:
       tags:
@@ -7488,7 +7488,7 @@ paths:
       operationId: AISuggestionsAPI_rebuildVector
       summary: Rebuild AI vector
       description: Rebuilds vector based on policy data in the DB
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           description: ''
@@ -7498,7 +7498,7 @@ paths:
       operationId: ProjectsAPI_projectSearch
       summary: Search projects
       description: Search projects by filters
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         description: The question of choosing a methodology
@@ -7533,7 +7533,7 @@ paths:
       operationId: ProjectsAPI_compareDocuments
       summary: Compare documents.
       description: Compare documents.
-      parameters: [ ]
+      parameters: []
       requestBody:
         required: true
         description: Filters.
@@ -7570,7 +7570,7 @@ paths:
       operationId: ProjectsAPI_getPolicyProperties
       summary: Get all properties
       description: Get all properties
-      parameters: [ ]
+      parameters: []
       responses:
         '200':
           description: Successful operation.
