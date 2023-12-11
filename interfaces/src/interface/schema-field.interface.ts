@@ -53,6 +53,10 @@ export interface SchemaField {
      */
     unitSystem: string;
     /**
+     * Property
+     */
+    property: string;
+    /**
      * Custom Type
      */
     customType: string;
@@ -116,4 +120,9 @@ export interface SchemaField {
      * Is field private
      */
     isPrivate?: boolean;
+
+    /**
+     * Is hidden field
+     */
+    hidden?: boolean;
 }

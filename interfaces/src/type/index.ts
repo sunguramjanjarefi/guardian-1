@@ -34,3 +34,4 @@ export * from './user-group.type';
 export * from './user-option.type';
 export * from './user-role.type';
 export * from './user.type';
+export * from './policy-category-type';

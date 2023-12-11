@@ -25,6 +25,11 @@ import { NewVersionsComponent } from './new-versions/new-versions.component';
 import { CompareBtnComponent } from './compare-btn/compare-btn.component';
 import { CompareViewerComponent } from './compare-viewer/compare-viewer.component';
 import { AlertComponent } from './alert/alert.component';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { DropdownModule } from 'primeng/dropdown';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { ButtonModule } from 'primeng/button';
 
 @NgModule({
     declarations: [
@@ -55,7 +60,12 @@ import { AlertComponent } from './alert/alert.component';
         NgxMatDatetimePickerModule,
         NgxFileDropModule,
         NgxColorsModule,
-        NgxMaskModule.forRoot()
+        NgxMaskModule.forRoot(),
+        DialogModule,
+        InputTextModule,
+        DropdownModule,
+        ProgressBarModule,
+        ButtonModule
     ],
     exports: [
         DatetimePicker,

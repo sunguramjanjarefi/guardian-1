@@ -72,6 +72,7 @@ export class LoggerService {
         try {
             const nameFilter = `.*${msg.name || ''}.*`;
             const existingAttributes = msg.existingAttributes || [];
+            console.log('existing attributes: ', existingAttributes)
             const aggregateAttrResult = await logRepository.aggregate([
                 { $project: { attributes: '$attributes' } },
                 { $unwind: { path: '$attributes' } },
@@ -82,6 +83,7 @@ export class LoggerService {
                 { $limit: 20 },
                 { $group: { _id: null, uniqueValues: { $addToSet: '$uniqueValues' } } }
             ]);
+            console.log('aggregated:', JSON.stringify(aggregateAttrResult));
             return new MessageResponse(aggregateAttrResult[0].uniqueValues?.sort() || []);
         }
         catch (error) {

@@ -167,6 +167,7 @@ export class DocumentModel implements IWeightModel {
         this._weight = [];
         this._weightMap = {};
         this._hash = '';
+        this._relationships = [];
     }
 
     /**
@@ -175,7 +176,7 @@ export class DocumentModel implements IWeightModel {
      * @public
      */
     public setRelationships(relationships: DocumentModel[]): DocumentModel {
-        if (Array.isArray(relationships)) {
+        if (relationships && Array.isArray(relationships)) {
             this._relationships = relationships;
         } else {
             this._relationships = [];
@@ -210,8 +211,9 @@ export class DocumentModel implements IWeightModel {
         let _document = '0';
         let _documentAndChildren = '0';
 
-        if (this._schemas) {
+        if (this._document && this._schemas) {
             this._document.updateSchemas(this._schemas, options);
+            this._document.update(options);
         }
 
         if (this._schemas) {
@@ -383,8 +385,23 @@ export class DocumentModel implements IWeightModel {
     }
 
     /**
+     * Merge documents
+     * @param docs - models
+     * @public
+     */
+    public merge(docs: DocumentModel[] | DocumentModel): void {
+        if (Array.isArray(docs)) {
+            for (const doc of docs) {
+                this.merge(doc);
+            }
+        } else {
+            this._document.merge(docs._document);
+        }
+    }
+
+    /**
      * Comparison of models using key
-     * @param item - model
+     * @param doc - model
      * @public
      */
     public equalKey(doc: DocumentModel): boolean {
@@ -433,7 +450,7 @@ export class DocumentModel implements IWeightModel {
             id: this.id,
             type: this.type,
             owner: this.owner,
-            policy: this.policy,
+            policy: this.policy
         };
     }
 

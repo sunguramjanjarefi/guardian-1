@@ -50,7 +50,7 @@ Promise.all([
         }));
 
         app.use(express.static('public'));
-        app.use(express.json({ limit: '2mb' }));
+        app.use(express.json({limit: '10mb'}));
 
         new Logger().setConnection(cn);
         const workersHelper = new Workers();

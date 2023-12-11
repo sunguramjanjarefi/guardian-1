@@ -1,7 +1,8 @@
-import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Input } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { noWhitespaceValidator } from 'src/app/validators/no-whitespace-validator';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 /**
  * Dialog for creating tokens.
@@ -26,8 +27,8 @@ export class TokenDialog {
         enableKYC: new FormControl(false, [Validators.required]),
         enableWipe: new FormControl(true, [Validators.required])
     });
-    title: string = "New Token";
-    description: string = "";
+    title: string = 'New Token';
+    description: string = '';
     token: any = null;
     readonly: boolean = false;
 
@@ -35,28 +36,30 @@ export class TokenDialog {
     public innerHeight: any;
     hideType: boolean = false;
 
+    @Input() data: any;
+
     constructor(
-        public dialogRef: MatDialogRef<TokenDialog>,
+        public dialogRef: DynamicDialogRef,
         private fb: FormBuilder,
-        @Inject(MAT_DIALOG_DATA) public data: any) {
-        if (data) {
-            this.hideType = !!data.hideType;
-            if (data.title) {
-                this.title = data.title;
+        public dialogConfig: DynamicDialogConfig) {
+        if (dialogConfig) {
+            this.hideType = !!dialogConfig.data.hideType;
+            if (dialogConfig.data.title) {
+                this.title = dialogConfig.data.title;
             } else {
-                if (data.token) {
-                    this.title = "Edit Token";
+                if (dialogConfig.data.token) {
+                    this.title = 'Edit Token';
                 } else {
-                    this.title = "New Token";
+                    this.title = 'New Token';
                 }
             }
-            if (data.description) {
-                this.description = data.description;
+            if (dialogConfig.data.description) {
+                this.description = dialogConfig.data.description;
             }
-            if (data.token) {
-                this.dataForm?.patchValue(data.token);
-                this.token = data.token;
-                if (data.token.draftToken) {
+            if (dialogConfig.data.token) {
+                this.dataForm?.patchValue(dialogConfig.data.token);
+                this.token = dialogConfig.data.token;
+                if (dialogConfig.data.token.draftToken) {
                     this.readonly = false;
                 } else {
                     this.readonly = true;
@@ -78,7 +81,7 @@ export class TokenDialog {
     onCreate() {
         if (this.dataForm.valid) {
             const data = this.dataForm.value;
-            if (data.tokenType == 'fungible') {
+            if (data.tokenType === 'fungible') {
                 data.decimals = data.decimals || '0';
                 data.initialSupply = '0';
             } else {

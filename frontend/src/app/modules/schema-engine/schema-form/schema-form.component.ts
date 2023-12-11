@@ -1,6 +1,6 @@
-import { NgxMatDateAdapter, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
+import { NGX_MAT_DATE_FORMATS, NgxMatDateAdapter } from '@angular-material-components/datetime-picker';
 import { NgxMatMomentAdapter } from '@angular-material-components/moment-adapter';
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { GenerateUUIDv4, Schema, SchemaField, UnitSystem } from '@guardian/interfaces';
 import { fullFormats } from 'ajv-formats/dist/formats';
@@ -64,7 +64,7 @@ enum ErrorArrayMessageByFieldType {
 @Component({
     selector: 'app-schema-form',
     templateUrl: './schema-form.component.html',
-    styleUrls: ['./schema-form.component.css'],
+    styleUrls: ['./schema-form.component.scss'],
     providers: [
         { provide: NgxMatDateAdapter, useClass: NgxMatMomentAdapter },
         { provide: NGX_MAT_DATE_FORMATS, useValue: DATETIME_FORMATS }
@@ -86,6 +86,8 @@ export class SchemaFormComponent implements OnInit {
     @Input() showButtons: boolean = true;
     @Input() isChildSchema: boolean = false;
     @Input() comesFromDialog: boolean = false;
+
+    @Input() isFormForFinishSetup: boolean = false;
 
     @Output('change') change = new EventEmitter<Schema | null>();
     @Output('destroy') destroy = new EventEmitter<void>();

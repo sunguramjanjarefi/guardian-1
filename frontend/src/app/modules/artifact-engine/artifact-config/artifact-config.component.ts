@@ -33,10 +33,12 @@ export class ArtifactConfigComponent implements OnInit {
         'delete'
     ];
     policies: any[] | null;
-    currentPolicyId: any = '';
+    currentPolicy: any = '';
     pageIndex: number;
     pageSize: number;
     policyNameById: any = {};
+    private currentArtifact: any;
+    deleteArtifactVisible: boolean = false;
 
     constructor(
         private profileService: ProfileService,
@@ -47,12 +49,12 @@ export class ArtifactConfigComponent implements OnInit {
         private artifact: ArtifactService) {
         this.policies = null;
         this.pageIndex = 0;
-        this.pageSize = 100;
+        this.pageSize = 10;
     }
 
     ngOnInit() {
         const policyId = this.route.snapshot.queryParams['policyId'];
-        this.currentPolicyId = policyId && policyId != 'all' ? policyId : '';
+        this.currentPolicy = policyId && policyId != 'all' ? policyId : '';
         this.loadProfile()
     }
 
@@ -76,7 +78,7 @@ export class ArtifactConfigComponent implements OnInit {
             }
 
             this.pageIndex = 0;
-            this.pageSize = 100;
+            this.pageSize = 10;
             this.loadArtifacts();
         }, ({ message }) => {
             this.loading = false;
@@ -87,7 +89,7 @@ export class ArtifactConfigComponent implements OnInit {
     loadArtifacts() {
         this.loading = true;
         const request =
-            this.artifact.getArtifacts(this.currentPolicyId, this.pageIndex, this.pageSize);
+            this.artifact.getArtifacts(this.currentPolicy.id, this.pageIndex, this.pageSize);
         this.columns = this.policyArtifactColumns;
         request.subscribe((artifactResponse: HttpResponse<any[]>) => {
             this.artifacts = artifactResponse.body?.map(item => {
@@ -110,7 +112,7 @@ export class ArtifactConfigComponent implements OnInit {
         this.pageIndex = 0;
         this.router.navigate(['/artifacts'], {
             queryParams: {
-                policyId: this.currentPolicyId ? this.currentPolicyId : 'all'
+                policyId: this.currentPolicy.id ? this.currentPolicy.id : 'all'
             }
         });
         this.loadArtifacts();
@@ -127,36 +129,10 @@ export class ArtifactConfigComponent implements OnInit {
         this.loadArtifacts();
     }
 
-    deleteArtifact(element: any) {
-        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-            data: {
-                dialogTitle: 'Delete artifact',
-                dialogText: 'Are you sure to delete artifact?'
-            },
-            disableClose: true,
-            autoFocus: false
-        });
-        dialogRef.afterClosed().subscribe((result) => {
-            if (!result) {
-                return;
-            }
-
-            this.loading = true;
-            const request =
-                this.artifact.deleteArtifact(element.id);
-
-            request.subscribe((data: any) => {
-                this.loadArtifacts();
-            }, (e) => {
-                this.loading = false;
-            });
-        });
-    }
-
     importArtifacts() {
         const dialogRef = this.dialog.open(ArtifactImportDialog, {
             data: {
-                policyId: this.currentPolicyId,
+                policyId: this.currentPolicy.id,
                 policies: this.policies
             },
             disableClose: true,
@@ -169,6 +145,44 @@ export class ArtifactConfigComponent implements OnInit {
             this.loading = true;
             this.artifact.addArtifacts(result.files, result.policyId)
                 .subscribe((res) => this.loadArtifacts(), (err) => this.loading = false);
+        });
+    }
+
+    newOnPage() {
+        this.pageIndex = 0;
+        this.loadArtifacts();
+    }
+
+    movePageIndex(inc: number) {
+        if (inc > 0 && this.pageIndex < (this.artifactsCount / this.pageSize) - 1) {
+            this.pageIndex += 1;
+            this.loadArtifacts();
+        } else if (inc < 0 && this.pageIndex > 0) {
+            this.pageIndex -= 1;
+            this.loadArtifacts();
+        }
+    }
+
+    openDeleteArtifactDialog(artifact: any) {
+        this.deleteArtifactVisible = true;
+        this.currentArtifact = artifact;
+    }
+
+    deleteArtifact(deleteArtifact: boolean) {
+        if (!deleteArtifact) {
+            this.deleteArtifactVisible = false;
+            return;
+        }
+        this.loading = true;
+        const request =
+            this.artifact.deleteArtifact(this.currentArtifact.id);
+
+        request.subscribe((data: any) => {
+            this.loadArtifacts();
+        }, (e) => {
+            this.loading = false;
+        }, () => {
+            this.deleteArtifactVisible = false
         });
     }
 }

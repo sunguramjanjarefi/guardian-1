@@ -32,4 +32,8 @@ export class ArtifactImportDialog {
       });
     }
   }
+
+    onNoClick(): void {
+        this.dialogRef.close(false);
+    }
 }

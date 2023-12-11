@@ -7,7 +7,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 @Component({
     selector: 'app-schema-view-dialog',
     templateUrl: './schema-view-dialog.component.html',
-    styleUrls: ['./schema-view-dialog.component.css']
+    styleUrls: ['./schema-view-dialog.component.scss']
 })
 export class SchemaViewDialog {
     loading = true;

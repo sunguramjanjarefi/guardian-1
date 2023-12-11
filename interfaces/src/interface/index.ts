@@ -30,4 +30,5 @@ export * from './wallet-account.interface';
 export * from './wizard-config.interface';
 export * from './messages';
 export * from './check-result.interface';
+export * from './policy-category-export.interface';
 export * from './about-interface';

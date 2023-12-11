@@ -874,3 +874,39 @@ export interface IPolicyInstance {
      */
     readonly owner: string;
 }
+
+/**
+ * Navigation
+ */
+export interface IPolicyNavigation {
+    /**
+     * Data
+     */
+    role: string;
+    /**
+     * Data
+     */
+    steps: IPolicyNavigationStep[];
+}
+
+/**
+ * Navigation Step
+ */
+export interface IPolicyNavigationStep {
+    /**
+     * Data
+     */
+    uuid: string;
+    /**
+     * Data
+     */
+    name: string;
+    /**
+     * Data
+     */
+    block: string;
+    /**
+     * Data
+     */
+    level: number;
+}

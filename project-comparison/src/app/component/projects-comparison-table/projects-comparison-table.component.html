@@ -1,0 +1,87 @@
+<div class="projects-comparison">
+    <p-button class="back-button" icon="pi pi-angle-left" iconPos="left" label="Back to Projects Overview"
+              (click)="navigateToProjectsOverview()"></p-button>
+    <div class="header">
+        <h1>Project Comparison</h1>
+    </div>
+    <div class="container" *ngIf="!loading else dataInLoad">
+        <div class="table">
+
+            <table>
+                <thead></thead>
+                <tbody>
+                <ng-container *ngFor="let group of groups">
+                    <tr class="project-title" *ngIf="group.root">
+                        <th>Project title</th>
+                        <ng-container *ngFor="let project of group.projects; let i = index">
+                            <th *ngIf="!isCollapsed(i)">
+                                <div class="column-header">
+                                    <span>{{ project.title }}</span>
+                                    <div class="column-actions">
+                                        <p-button class="toggle-button" icon="pi pi-angle-left"
+                                                  (click)="toggleColumn(i)"></p-button>
+                                        <p-button class="p-button-outlined" icon="pi pi-trash"
+                                                  [disabled]="group.projects.length <= 2"
+                                                  (onClick)="deleteColumn(project.id, i)"></p-button>
+                                    </div>
+                                </div>
+                            </th>
+                            <th *ngIf="isCollapsed(i)" [attr.rowspan]="propertyCount" class="collapsed-header">
+                                <div class="column-header">
+                                    <span>{{ project.id }}</span>
+                                    <div class="column-actions">
+                                        <p-button class="toggle-button" icon="pi pi-angle-left"
+                                                  (click)="toggleColumn(i)"></p-button>
+                                    </div>
+                                </div>
+                            </th>
+                        </ng-container>
+                    </tr>
+                    <tr *ngIf="!group.root">
+                        <td class="document-title" [attr.colspan]="columnCount">
+                            {{ group.type }}
+                        </td>
+                    </tr>
+                    <ng-container *ngFor="let row of group.mergedProperties">
+                        <tr *ngIf="row.isGroup" class="property-group">
+                            <td class="main-col">
+                                    <span class="pi pi-angle-down toggle-icon"
+                                          [ngClass]="{'toggle-icon-collapsed': row.collapsed}"
+                                          (click)="toggleRow(row)"></span>
+                                {{ row.title }}
+                            </td>
+                            <ng-container *ngFor="let field of row.fields; let i = index">
+                                <td *ngIf="!isCollapsed(i)">
+                                    <div *ngIf="row.collapsed">
+                                        {{ field.displayValue }}, ...
+                                    </div>
+                                </td>
+                            </ng-container>
+                        </tr>
+                        <ng-container *ngIf="!row.isGroup || !row.collapsed">
+                            <tr *ngFor="let property of row.properties">
+                                <td *ngIf="row.isGroup" class="main-col"></td>
+                                <td *ngIf="!row.isGroup" class="main-col">{{ property.title }}</td>
+                                <ng-container *ngFor="let field of property.fields; let i = index">
+                                    <td *ngIf="!isCollapsed(i)" [ngClass]="{'cell-green': field?.green}">
+                                        <div [ngClass]="{'collapsed': isCollapsed(i)}">
+                                            {{ field.displayValue }}
+                                        </div>
+                                    </td>
+                                </ng-container>
+                            </tr>
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<ng-template #dataInLoad>
+    <div class="not-exist">
+        <div class="preloader-image preloader-image-l-size"></div>
+    </div>
+</ng-template>

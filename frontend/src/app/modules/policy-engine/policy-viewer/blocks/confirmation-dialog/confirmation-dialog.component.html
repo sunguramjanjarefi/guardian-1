@@ -1,11 +1,10 @@
-<h1 mat-dialog-title>{{this.title}}</h1>
-<div mat-dialog-content class="content">
+<div class="dialog-body">
     <div *ngIf="this.description" class="description">
-        {{this.description}}
+        {{ this.description }}
     </div>
     <div *ngIf="this.descriptions" class="description">
         <div *ngFor="let item of this.descriptions">
-            {{item}}
+            {{ item }}
         </div>
     </div>
     <div class="textarea">
@@ -13,8 +12,22 @@
             <textarea matInput rows="4" [formControl]="value"></textarea>
         </mat-form-field>
     </div>
-    <div class="buttons" mat-dialog-actions>
-        <button mat-raised-button color="primary" [disabled]="value.invalid" (click)="onSubmit()">Ok</button>
-        <button mat-button type="button" (click)="onNoClick()">Cancel</button>
+</div>
+<div class="dialog-footer" mat-dialog-actions>
+    <div class="action-buttons">
+        <div class="cancel-button">
+            <p-button
+                    label="Cancel"
+                    styleClass="p-button-outlined"
+                    (click)="onNoClick()"
+            ></p-button>
+        </div>
+        <div>
+            <p-button
+                    label="Save"
+                    [disabled]="value.invalid"
+                    (click)="onSubmit()"
+            ></p-button>
+        </div>
     </div>
 </div>

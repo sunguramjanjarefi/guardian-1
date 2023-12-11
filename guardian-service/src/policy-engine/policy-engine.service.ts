@@ -1,5 +1,22 @@
-import { ExternalMessageEvents, GenerateUUIDv4, PolicyEngineEvents, PolicyEvents, PolicyType, TopicType } from '@guardian/interfaces';
-import { BinaryMessageResponse, DatabaseServer, DIDDocument, findAllEntities, IAuthUser, Logger, MessageError, MessageResponse, NatsService, Policy, PolicyImportExport, RunFunctionAsync, Singleton, TopicConfig, Users } from '@guardian/common';
+import { ExternalMessageEvents, GenerateUUIDv4, PolicyEngineEvents, PolicyEvents, PolicyType, Schema, SchemaField, TopicType } from '@guardian/interfaces';
+import {
+    BinaryMessageResponse,
+    DatabaseServer,
+    DIDDocument,
+    findAllEntities,
+    IAuthUser,
+    Logger,
+    MessageError,
+    MessageResponse,
+    NatsService,
+    Policy,
+    PolicyImportExport,
+    RunFunctionAsync,
+    Singleton,
+    TopicConfig,
+    Users,
+    Schema as SchemaCollection
+} from '@guardian/common';
 import { PolicyImportExportHelper } from './helpers/policy-import-export-helper';
 import { PolicyComponentsUtils } from './policy-components-utils';
 import { IPolicyUser } from './policy-user';
@@ -546,6 +563,60 @@ export class PolicyEngineService {
             }
         });
 
+        this.channel.getMessages<any, any>(PolicyEngineEvents.GET_PUBLISH_POLICIES, async () => {
+            try {
+                const publishPolicies = await DatabaseServer.getPublishPolicies();
+                return new MessageResponse(publishPolicies);
+            } catch (error) {
+                new Logger().error(error, ['GUARDIAN_SERVICE']);
+                return new MessageError(error);
+            }
+        });
+
+        this.channel.getMessages<any, any>(PolicyEngineEvents.GET_FIELDS_DESCRIPTIONS, async (msg) => {
+            try {
+                const policiesData = msg.policiesData;
+                const policySchemas = [];
+
+                for (const policy of policiesData) {
+                    const policyId = policy.policyId;
+                    const topicId = policy.topicId;
+
+                    const dbSchemas = await DatabaseServer.getSchemas({topicId});
+
+                    const schemas = dbSchemas.map((schema: SchemaCollection) => new Schema(schema));
+
+                    const nonSystemSchemas = schemas.filter(schema => !schema.system);
+
+                    const policyDescriptions: string[] = [];
+                    for (const schema of nonSystemSchemas) {
+                        const fields = schema?.fields;
+                        const descriptions = fields.map((field: SchemaField) => field?.description);
+                        policyDescriptions.push(...descriptions);
+                    }
+                    policySchemas.push({
+                        policyId,
+                        descriptions: Array.from(new Set(policyDescriptions))
+                    });
+                }
+
+                return new MessageResponse(policySchemas);
+            } catch (error) {
+                new Logger().error(error, ['GUARDIAN_SERVICE']);
+                return new MessageError(error);
+            }
+        });
+
+        this.channel.getMessages<any, any>(PolicyEngineEvents.GET_POLICIES_BY_CATEGORY, async (msg) => {
+            try {
+                const resultPolicies = await DatabaseServer.getFilteredPolicies(msg.categoryIds, msg.text);
+                return new MessageResponse(resultPolicies);
+            } catch (error) {
+                new Logger().error(error, ['GUARDIAN_SERVICE']);
+                return new MessageError(error);
+            }
+        });
+
         this.channel.getMessages<any, any>(PolicyEngineEvents.GET_BLOCK_DATA, async (msg) => {
             try {
                 const { user, blockId, policyId } = msg;
@@ -635,6 +706,20 @@ export class PolicyEngineService {
                     blockId
                 }) as any;
                 return new MessageResponse(blockData);
+            } catch (error) {
+                new Logger().error(error, ['GUARDIAN_SERVICE']);
+                return new MessageError(error);
+            }
+        });
+
+        this.channel.getMessages<any, any>(PolicyEngineEvents.GET_POLICY_NAVIGATION, async (msg) => {
+            try {
+                const {user, policyId} = msg;
+
+                const navigationData = await new GuardiansService().sendPolicyMessage(PolicyEvents.GET_POLICY_NAVIGATION, policyId, {
+                    user
+                }) as any;
+                return new MessageResponse(navigationData);
             } catch (error) {
                 new Logger().error(error, ['GUARDIAN_SERVICE']);
                 return new MessageError(error);

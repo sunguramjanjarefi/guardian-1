@@ -1,4 +1,50 @@
-<div class="g-dialog-content">
+<div>
+    <form [formGroup]="dataForm">
+        <div class="form-input-container">
+            <label class="p-field-label">* Name</label>
+            <input formControlName="name" type="text" pInputText class="p-field-input"/>
+        </div>
+        <div class="form-input-container">
+            <label class="p-field-label">Description</label>
+            <input formControlName="description" type="text" pInputText class="p-field-input"/>
+        </div>
+    </form>
+
+    <div *ngIf="schemas && schemas.length" class="artifact-container">
+        <p-dropdown *ngIf="canAddDocument" [options]="schemas" [(ngModel)]="schema" optionLabel="name">
+            <ng-template pTemplate="selectedItem">
+                <div class="country-item country-item-value" *ngIf="schema">
+                    <div>{{ schema.name }}</div>
+                </div>
+            </ng-template>
+            <ng-template let-schema pTemplate="item">
+                <div class="country-item">
+                    <div>{{ schema.name }}</div>
+                </div>
+            </ng-template>
+        </p-dropdown>
+
+        <div *ngIf="schema" class="artifact-form">
+            <div class="artifact-form-label">
+                {{ schema.name }}
+            </div>
+            <div class="delete-artifact" (click)="onDeleteArtifact()">
+                <mat-icon>delete</mat-icon>
+            </div>
+            <form [formGroup]="schemaForm">
+                <app-schema-form [formGroup]="schemaForm" [schema]="schema" [showButtons]="false"></app-schema-form>
+            </form>
+        </div>
+    </div>
+    <div class="dialog-footer">
+        <button *ngIf="!schema" style="margin-right: auto;" class="button secondary" pButton
+                (click)="onAddArtifact(schema)" label="Add Document"></button>
+        <button pButton class="button secondary" label="Cancel" (click)="onNoClick()"></button>
+        <button pButton class="button" [label]="'Create'" (click)="onCreate()" [disabled]="disabled"></button>
+    </div>
+</div>
+
+<div *ngIf="false" class="g-dialog-content">
     <div class="g-dialog-header">
         <div class="g-dialog-cancel">
             <div class="g-dialog-cancel-btn" (click)="onNoClick()">

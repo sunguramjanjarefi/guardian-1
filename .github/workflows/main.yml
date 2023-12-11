@@ -19,18 +19,21 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Build
         run: |
-          yarn
           pushd interfaces
-          yarn run build
+          npm install
+          npm run build
           popd
           pushd common
-          yarn run build
+          npm install
+          npm run build
           popd
           pushd logger-service
-          yarn run build
+          npm install
+          npm run build
           popd
           pushd notification-service
-          yarn run build
+          npm install
+          npm run build
           popd
           pushd frontend
           npm install
@@ -39,19 +42,24 @@ jobs:
           npm run build:demo
           popd
           pushd auth-service
-          yarn run build
+          npm install
+          npm run build
           popd
           pushd policy-service
-          yarn run build
+          npm install
+          npm run build
           popd
           pushd guardian-service
-          yarn run build
+          npm install
+          npm run build
           popd
           pushd worker-service
-          yarn run build
+          npm install
+          npm run build
           popd
           pushd api-gateway
-          yarn run build
+          npm install
+          npm run build
           popd
         env:
           CI: true

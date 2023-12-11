@@ -1,11 +1,12 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ContractService } from 'src/app/services/contract.service';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { TokenType } from '@guardian/interfaces';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { MenuItem } from 'primeng/api';
+import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 
 /**
  * Dialog for retire tokens.
@@ -13,7 +14,7 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
     selector: 'retire-token-dialog',
     templateUrl: './retire-token-dialog.component.html',
-    styleUrls: ['./retire-token-dialog.component.css'],
+    styleUrls: ['./retire-token-dialog.component.scss'],
     providers: [
         {
             provide: STEPPER_GLOBAL_OPTIONS,
@@ -29,7 +30,7 @@ export class RetireTokenDialogComponent {
     oppositeTokenId = this.fb.control('');
     contractForm = this.fb.control('', Validators.required);
     tokenCountForm = this.fb.group({
-        baseTokenCount: [0],
+        baseTokenCount: [{value: 0, disabled: true}],
         oppositeTokenCount: [0],
         baseTokenSerials: [[]],
         oppositeTokenSerials: [[]],
@@ -47,18 +48,21 @@ export class RetireTokenDialogComponent {
     contractAndRates: any = [];
     contractsLoading = false;
 
+    steps: MenuItem[];
+    activeIndex: number = 0;
+
     public innerWidth: any;
     public innerHeight: any;
 
     destroy$: Subject<boolean> = new Subject<boolean>();
 
     constructor(
-        public dialogRef: MatDialogRef<RetireTokenDialogComponent>,
-        private fb: FormBuilder,
         private contractService: ContractService,
-        @Inject(MAT_DIALOG_DATA) public data: any
+        public ref: DynamicDialogRef,
+        public config: DynamicDialogConfig,
+        private fb: FormBuilder,
     ) {
-        this.tokens = data?.tokens || [];
+        this.tokens = config.data?.tokens || [];
         this.baseTokens = this.tokens;
         this.oppositeTokens = this.tokens;
         const oppositeTokenCountControl =
@@ -179,19 +183,55 @@ export class RetireTokenDialogComponent {
     ngOnInit() {
         this.innerWidth = window.innerWidth;
         this.innerHeight = window.innerHeight;
+
+        this.steps = [
+            {
+                label: 'Base Token',
+            },
+            {
+                label: 'Opposite Token (optional)',
+            },
+            {
+                label: 'Contract',
+            },
+            {
+                label: 'Count',
+            }
+        ];
     }
 
     onNoClick(): void {
-        this.dialogRef.close(null);
+        this.ref.close(null);
     }
 
     onCreate() {
-        this.dialogRef.close({
+        this.ref.close({
             baseTokenId: this.baseTokenId.value,
             oppositeTokenId: this.oppositeTokenId.value,
             ...this.tokenCountForm.getRawValue(),
             contractId: this.contractForm.value,
         });
+    }
+
+    onPrevStep() {
+        this.activeIndex = this.activeIndex === 0 ? 0 : this.activeIndex - 1;
+    }
+
+    onNextStep() {
+        this.activeIndex = this.activeIndex < this.steps.length ? this.activeIndex + 1 : (this.steps.length - 1);
+    }
+
+    validateCurrentStep() {
+        if (this.activeIndex == 0) {
+            return this.baseTokenId.valid;
+        } else if (this.activeIndex == 1) {
+            return true
+        } else if (this.activeIndex == 2) {
+            return true
+        } else if (this.activeIndex == 3) {
+            return true
+        }
+        return true
     }
 
     validateCountValues() {

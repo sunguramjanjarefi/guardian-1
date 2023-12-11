@@ -217,9 +217,10 @@ export class NotificationService {
         try {
             const notificationRepo = new DataBaseHelper(Notification);
             const { userId, pageIndex, pageSize } = msg;
+
             const options =
-                typeof pageIndex === 'number' && typeof pageSize === 'number'
-                    ? {
+                typeof pageIndex === 'number' && typeof pageSize === 'number' ?
+                    {
                           orderBy: {
                               createDate: OrderDirection.DESC,
                           },

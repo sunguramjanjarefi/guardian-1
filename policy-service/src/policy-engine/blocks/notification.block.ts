@@ -90,6 +90,12 @@ import {
                 type: PropertyType.Checkbox,
             },
             {
+                name: 'sendEmail',
+                label: 'Tun on email notifications',
+                title: 'Tun on email notifications',
+                type: PropertyType.Checkbox,
+            },
+            {
                 name: 'user',
                 label: 'User',
                 title: 'User',
@@ -197,7 +203,13 @@ export class NotificationBlock {
         const ref =
             PolicyComponentsUtils.GetBlockRef<IPolicyRequestBlock>(this);
 
-        const notify = this.getNotificationFunction(ref);
+        const notify = async (title, message, userId) => {
+            if (ref.options.sendEmail) {
+                console.log('Email has been sent', userId);
+            }
+
+            await this.getNotificationFunction(ref)(title, message, userId);
+        }
 
         switch (ref.options.user) {
             case UserOption.ALL: {
@@ -270,14 +282,14 @@ export class NotificationBlock {
             case UserOption.ROLE: {
                 const users = ref.options.grouped
                     ? await ref.databaseServer.getAllUsersByRole(
-                          ref.policyId,
-                          event.user.group,
-                          ref.options.role
-                      )
+                        ref.policyId,
+                        event.user.group,
+                        ref.options.role
+                    )
                     : await ref.databaseServer.getUsersByRole(
-                          ref.policyId,
-                          ref.options.role
-                      );
+                        ref.policyId,
+                        ref.options.role
+                    );
                 for (const user of users) {
                     await notify(
                         ref.options.title,

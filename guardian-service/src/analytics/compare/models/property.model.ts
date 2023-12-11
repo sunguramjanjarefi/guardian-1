@@ -51,10 +51,36 @@ export class PropertyModel<T> implements IProperties<T> {
     protected _weight: string;
 
     /**
+     * Description
+     * @protected
+     */
+    protected _description: string;
+
+    /**
      * Title
      * @protected
      */
     protected _title: string;
+
+    /**
+     * Key
+     * @protected
+     */
+    protected _key: string;
+
+    /**
+     * Property
+     * @protected
+     */
+    protected _property: string;
+
+    /**
+     * Model key
+     * @public
+     */
+    public get key(): string {
+        return this._key;
+    }
 
     constructor(
         name: string,
@@ -70,6 +96,7 @@ export class PropertyModel<T> implements IProperties<T> {
         this.path = path === undefined ? name : path;
         this._subProp = [];
         this._weight = String(this.value);
+        this._key = this.path;
     }
 
     /**
@@ -94,8 +121,14 @@ export class PropertyModel<T> implements IProperties<T> {
             type: this.type,
             value: this.value
         }
+        if (this._description) {
+            item.description = this._description;
+        }
         if (this._title) {
             item.title = this._title;
+        }
+        if (this._property) {
+            item.property = this._property;
         }
         return item;
     }
@@ -126,11 +159,44 @@ export class PropertyModel<T> implements IProperties<T> {
     }
 
     /**
+     * Set description
+     * @public
+     */
+    public setDescription(description: string): void {
+        this._description = description;
+    }
+
+    /**
      * Set title
      * @public
      */
     public setTitle(title: string): void {
         this._title = title;
+    }
+
+    /**
+     * Set property
+     * @public
+     */
+    public setProperty(property: string): void {
+        this._property = property;
+    }
+
+    /**
+     * Update all weight
+     * @public
+     */
+    public update(options: ICompareOptions): void {
+        if (options.idLvl === 2) {
+            this._key = this._description;
+        } else if (options.idLvl === 3) {
+            this._key = this._property;
+        } else {
+            this._key = this.path;
+        }
+        if (!this._key) {
+            this._key = this.path;
+        }
     }
 }
 
@@ -190,14 +256,26 @@ export class AnyPropertyModel extends PropertyModel<any> {
 /**
  * Property Model (type = Array)
  */
-export class ArrayPropertyModel extends PropertyModel<number> {
+export class ArrayPropertyModel<T> extends PropertyModel<number> {
+    private readonly _items: T[];
     constructor(
         name: string,
-        value: number,
+        items: T[],
         lvl?: number,
         path?: string
     ) {
-        super(name, PropertyType.Array, value, lvl, path);
+        super(name, PropertyType.Array, items?.length, lvl, path);
+        this._items = items;
+    }
+
+    /**
+     * Convert class to object
+     * @public
+     */
+    public override toObject(): IProperties<number> {
+        const result = super.toObject();
+        result.items = this._items;
+        return result;
     }
 }
 

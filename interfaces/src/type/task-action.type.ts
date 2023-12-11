@@ -21,7 +21,7 @@ export enum TaskAction {
     DISSOCIATE_TOKEN = 'Dissociate token',
     GRANT_KYC = 'Grant KYC',
     REVOKE_KYC = 'Revoke KYC',
-    DELETE_POLICY = 'Delete policy',
+    DELETE_POLICY = 'Delete a policy',
     CLONE_POLICY = 'Clone policy',
     RESTORE_USER_PROFILE = 'Restore user profile',
     GET_USER_TOPICS = 'Get user topics',

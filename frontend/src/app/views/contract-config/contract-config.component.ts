@@ -54,7 +54,7 @@ export class ContractConfigComponent implements OnInit, OnDestroy {
     ) {
         this.contracts = null;
         this.pageIndex = 0;
-        this.pageSize = 100;
+        this.pageSize = 10;
         this.columns = [
             'contractId',
             'description',

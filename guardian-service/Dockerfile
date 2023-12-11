@@ -49,6 +49,7 @@ RUN node -e "const fs=require('fs'); const input=JSON.parse(fs.readFileSync('pac
 RUN node -e "const fs=require('fs'); const input=JSON.parse(fs.readFileSync('package.json')); input.dependencies['@guardian/common']='file:/tmp/common.tgz'; fs.writeFileSync('package.json', JSON.stringify(input));"
 RUN yarn install
 COPY --from=guardianServiceBuilder /usr/local/guardian-service/dist ./dist
+COPY ./policy_properties.csv ./
 RUN rm /tmp/interfaces.tgz /tmp/common.tgz
 
 CMD yarn start

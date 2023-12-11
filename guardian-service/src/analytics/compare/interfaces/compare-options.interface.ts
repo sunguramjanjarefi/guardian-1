@@ -34,4 +34,10 @@ export interface ICompareOptions {
      * 1 - Standard Registry
      */
     owner?: string;
+    /**
+     * References
+     * 0 - Don't compare
+     * 1 - All UUID
+     */
+    refLvl?: number;
 }

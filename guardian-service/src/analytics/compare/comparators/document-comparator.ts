@@ -353,13 +353,51 @@ export class DocumentComparator {
      * @private
      * @static
      */
+    private static async loadDocumentsByRef(ref: string, options: ICompareOptions): Promise<any[]> {
+        let document: any[];
+
+        const filter = options.owner ? {
+            $or: [{
+                relationships: ref,
+                messageId: {$exists: true, $ne: null}
+            }, {
+                relationships: ref,
+                owner: options.owner
+            }]
+        } : {
+            relationships: ref,
+            messageId: {$exists: true, $ne: null}
+        };
+
+        document = await DatabaseServer.getVCs(filter);
+
+        if (document && document.length) {
+            return document;
+        }
+
+        document = await DatabaseServer.getVPs(filter);
+
+        if (document && document.length) {
+            return document;
+        }
+
+        return [];
+    }
+
+    /**
+     * Load document
+     * @param id
+     * @param options
+     * @private
+     * @static
+     */
     private static async loadDocument(id: string, options: ICompareOptions): Promise<DocumentModel> {
         let document: any;
 
         document = await DatabaseServer.getVCById(id);
 
         if (document) {
-            if (!options.owner || document.messageId || options.owner === document.owner) {
+            if (document.messageId || (options.owner && options.owner === document.owner)) {
                 return new VcDocumentModel(document, options);
             } else {
                 return null;
@@ -369,7 +407,7 @@ export class DocumentComparator {
         document = await DatabaseServer.getVC({ messageId: id });
 
         if (document) {
-            if (!options.owner || document.messageId || options.owner === document.owner) {
+            if (document.messageId || (options.owner && options.owner === document.owner)) {
                 return new VcDocumentModel(document, options);
             } else {
                 return null;
@@ -379,7 +417,7 @@ export class DocumentComparator {
         document = await DatabaseServer.getVPById(id);
 
         if (document) {
-            if (!options.owner || document.messageId || options.owner === document.owner) {
+            if (document.messageId || (options.owner && options.owner === document.owner)) {
                 return new VpDocumentModel(document, options);
             } else {
                 return null;
@@ -389,7 +427,7 @@ export class DocumentComparator {
         document = await DatabaseServer.getVP({ messageId: id });
 
         if (document) {
-            if (!options.owner || document.messageId || options.owner === document.owner) {
+            if (document.messageId || (options.owner && options.owner === document.owner)) {
                 return new VpDocumentModel(document, options);
             } else {
                 return null;
@@ -397,6 +435,61 @@ export class DocumentComparator {
         }
 
         return null;
+    }
+
+    /**
+     * Create document model
+     * @param cacheDocuments
+     * @param cacheSchemas
+     * @param id
+     * @param options
+     * @private
+     * @static
+     */
+    private static async createRelationships(
+        documentModel: DocumentModel,
+        cacheDocuments: Map<string, DocumentModel>,
+        cacheSchemas: Map<string, SchemaModel>,
+        options: ICompareOptions
+    ): Promise<void> {
+        if (options.refLvl === 0) {
+            documentModel.setRelationships([]);
+            return;
+        }
+
+        if (options.refLvl === 1) {
+            //Revert
+            const documents = await DocumentComparator.loadDocumentsByRef(documentModel.messageId, options);
+            const relationshipModels: DocumentModel[] = [];
+            for (const doc of documents) {
+                const item = await DocumentComparator.createDocument(cacheDocuments, cacheSchemas, doc.id, options);
+                if (item) {
+                    relationshipModels.push(item);
+                }
+            }
+            documentModel.setRelationships(relationshipModels);
+        } else if (options.refLvl === 2) {
+            //Merge
+            const documents = await DocumentComparator.loadDocumentsByRef(documentModel.messageId, options);
+            const relationshipModels: DocumentModel[] = [];
+            for (const doc of documents) {
+                const item = await DocumentComparator.createDocument(cacheDocuments, cacheSchemas, doc.id, options);
+                if (item) {
+                    relationshipModels.push(item);
+                }
+            }
+            documentModel.merge(relationshipModels);
+        } else {
+            //Default
+            const relationshipModels: DocumentModel[] = [];
+            for (const relationship of documentModel.relationshipIds) {
+                const item = await DocumentComparator.createDocument(cacheDocuments, cacheSchemas, relationship, options);
+                if (item) {
+                    relationshipModels.push(item);
+                }
+            }
+            documentModel.setRelationships(relationshipModels);
+        }
     }
 
     /**
@@ -426,16 +519,8 @@ export class DocumentComparator {
             return null;
         }
 
-        const relationshipModels: DocumentModel[] = [];
-        for (const relationship of documentModel.relationshipIds) {
-            const r = await DocumentComparator.createDocument(
-                cacheDocuments, cacheSchemas, relationship, options
-            );
-            if (r) {
-                relationshipModels.push(r);
-            }
-        }
-        documentModel.setRelationships(relationshipModels);
+        //Relationships
+        await DocumentComparator.createRelationships(documentModel, cacheDocuments, cacheSchemas, options);
 
         //Schemas
         const schemaModels: SchemaModel[] = [];

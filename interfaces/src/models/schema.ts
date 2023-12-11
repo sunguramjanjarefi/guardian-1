@@ -130,6 +130,7 @@ export class Schema implements ISchema {
     /**
      * Schema constructor
      * @param schema
+     * @param includeSystemProperties
      * @constructor
      */
     constructor(schema?: ISchema, includeSystemProperties: boolean = false) {
@@ -348,9 +349,9 @@ export class Schema implements ISchema {
             f.path = path + f.name;
             if (filter(f)) {
                 result.push(f);
-                if (f.fields) {
-                    this._searchFields(f.fields, filter, result, f.path + '.');
-                }
+            }
+            if (Array.isArray(f.fields)) {
+                this._searchFields(f.fields, filter, result, f.path + '.');
             }
         }
     }

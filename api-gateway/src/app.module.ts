@@ -33,6 +33,8 @@ import { MatchConstraint } from '@helpers/decorators/match.validator';
 import { NotificationService } from '@guardian/common';
 import { NotificationsApi } from '@api/service/notifications';
 import { ApplicationEnvironment } from './environment';
+import { AISuggestionsAPI } from '@api/service/ai-suggestions';
+import { ProjectsAPI } from '@api/service/project';
 
 const JSON_REQUEST_LIMIT = process.env.JSON_REQUEST_LIMIT || '1mb';
 const RAW_REQUEST_LIMIT = process.env.RAW_REQUEST_LIMIT || '1gb';
@@ -92,6 +94,8 @@ const RAW_REQUEST_LIMIT = process.env.RAW_REQUEST_LIMIT || '1gb';
         BrandingApi,
         SuggestionsApi,
         NotificationsApi,
+        AISuggestionsAPI,
+        ProjectsAPI
     ],
     providers: [
         LoggerService,
@@ -124,6 +128,7 @@ export class AppModule {
         consumer.apply(authorizationHelper).forRoutes(SuggestionsApi);
         consumer.apply(authorizationHelper).forRoutes(NotificationsApi);
         consumer.apply(authorizationHelper).forRoutes(TaskApi);
+        consumer.apply(authorizationHelper).forRoutes(AISuggestionsAPI);
 
         consumer.apply(express.json({
             limit: JSON_REQUEST_LIMIT

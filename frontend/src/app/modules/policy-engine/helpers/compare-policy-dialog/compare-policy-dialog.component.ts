@@ -1,10 +1,10 @@
-import { ChangeDetectorRef, Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 @Component({
     selector: 'compare-policy-dialog',
     templateUrl: './compare-policy-dialog.component.html',
-    styleUrls: ['./compare-policy-dialog.component.css']
+    styleUrls: ['./compare-policy-dialog.component.scss'],
 })
 export class ComparePolicyDialog {
     loading = true;
@@ -19,11 +19,12 @@ export class ComparePolicyDialog {
     list2: any[];
 
     constructor(
-        public dialogRef: MatDialogRef<ComparePolicyDialog>,
+        public ref: DynamicDialogRef,
+        public config: DynamicDialogConfig,
         private changeDetector: ChangeDetectorRef,
-        @Inject(MAT_DIALOG_DATA) public data: any) {
-        this.policy = data.policy;
-        this.policies = data.policies || [];
+    ) {
+        this.policy = this.config.data.policy;
+        this.policies = this.config.data.policies || [];
         this.policyId1 = this.policy?.id;
         this.list1 = this.policies;
         this.list2 = this.policies;
@@ -44,7 +45,7 @@ export class ComparePolicyDialog {
     }
 
     onClose(): void {
-        this.dialogRef.close(false);
+        this.ref.close(false);
     }
 
     onCompare() {
@@ -52,17 +53,19 @@ export class ComparePolicyDialog {
             return;
         }
         const policyIds = [this.policyId1, ...this.policyId2];
-        this.dialogRef.close({ policyIds });
+        this.ref.close({policyIds});
     }
 
     onChange() {
         if (this.policyId1) {
-            this.list2 = this.policies.filter(s => s.id !== this.policyId1);
+            this.list2 = this.policies.filter((s) => s.id !== this.policyId1);
         } else {
             this.list2 = this.policies;
         }
         if (this.policyId2 && this.policyId2.length) {
-            this.list1 = this.policies.filter(s => this.policyId2.indexOf(s.id) === -1);
+            this.list1 = this.policies.filter(
+                (s) => this.policyId2.indexOf(s.id) === -1
+            );
         } else {
             this.list1 = this.policies;
         }

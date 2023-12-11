@@ -1,25 +1,25 @@
-<div class="content">
-    <h1 mat-dialog-title>
-        {{title}}
-    </h1>
-    <div mat-dialog-content>
-        <form [formGroup]="dataForm">
-            <mat-form-field *ngFor="let field of fieldsConfig" appearance="outline">
-                <mat-label>
-                    <span *ngIf="field.required">*</span>
-                    {{field.label}}
-                </mat-label>
-                <input matInput type="text" placeholder={{field.placeholder}} [formControlName]="field.name">
-            </mat-form-field>
-            <div mat-dialog-actions>
-                <button mat-raised-button color="primary" [mat-dialog-close]="dataForm.value"
-                    [disabled]="!dataForm.valid">Ok</button>
-                <button mat-button type="button" (click)="onNoClick()">Cancel</button>
-            </div>
-        </form>
-    </div>
-
-    <div *ngIf="loading" class="loading">
-        <mat-spinner></mat-spinner>
+<div class="dialog-body">
+    <form [formGroup]="dataForm" (ngSubmit)="onSubmit()">
+        <div *ngFor="let field of fieldsConfig" class="form-input-container">
+            <label class="form-label"><span *ngIf="field.required">*</span>{{ field.label }}</label>
+            <input type="text" [formControlName]="field.name" pInputText placeholder={{field.placeholder}}/>
+        </div>
+        <div *ngIf="loading" class="loading">
+            <div class="preloader-image preloader-image-l-size"></div>
+        </div>
+    </form>
+</div>
+<div class="dialog-footer">
+    <div class="action-buttons">
+        <div class="cancel-button">
+            <p-button
+                    label="Cancel"
+                    styleClass="p-button-outlined"
+                    (click)="onNoClick()"
+            ></p-button>
+        </div>
+        <div>
+            <p-button label="Ok" [disabled]="!dataForm.valid" (click)="onSubmit()"></p-button>
+        </div>
     </div>
 </div>

@@ -1,0 +1,104 @@
+<ng-container *ngIf="isLogin">
+    <ng-container [ngTemplateOutlet]="remoteButton"></ng-container>
+    <div id="navbar" [class.collapse]="menuCollapsed" (mousemove)="menuCollapsed = false"
+         (mouseleave)="menuCollapsed = smallMenuMode">
+        <ng-container [ngTemplateOutlet]="logotype"></ng-container>
+        <ng-container *ngIf="menuItems">
+            <ng-container [ngTemplateOutlet]="menuBar"></ng-container>
+            <ng-container [ngTemplateOutlet]="footerBar"></ng-container>
+        </ng-container>
+    </div>
+</ng-container>
+
+<ng-template #remoteButton>
+    <div id="remoteButton" [class.collapse-button]="menuCollapsed"
+         (click)="toggleMenuMode()">
+        <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path class="icon-color"
+                  d="M7.28273 0.689065C6.89223 0.298565 6.25903 0.298565 5.86853 0.689065L0.981094 5.58127C0.200694 6.36247 0.201003 7.62827 0.981783 8.40907L5.87213 13.2994C6.26263 13.6899 6.89583 13.6899 7.28633 13.2994C7.67693 12.9089 7.67693 12.2757 7.28633 11.8852L3.10073 7.69956C2.71023 7.30896 2.71023 6.67587 3.10073 6.28536L7.28273 2.10326C7.67323 1.71276 7.67323 1.07956 7.28273 0.689065Z"/>
+        </svg>
+    </div>
+</ng-template>
+
+<ng-template #logotype>
+    <div id="logotype" [routerLink]="'/'">
+        <img id="company-logo" alt="">
+        <span id="company-name" [class.hidden-logotype]="menuCollapsed"></span>
+    </div>
+</ng-template>
+
+<ng-template #menuBar>
+    <div id="menuBar">
+        <ng-container [ngTemplateOutlet]="menuBarItem" [ngTemplateOutletContext]="{barItems: menuItems}"></ng-container>
+    </div>
+
+    <ng-template #menuBarItem let-barItems="barItems">
+        <ng-container *ngFor="let barItem of barItems">
+            <div class="item-block">
+                <div class="item clickable"
+                     [class.current]="!barItem.childItems && activeLink.startsWith(barItem.routerLink)"
+                     (click)="barItem.childItems ? barItem.active = !barItem.active : null"
+                     [routerLink]="!barItem.childItems ? barItem.routerLink : null">
+                    <img *ngIf="barItem.iconUrl" [src]="'/assets/images/icons/' + barItem.iconUrl + '.svg'" alt="">
+                    <div class="span-icon" [class.hidden-logotype]="menuCollapsed">
+                        <span [class.without-icon]="!barItem.iconUrl">{{ barItem.title }}</span>
+                        <img class="smooth-rotate" [class.rotate-180]="barItem.active" *ngIf="barItem.childItems"
+                             src="/assets/images/icons/chevron-white.svg" alt="">
+                    </div>
+                </div>
+                <div *ngIf="!menuCollapsed && barItem.active && barItem.childItems" class="item-container">
+                    <ng-container [ngTemplateOutlet]="menuBarItem"
+                                  [ngTemplateOutletContext]="{barItems: barItem.childItems}"></ng-container>
+                </div>
+            </div>
+        </ng-container>
+    </ng-template>
+</ng-template>
+
+<ng-template #footerBar>
+    <div id="footerBar">
+        <div *ngIf="role !== 'AUDITOR'" class="item background-light border-item"
+             [class.hidden-logotype]="menuCollapsed">
+            <img src="assets/images/icons/money.svg" alt="">
+            <span>Balance
+                <strong *ngIf="balance">{{ balance }}</strong>
+            </span>
+            <div *ngIf="!balance" class="preloader">
+                <div class="preloader-image"></div>
+            </div>
+        </div>
+        <div class="item cursor-pointer" [routerLink]="'/notifications'"
+             [class.current]="activeLink.startsWith('/notifications')">
+            <img src="assets/images/icons/notification.svg" alt="">
+            <div class="collapsed-notify-counter" [class.hidden-logotype]="!menuCollapsed">
+                <app-notification [menuCollapsed]="smallMenuMode"></app-notification>
+            </div>
+            <div class="span-icon" [class.hidden-logotype]="menuCollapsed">
+                <span>Notifications</span>
+                <app-notification [menuCollapsed]="smallMenuMode"></app-notification>
+            </div>
+        </div>
+        <div class="boundary-box">
+            <div [class.current]="activeLink.startsWith('/config') || activeLink.startsWith('/user-profile')"
+                 (click)="goToHomePage()" [class.clickable]="role !== 'AUDITOR'" class="item">
+                <img src="assets/images/icons/user.svg" alt="">
+                <div class="span-icon" [style.display]="menuCollapsed ? 'none' : 'flex'">
+                    <span matTooltip="Open Profile" matTooltipPosition="after">{{ username }}</span>
+                    <div class="flex-column-gap-10">
+                        <i *ngIf="role === 'STANDARD_REGISTRY'"
+                           (click)="goToBrandingPage($event)"
+                           class="pi pi-cog icon-color-grey"
+                           matTooltip="Branding Settings"
+                           matTooltipPosition="after"
+                        ></i>
+                        <i (click)="logOut()"
+                           class="pi pi-sign-out icon-color-grey"
+                           matTooltip="Logout"
+                           matTooltipPosition="after"
+                        ></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

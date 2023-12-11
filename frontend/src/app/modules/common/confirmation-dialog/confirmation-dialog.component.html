@@ -1,6 +1,18 @@
 <h2 mat-dialog-title>{{dialogTitle}}</h2>
-<mat-dialog-content>{{dialogText}}</mat-dialog-content>
-<mat-dialog-actions>
-  <button mat-flat-button [mat-dialog-close]>Cancel</button>
-  <button mat-flat-button color="primary" [mat-dialog-close]="true">OK</button>
-</mat-dialog-actions>
+<div mat-dialog-content class="content">
+    <div>
+        {{ dialogText }}
+    </div>
+    <div mat-dialog-actions>
+        <div class="cancel-button">
+            <p-button
+                    label="Cancel"
+                    styleClass="p-button-outlined"
+                    (click)="onNoClick()"
+            ></p-button>
+        </div>
+        <div>
+            <p-button label="Ok" (click)="onSubmit()"></p-button>
+        </div>
+    </div>
+</div>

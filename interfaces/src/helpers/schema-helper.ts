@@ -23,6 +23,7 @@ export class SchemaHelper {
             pattern: null,
             unit: null,
             unitSystem: null,
+            property: null,
             isArray: null,
             isRef: null,
             readOnly: null,
@@ -66,19 +67,22 @@ export class SchemaHelper {
      * @param name
      * @param property
      * @param required
+     * @param hidden
      * @param url
      */
-    public static parseField(name: string, property: any, required: boolean, url: string): [SchemaField, number] {
-        const field: SchemaField = SchemaHelper.parseProperty(name, property);
+    public static parseField(name: string, prop: any, required: boolean, url: string): [SchemaField, number] {
+        const field: SchemaField = SchemaHelper.parseProperty(name, prop);
         const {
             unit,
             unitSystem,
+            property,
             customType,
             textColor,
             textSize,
             textBold,
             orderPosition,
             isPrivate,
+            hidden,
         } = SchemaHelper.parseFieldComment(field.comment);
         if (field.isRef) {
             const { type } = SchemaHelper.parseRef(field.type);
@@ -89,6 +93,7 @@ export class SchemaHelper {
         } else {
             field.unit = unit ? String(unit) : null;
             field.unitSystem = unitSystem ? String(unitSystem) : null;
+            field.property = property ? String(property) : null;
             field.textColor = textColor;
             field.textSize = textSize;
             field.textBold = textBold;
@@ -96,6 +101,7 @@ export class SchemaHelper {
         field.customType = customType ? String(customType) : null;
         field.isPrivate = isPrivate;
         field.required = required;
+        field.hidden = !!hidden;
         return [field, orderPosition];
     }
 
@@ -104,6 +110,7 @@ export class SchemaHelper {
      * @param field
      * @param name
      * @param contextURL
+     * @param orderPosition
      */
     public static buildField(field: SchemaField, name: string, contextURL: string, orderPosition?: number): any {
         let item: any;
@@ -820,6 +827,9 @@ export class SchemaHelper {
         if (field.unitSystem) {
             comment.unitSystem = field.unitSystem;
         }
+        if (field.property) {
+            comment.property = field.property;
+        }
         if (field.customType) {
             comment.customType = field.customType;
         }
@@ -834,6 +844,9 @@ export class SchemaHelper {
         }
         if (Number.isInteger(orderPosition) && orderPosition >= 0) {
             comment.orderPosition = orderPosition;
+        }
+        if (field.hidden) {
+            comment.hidden = !!field.hidden;
         }
         return JSON.stringify(comment);
     }

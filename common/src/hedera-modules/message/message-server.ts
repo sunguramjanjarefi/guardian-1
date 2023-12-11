@@ -334,6 +334,7 @@ export class MessageServer {
         }
 
         const { operatorId, operatorKey, dryRun } = this.clientOptions;
+
         const workers = new Workers();
         const { topicId, message } = await workers.addRetryableTask({
             type: WorkerTaskType.GET_TOPIC_MESSAGE,
@@ -554,6 +555,7 @@ export class MessageServer {
             if (messageId && typeof messageId === 'string') {
                 const timeStamp = messageId.trim();
                 const { operatorId, operatorKey, dryRun } = this.clientOptions;
+
                 const workers = new Workers();
                 const { topicId } = await workers.addRetryableTask({
                     type: WorkerTaskType.GET_TOPIC_MESSAGE,

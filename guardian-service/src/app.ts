@@ -45,6 +45,7 @@ import { ipfsAPI } from '@api/ipfs.service';
 import { artifactAPI } from '@api/artifact.service';
 import { sendKeysToVault } from '@helpers/send-keys-to-vault';
 import { contractAPI } from '@api/contract.service';
+// import { analyticsAPI } from '@api/analytics.service';
 import { PolicyServiceChannelsContainer } from '@helpers/policy-service-channels-container';
 import { PolicyEngine } from '@policy-engine/policy-engine';
 import { modulesAPI } from '@api/module.service';
@@ -65,6 +66,9 @@ import { AppModule } from './app.module';
 import { analyticsAPI } from '@api/analytics.service';
 import { GridFSBucket } from 'mongodb';
 import { suggestionsAPI } from '@api/suggestions.service';
+import { setDefaultPolicyCategories } from '@api/helpers/set-default-policy-categories';
+import { AISuggestionsService } from '@helpers/ai-suggestions';
+import { projectsAPI } from '@api/projects.service';
 
 export const obj = {};
 
@@ -87,7 +91,8 @@ Promise.all([
         'v2-11-0',
         'v2-12-0',
         'v2-13-0',
-        'v2-16-0'
+        'v2-16-0',
+        'v2-17-0'
     ]),
     MessageBrokerChannel.connect('GUARDIANS_SERVICE'),
     NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
@@ -131,6 +136,7 @@ Promise.all([
 
     }
 
+    await new AISuggestionsService().setConnection(cn).init();
     await state.updateState(ApplicationStates.STARTED);
 
     const didDocumentRepository = new DataBaseHelper(DidDocument);
@@ -164,7 +170,8 @@ Promise.all([
         await themeAPI();
         await wizardAPI();
         await brandingAPI(brandingRepository);
-        await suggestionsAPI()
+        await suggestionsAPI();
+        await projectsAPI();
     } catch (error) {
         console.error(error.message);
         process.exit(0);
@@ -284,6 +291,7 @@ Promise.all([
         }
 
         try {
+            await setDefaultPolicyCategories();
             await setDefaultSchema();
         } catch (error) {
             console.error(error.message);

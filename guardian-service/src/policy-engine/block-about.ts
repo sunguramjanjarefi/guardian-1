@@ -1104,6 +1104,12 @@ export const BlockAbout = {
                 'type': 'Checkbox',
             },
             {
+                'name': 'sendEmail',
+                'label': 'Turn on email notifications',
+                'title': 'Turn on email notifications',
+                'type': 'Checkbox',
+            },
+            {
                 'name': 'user',
                 'label': 'User',
                 'title': 'User',

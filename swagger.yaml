@@ -193,76 +193,531 @@ paths:
   /analytics/search/policies:
     post:
       operationId: AnalyticsApi_searchPolicies
+      summary: Search policies.
+      description: >-
+        Search policies. Only users with the Standard Registry role are allowed
+        to make the request.
       parameters: []
+      requestBody:
+        required: true
+        description: Filters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterSearchPoliciesDTO'
+            examples:
+              Filter:
+                value:
+                  policyId: '000000000000000000000000'
       responses:
         '200':
-          description: ''
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchPoliciesDTO'
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: &ref_0
         - analytics
+      security:
+        - bearerAuth: [ ]
   /analytics/compare/policies:
     post:
       operationId: AnalyticsApi_comparePolicies
+      summary: Compare policies.
+      description: >-
+        Compare policies. Only users with the Standard Registry role are allowed
+        to make the request.
       parameters: []
+      requestBody:
+        required: true
+        description: Filters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterPoliciesDTO'
+            examples:
+              Filter1:
+                value:
+                  policyId1: '000000000000000000000001'
+                  policyId2: '000000000000000000000002'
+                  eventsLvl: '0'
+                  propLvl: '0'
+                  childrenLvl: '0'
+                  idLvl: '0'
+              Filter2:
+                value:
+                  policyIds:
+                    - '000000000000000000000001'
+                    - '000000000000000000000002'
+                  eventsLvl: '0'
+                  propLvl: '0'
+                  childrenLvl: '0'
+                  idLvl: '0'
       responses:
         '200':
-          description: ''
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComparePoliciesDTO'
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_0
+      security:
+        - bearerAuth: [ ]
   /analytics/compare/modules:
     post:
       operationId: AnalyticsApi_compareModules
+      summary: Compare modules.
+      description: >-
+        Compare modules. Only users with the Standard Registry role are allowed
+        to make the request.
       parameters: []
+      requestBody:
+        required: true
+        description: Filters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterModulesDTO'
+            examples:
+              Filter:
+                value:
+                  moduleId1: '000000000000000000000001'
+                  moduleId2: '000000000000000000000002'
+                  propLvl: '0'
+                  childrenLvl: '0'
+                  idLvl: '0'
       responses:
         '200':
-          description: ''
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompareModulesDTO'
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_0
+      security:
+        - bearerAuth: [ ]
   /analytics/compare/schemas:
     post:
       operationId: AnalyticsApi_compareSchemas
+      summary: Compare schemas.
+      description: >-
+        Compare schemas. Only users with the Standard Registry role are allowed
+        to make the request.
       parameters: []
+      requestBody:
+        required: true
+        description: Filters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterSchemasDTO'
+            examples:
+              Filter:
+                value:
+                  schemaId1: '000000000000000000000001'
+                  schemaId2: '000000000000000000000002'
+                  idLvl: '0'
       responses:
         '200':
-          description: ''
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompareSchemasDTO'
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_0
+      security:
+        - bearerAuth: [ ]
   /analytics/compare/documents:
     post:
       operationId: AnalyticsApi_compareDocuments
+      summary: Compare documents.
+      description: >-
+        Compare documents. Only users with the Standard Registry role are
+        allowed to make the request.
       parameters: []
+      requestBody:
+        required: true
+        description: Filters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterDocumentsDTO'
+            examples:
+              Filter1:
+                value:
+                  documentId1: '000000000000000000000001'
+                  documentId2: '000000000000000000000002'
+              Filter2:
+                value:
+                  documentIds:
+                    - '000000000000000000000001'
+                    - '000000000000000000000002'
       responses:
         '200':
-          description: ''
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompareDocumentsDTO'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_0
+  /analytics/compare/tools:
+    post:
+      operationId: AnalyticsApi_compareTools
+      summary: Compare tools.
+      description: >-
+        Compare tools. Only users with the Standard Registry role are allowed to
+        make the request.
+      parameters: [ ]
+      requestBody:
+        required: true
+        description: Filters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterToolsDTO'
+            examples:
+              Filter1:
+                value:
+                  toolId1: '000000000000000000000001'
+                  toolId2: '000000000000000000000002'
+              Filter2:
+                value:
+                  toolIds:
+                    - '000000000000000000000001'
+                    - '000000000000000000000002'
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompareToolsDTO'
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
+      tags: *ref_0
+      security:
+        - bearerAuth: [ ]
   /analytics/compare/policies/export:
     post:
       operationId: AnalyticsApi_comparePoliciesExport
+      summary: Compare policies.
+      description: >-
+        Compare policies. Only users with the Standard Registry role are allowed
+        to make the request.
       parameters: []
+      requestBody:
+        required: true
+        description: Filters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterPoliciesDTO'
+            examples:
+              Filter1:
+                value:
+                  policyId1: '000000000000000000000001'
+                  policyId2: '000000000000000000000002'
+                  eventsLvl: '0'
+                  propLvl: '0'
+                  childrenLvl: '0'
+                  idLvl: '0'
+              Filter2:
+                value:
+                  policyIds:
+                    - '000000000000000000000001'
+                    - '000000000000000000000002'
+                  eventsLvl: '0'
+                  propLvl: '0'
+                  childrenLvl: '0'
+                  idLvl: '0'
       responses:
         '200':
-          description: ''
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_0
+      security:
+        - bearerAuth: [ ]
   /analytics/compare/modules/export:
     post:
       operationId: AnalyticsApi_compareModulesExport
+      summary: Compare modules.
+      description: >-
+        Compare modules. Only users with the Standard Registry role are allowed
+        to make the request.
       parameters: []
+      requestBody:
+        required: true
+        description: Filters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterModulesDTO'
+            examples:
+              Filter:
+                value:
+                  moduleId1: '000000000000000000000001'
+                  moduleId2: '000000000000000000000002'
+                  propLvl: '0'
+                  childrenLvl: '0'
+                  idLvl: '0'
       responses:
         '200':
-          description: ''
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_0
+      security:
+        - bearerAuth: [ ]
   /analytics/compare/schemas/export:
     post:
       operationId: AnalyticsApi_compareSchemasExport
+      summary: Compare schemas.
+      description: >-
+        Compare schemas. Only users with the Standard Registry role are allowed
+        to make the request.
       parameters: []
+      requestBody:
+        required: true
+        description: Filters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterSchemasDTO'
+            examples:
+              Filter:
+                value:
+                  schemaId1: '000000000000000000000001'
+                  schemaId2: '000000000000000000000002'
+                  idLvl: '0'
       responses:
         '200':
-          description: ''
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_0
+      security:
+        - bearerAuth: [ ]
   /analytics/compare/documents/export:
     post:
       operationId: AnalyticsApi_compareDocumentsExport
-      parameters: []
+      summary: Compare documents.
+      description: >-
+        Compare documents. Only users with the Standard Registry role are
+        allowed to make the request.
+      parameters: [ ]
+      requestBody:
+        required: true
+        description: Filters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterDocumentsDTO'
+            examples:
+              Filter1:
+                value:
+                  documentId1: '000000000000000000000001'
+                  documentId2: '000000000000000000000002'
+              Filter2:
+                value:
+                  documentIds:
+                    - '000000000000000000000001'
+                    - '000000000000000000000002'
       responses:
         '200':
-          description: ''
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
       tags: *ref_0
+      security:
+        - bearerAuth: [ ]
+  /analytics/compare/tools/export:
+    post:
+      operationId: AnalyticsApi_compareToolsExport
+      summary: Compare tools.
+      description: >-
+        Compare tools. Only users with the Standard Registry role are allowed to
+        make the request.
+      parameters: []
+      requestBody:
+        required: true
+        description: Filters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterToolsDTO'
+            examples:
+              Filter1:
+                value:
+                  toolId1: '000000000000000000000001'
+                  toolId2: '000000000000000000000002'
+              Filter2:
+                value:
+                  toolIds:
+                    - '000000000000000000000001'
+                    - '000000000000000000000002'
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
+      tags: *ref_0
+      security:
+        - bearerAuth: [ ]
+  /analytics/search/blocks:
+    post:
+      operationId: AnalyticsApi_searchBlocks
+      summary: Search same blocks.
+      description: >-
+        Search same blocks. Only users with the Standard Registry role are
+        allowed to make the request.
+      parameters: [ ]
+      requestBody:
+        required: true
+        description: Filters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterSearchPoliciesDTO'
+            examples:
+              Filter:
+                value:
+                  uuid: ''
+                  config: { }
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchPoliciesDTO'
+        '401':
+          description: Unauthorized.
+        '403':
+          description: Forbidden.
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
+      tags: *ref_0
+      security:
+        - bearerAuth: [ ]
   /artifacts:
     get:
       tags:
@@ -2507,6 +2962,63 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /policies/categories:
+    get:
+      operationId: PolicyApi_getPolicyCategoriesAsync
+      summary: Get all categories
+      description: Get all categories
+      parameters: [ ]
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PolicyCategoryDTO'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
+      tags: &ref_4
+        - policies
+  /policies/filtered-policies:
+    post:
+      operationId: PolicyApi_getPoliciesByCategory
+      summary: Get filtered policies
+      description: Get policies by categories and text
+      parameters: [ ]
+      requestBody:
+        required: true
+        description: Filters
+        content:
+          application/json:
+            schema:
+              type: string
+            examples:
+              Filter1:
+                value:
+                  categoryIds:
+                    - '000000000000000000000001'
+                    - '000000000000000000000002'
+                  text: abc
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
+      tags: *ref_4
   /policies/push/{policyId}:
     post:
       operationId: PolicyApi_updatePolicyAsync
@@ -2525,8 +3037,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalServerErrorDTO'
-      tags: &ref_4
-        - policies
+      tags: *ref_4
       security:
         - bearerAuth: []
         - bearerAuth: []
@@ -2818,6 +3329,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /policies/{policyId}/navigation:
+    get:
+      operationId: PolicyApi_getPolicyNavigation
+      summary: Returns a policy navigation.
+      description: Returns a policy navigation.
+      parameters: [ ]
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
+      tags: *ref_4
+      security:
+        - bearerAuth: [ ]
+        - bearerAuth: [ ]
   /policies/{policyId}/groups:
     get:
       tags:
@@ -3900,7 +4434,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SchemaDTO'
+                type: array
+                items:
+                  $ref: '#/components/schemas/SchemaDTO'
         '401':
           description: Unauthorized.
         '403':
@@ -4118,7 +4654,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SchemaDTO'
+                type: array
+                items:
+                  $ref: '#/components/schemas/SchemaDTO'
         '401':
           description: Unauthorized.
         '403':
@@ -6918,6 +7456,137 @@ paths:
       security:
         - bearer: []
         - bearerAuth: []
+  /ai-suggestions/ask:
+    get:
+      operationId: AISuggestionsAPI_getAIAnswer
+      summary: Get methodology suggestion
+      description: Returns AI response to the current question
+      parameters:
+        - name: q
+          required: true
+          in: path
+          description: The question of choosing a methodology
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                example: ACM0001, ACM0002, ACM0006, ACM0007, ACM0018
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
+      tags: &ref_9
+        - ai-suggestions
+  /ai-suggestions/rebuild-vector:
+    put:
+      operationId: AISuggestionsAPI_rebuildVector
+      summary: Rebuild AI vector
+      description: Rebuilds vector based on policy data in the DB
+      parameters: [ ]
+      responses:
+        '200':
+          description: ''
+      tags: *ref_9
+  /projects/search:
+    post:
+      operationId: ProjectsAPI_projectSearch
+      summary: Search projects
+      description: Search projects by filters
+      parameters: [ ]
+      requestBody:
+        required: true
+        description: The question of choosing a methodology
+        content:
+          application/json:
+            schema:
+              type: string
+            examples:
+              q:
+                value: >-
+                  What methodology can I use for production of electricity using
+                  renewable energy technologies?
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectDTO'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
+      tags: &ref_10
+        - projects
+  /projects/compare/documents:
+    post:
+      operationId: ProjectsAPI_compareDocuments
+      summary: Compare documents.
+      description: Compare documents.
+      parameters: [ ]
+      requestBody:
+        required: true
+        description: Filters.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterDocumentsDTO'
+            examples:
+              Filter1:
+                value:
+                  documentId1: '000000000000000000000001'
+                  documentId2: '000000000000000000000002'
+              Filter2:
+                value:
+                  documentIds:
+                    - '000000000000000000000001'
+                    - '000000000000000000000002'
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompareDocumentsDTO'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
+      tags: *ref_10
+  /projects/properties:
+    get:
+      operationId: ProjectsAPI_getPolicyProperties
+      summary: Get all properties
+      description: Get all properties
+      parameters: [ ]
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PropertiesDTO'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDTO'
+      tags: *ref_10
   /schemas/type/{type}:
     get:
       tags:
@@ -7293,7 +7962,7 @@ info:
     the heart of the Guardian solution is a sophisticated Policy Workflow Engine
     (PWE) that enables applications to offer a requirements-based tokenization
     implementation.
-  version: 2.17.0-prerelease
+  version: 2.17.0
   contact:
     name: API developer
     url: https://envisionblockchain.com
@@ -7547,6 +8216,219 @@ components:
         - balance
         - unit
         - user
+    FilterSearchPoliciesDTO:
+      type: object
+      properties:
+        policyId:
+          type: string
+      required:
+        - policyId
+    SearchPoliciesDTO:
+      type: object
+      properties:
+        target:
+          type: object
+        result:
+          type: object
+      required:
+        - target
+        - result
+    FilterPoliciesDTO:
+      type: object
+      properties:
+        policyId1:
+          type: string
+        policyId2:
+          type: string
+        policyIds:
+          type: string
+        eventsLvl:
+          type: number
+        propLvl:
+          type: number
+        childrenLvl:
+          type: number
+        idLvl:
+          type: number
+      required:
+        - policyId1
+        - policyId2
+        - policyIds
+        - eventsLvl
+        - propLvl
+        - childrenLvl
+        - idLvl
+    ComparePoliciesDTO:
+      type: object
+      properties:
+        blocks:
+          type: object
+        groups:
+          type: object
+        left:
+          type: object
+        right:
+          type: object
+        roles:
+          type: object
+        tokens:
+          type: object
+        topics:
+          type: object
+        total:
+          type: object
+      required:
+        - blocks
+        - groups
+        - left
+        - right
+        - roles
+        - tokens
+        - topics
+        - total
+    FilterModulesDTO:
+      type: object
+      properties:
+        moduleId1:
+          type: string
+        moduleId2:
+          type: string
+        eventsLvl:
+          type: number
+        propLvl:
+          type: number
+        childrenLvl:
+          type: number
+        idLvl:
+          type: number
+      required:
+        - moduleId1
+        - moduleId2
+        - eventsLvl
+        - propLvl
+        - childrenLvl
+        - idLvl
+    CompareModulesDTO:
+      type: object
+      properties:
+        blocks:
+          type: object
+        left:
+          type: object
+        right:
+          type: object
+        inputEvents:
+          type: object
+        outputEvents:
+          type: object
+        variables:
+          type: object
+        total:
+          type: object
+      required:
+        - blocks
+        - left
+        - right
+        - inputEvents
+        - outputEvents
+        - variables
+        - total
+    FilterSchemasDTO:
+      type: object
+      properties:
+        schemaId1:
+          type: string
+        schemaId2:
+          type: string
+        idLvl:
+          type: number
+      required:
+        - schemaId1
+        - schemaId2
+        - idLvl
+    CompareSchemasDTO:
+      type: object
+      properties:
+        fields:
+          type: object
+        left:
+          type: object
+        right:
+          type: object
+        total:
+          type: object
+      required:
+        - fields
+        - left
+        - right
+        - total
+    FilterDocumentsDTO:
+      type: object
+      properties:
+        documentId1:
+          type: string
+        documentId2:
+          type: string
+        documentIds:
+          type: string
+      required:
+        - documentId1
+        - documentId2
+        - documentIds
+    CompareDocumentsDTO:
+      type: object
+      properties:
+        documents:
+          type: object
+        left:
+          type: object
+        right:
+          type: object
+        total:
+          type: object
+      required:
+        - documents
+        - left
+        - right
+        - total
+    FilterToolsDTO:
+      type: object
+      properties:
+        toolId1:
+          type: string
+        toolId2:
+          type: string
+        toolIds:
+          type: string
+      required:
+        - toolId1
+        - toolId2
+        - toolIds
+    CompareToolsDTO:
+      type: object
+      properties:
+        blocks:
+          type: object
+        left:
+          type: object
+        right:
+          type: object
+        inputEvents:
+          type: object
+        outputEvents:
+          type: object
+        variables:
+          type: object
+        total:
+          type: object
+      required:
+        - blocks
+        - left
+        - right
+        - inputEvents
+        - outputEvents
+        - variables
+        - total
     ArtifactDTOItem:
       type: object
       properties:
@@ -7573,6 +8455,19 @@ components:
           type: string
       required:
         - contractId
+    PolicyCategoryDTO:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+      required:
+        - id
+        - name
+        - type
     SchemaDTO:
       type: object
       properties:
@@ -7613,6 +8508,52 @@ components:
         - hash
         - status
         - topicId
+        - version
+        - owner
+        - messageId
+    TaskDTO:
+      type: object
+      properties:
+        taskId:
+          type: string
+        expectation:
+          type: number
+      required:
+        - taskId
+        - expectation
+    VersionSchemaDTO:
+      type: object
+      properties:
+        version:
+          type: string
+      required:
+        - version
+    MessageSchemaDTO:
+      type: object
+      properties:
+        messageId:
+          type: string
+      required:
+        - messageId
+    ExportSchemaDTO:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        version:
+          type: string
+        owner:
+          type: string
+        messageId:
+          type: string
+      required:
+        - id
+        - name
+        - description
         - version
         - owner
         - messageId
@@ -7746,6 +8687,44 @@ components:
         - progress
         - type
         - taskId
+    ProjectDTO:
+      type: object
+      properties:
+        id:
+          type: string
+        policyId:
+          type: string
+        policyName:
+          type: string
+        registered:
+          type: string
+        title:
+          type: string
+        companyName:
+          type: string
+        sectoralScope:
+          type: string
+      required:
+        - id
+        - policyId
+        - policyName
+        - registered
+        - title
+        - companyName
+        - sectoralScope
+    PropertiesDTO:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        value:
+          type: string
+      required:
+        - id
+        - title
+        - value
     Credentials:
       type: object
       required:

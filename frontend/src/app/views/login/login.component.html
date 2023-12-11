@@ -1,63 +1,44 @@
-<div class="content login">
-    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-        <mat-form-field class="example-full-width" appearance="outline">
-            <mat-label>Username</mat-label>
-            <input matInput formControlName="login">
-            <span *ngIf="showLoginRequiredError" class="field-error">
-                Value is required
-            </span>
-        </mat-form-field>
-
-        <div class="password-control">
-            <mat-form-field class="example-full-width" appearance="outline">
-                <mat-label>Password</mat-label>
-                <input matInput formControlName="password" [type]="passFieldType">
-                <span *ngIf="showPasswordRequiredError" class="field-error">
-                    Value is required
-                </span>
-            </mat-form-field>
-
-            <mat-icon
-                *ngIf="showPasswordValue; else hidePassBtn"
-                class="eye-icon"
-                (click)="togglePasswordShow()"
-            >
-                 visibility_on
-            </mat-icon>
-
-            <ng-template #hidePassBtn>
-                <mat-icon class="eye-icon" (click)="togglePasswordShow()">visibility_off</mat-icon>
-            </ng-template>
+<div class="login-container">
+    <div style="width: 50vw; height: 100%; background: var(--linear-gradient);">
+        <img class="background-image" [src]="backgroundImageData">
+    </div>
+    <div class="login-form" [class.w-100]="brandingLoading">
+        <div *ngIf="!brandingLoading && !loading" class="form-container">
+            <h1>Welcome<br>to the {{ companyName }}</h1>
+            <form [formGroup]="loginForm">
+                <div class="form-input-container">
+                    <label class="p-field-label" for="login">Username</label>
+                    <input placeholder="Enter a Username" type="text" id="login" pInputText formControlName="login"
+                           class="p-field-input"/>
+                </div>
+                <div class="form-input-container">
+                    <label class="p-field-label" for="password">Password</label>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <input #password placeholder="Password" id="password" pPassword [showPassword]="false"
+                               [feedback]="false"
+                               formControlName="password" class="p-field-input"/>
+                        <button style="position: absolute; right: 20%;"
+                                class="p-button-rounded p-button-secondary p-button-text" pButton [icon]="'pi pi-eye'"
+                                (click)="password.type === 'password' ? password.type = 'text' : password.type = 'password'"></button>
+                    </div>
+                </div>
+                <div class="forgot-password-button">
+                    <span (click)="forgotPasswordInit()" class="primary-text-button">Forgot password</span>
+                    <div class="wrong-notification" *ngIf="wrongNameOrPassword">
+                        Wrong Username or Password
+                    </div>
+                </div>
+                <div style="display: flex; column-gap: 10px; align-items: center;">
+                    <button pButton
+                            [disabled]="!this.loginForm.controls['login'].value || !this.loginForm.controls['password'].value"
+                            class="button full-width" (click)="onLogin()" label="Log In"></button>
+                </div>
+                <div class="sign-up">
+                    <span>Don’t have an Account?</span>
+                    <span (click)="signUpInit()" class="primary-text-button">Sign Up</span>
+                </div>
+            </form>
         </div>
-
-        <div class="login__footer">
-            <button mat-raised-button type="submit" color="primary" [disabled]="!loginForm.valid">
-                Log In
-            </button>
-
-            <div *ngIf="isMeecoLoginAllowed" class="login-btns__separator">
-                <div class="separator-line"></div>
-                <span>OR</span>
-                <div class="separator-line"></div>
-            </div>
-
-            <button
-                mat-button
-                *ngIf="isMeecoLoginAllowed"
-                type="button"
-                class="meeco-button"
-                (click)="onMeecoLogin()"
-                [disabled]="shouldDisableMeecoBtn"
-            >
-                <img src="/assets/meeco.svg" class="meeco-button__logo" />
-                {{ meecoBtnTitle }}
-            </button>
-        </div>
-
-        <a [routerLink]="['/register']" class="create-link">Create new <mat-icon>chevron_right</mat-icon></a>
-    </form>
-
-    <div *ngIf="loading" class="loading">
-        <mat-spinner></mat-spinner>
+        <div *ngIf="loading" class="preloader preloader-image-l-size"></div>
     </div>
 </div>

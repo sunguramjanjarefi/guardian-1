@@ -1,0 +1,11 @@
+<div
+        class="menu"
+        id="top-menu"
+        [attr.background]="whiteMenuActive ? 'white' : 'transparent'"
+>
+    <div class="logotype">
+        <span>{{ applicationName }}</span>
+    </div>
+    <button class="login-button" (click)="navigateToLogin()">Login / Join</button>
+</div>
+<router-outlet></router-outlet>

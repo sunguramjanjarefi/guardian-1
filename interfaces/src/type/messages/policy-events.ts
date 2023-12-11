@@ -15,6 +15,7 @@ export enum PolicyEvents {
     GET_BLOCK_DATA_BY_TAG = 'policy-event-get-block-data-by-tag',
     SET_BLOCK_DATA = 'policy-event-set-block-data',
     SET_BLOCK_DATA_BY_TAG = 'policy-event-set-block-data-by-tag',
+    GET_POLICY_NAVIGATION = 'policy-event-get-policy-navigation',
     GET_ROOT_BLOCK_DATA = 'policy-event-get-root-block-data',
     GET_POLICY_GROUPS = 'policy-event-get-policy-groups',
     SELECT_POLICY_GROUP = 'policy-event-select-policy-groups',

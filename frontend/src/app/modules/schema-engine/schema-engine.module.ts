@@ -28,6 +28,14 @@ import { ExportSchemaDialog } from './export-schema-dialog/export-schema-dialog.
 import { SchemaFieldConfigurationComponent } from './schema-field-configuration/schema-field-configuration.component';
 import { EnumEditorDialog } from './enum-editor-dialog/enum-editor-dialog.component';
 import { CompareSchemaDialog } from './compare-schema-dialog/compare-schema-dialog.component';
+import { ButtonModule } from 'primeng/button';
+import { TabViewModule } from 'primeng/tabview';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { CheckboxModule } from 'primeng/checkbox';
+import { DropdownModule } from 'primeng/dropdown';
+import { DeleteSchemaDialogComponent } from './delete-schema-dialog/delete-schema-dialog.component';
+import { ServiceUnavailableDialog } from './service-unavailable-dialog/service-unavailable-dialog.component';
 
 @NgModule({
     declarations: [
@@ -45,6 +53,8 @@ import { CompareSchemaDialog } from './compare-schema-dialog/compare-schema-dial
         EnumEditorDialog,
         CompareSchemaDialog,
         GeojsonTypeComponent,
+        DeleteSchemaDialogComponent,
+        ServiceUnavailableDialog
     ],
     imports: [
         CommonModule,
@@ -58,6 +68,12 @@ import { CompareSchemaDialog } from './compare-schema-dialog/compare-schema-dial
         CodemirrorModule,
         ArtifactEngineModule,
         GoogleMapsModule,
+        ButtonModule,
+        TabViewModule,
+        InputTextModule,
+        InputTextareaModule,
+        CheckboxModule,
+        DropdownModule,
     ],
     exports: [
         SchemaDialog,
@@ -72,4 +88,5 @@ import { CompareSchemaDialog } from './compare-schema-dialog/compare-schema-dial
         SchemaFieldConfigurationComponent,
     ],
 })
-export class SchemaEngineModule { }
+export class SchemaEngineModule {
+}

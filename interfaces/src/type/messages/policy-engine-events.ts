@@ -28,6 +28,7 @@ export enum PolicyEngineEvents {
     POLICY_IMPORT_MESSAGE_ASYNC = 'policy-engine-event-policy-import-message-async',
     GET_POLICIES = 'policy-engine-event-get-policies',
     GET_POLICY = 'policy-engine-event-get-policy',
+    GET_POLICY_NAVIGATION = 'policy-engine-event-get-policy-navigation',
     GET_BLOCK_PARENTS = 'policy-engine-event-get-block-parents',
     BLOCK_ABOUT = 'policy-engine-event-block-about',
     GET_VIRTUAL_USERS = 'policy-engine-event-get-virtual-users',
@@ -42,5 +43,8 @@ export enum PolicyEngineEvents {
     CLONE_POLICY_ASYNC = 'policy-engine-event-clone-policy-async',
     GET_TOKENS_MAP = 'policy-engine-event-get-tokens-map',
     SET_MULTI_POLICY = 'policy-engine-event-set-multi-policy',
-    GET_MULTI_POLICY = 'policy-engine-event-get-multi-policy'
+    GET_MULTI_POLICY = 'policy-engine-event-get-multi-policy',
+    GET_POLICIES_BY_CATEGORY = 'policy-engine-event-get-policies-by-category',
+    GET_PUBLISH_POLICIES = 'policy-engine-event-get-publish-policies',
+    GET_FIELDS_DESCRIPTIONS = 'policy-engine-event-get-fields-descriptions',
 }

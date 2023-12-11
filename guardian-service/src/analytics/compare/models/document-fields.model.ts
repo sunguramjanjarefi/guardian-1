@@ -94,10 +94,22 @@ export class DocumentFieldsModel {
             for (const schema of schemas) {
                 const field = schema.getField(path);
                 if (field) {
-                    data.setTitle(field.description);
+                    data.setDescription(field.description);
+                    data.setTitle(field.title);
+                    data.setProperty(field.property);
                     continue;
                 }
             }
+        }
+    }
+
+    /**
+     * Update all weight
+     * @public
+     */
+    public update(options: ICompareOptions): void {
+        for (const data of this.fields) {
+            data.update(options);
         }
     }
 
@@ -107,6 +119,17 @@ export class DocumentFieldsModel {
      */
     public getFieldsList(): PropertyModel<any>[] {
         return this.fields.slice();
+    }
+
+    /**
+     * Merge fields
+     * @param fields - models
+     * @public
+     */
+    public merge(doc: DocumentFieldsModel): void {
+        for (const field of doc.fields) {
+            this.fields.push(field);
+        }
     }
 
     /**
@@ -169,7 +192,7 @@ export class DocumentFieldsModel {
         }
         if (value && typeof value === 'object') {
             if (Array.isArray(value)) {
-                fields.push(new ArrayPropertyModel(name, value.length, lvl, path));
+                fields.push(new ArrayPropertyModel(name, value, lvl, path));
                 for (let index = 0; index < value.length; index++) {
                     DocumentFieldsModel.createField(String(index), value[index], lvl + 1, `${path}.${index}`, fields);
                 }

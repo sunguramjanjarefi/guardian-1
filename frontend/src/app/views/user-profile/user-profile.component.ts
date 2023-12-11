@@ -1,8 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+    AbstractControl,
+    FormControl,
+    FormGroup,
+    Validators,
+} from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, Subscription } from 'rxjs';
-import { IUser, Token, SchemaEntity, Schema, TagType, SchemaHelper, IStandardRegistryResponse, IPolicy } from '@guardian/interfaces';
+import {
+    IUser,
+    Token,
+    SchemaEntity,
+    Schema,
+    TagType,
+    SchemaHelper,
+    IStandardRegistryResponse,
+    IPolicy,
+} from '@guardian/interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
 //services
 import { AuthService } from '../../services/auth.service';
@@ -20,9 +34,12 @@ import { ContractService } from '../../services/contract.service';
 import { VCViewerDialog } from '../../modules/schema-engine/vc-dialog/vc-dialog.component';
 import { RetireTokenDialogComponent } from 'src/app/components/retire-token-dialog/retire-token-dialog.component';
 import { noWhitespaceValidator } from 'src/app/validators/no-whitespace-validator';
+import { DialogService } from 'primeng/dynamicdialog';
 
 enum OperationMode {
-    None, Generate, Associate
+    None,
+    Generate,
+    Associate,
 }
 
 /**
@@ -31,7 +48,7 @@ enum OperationMode {
 @Component({
     selector: 'app-user-profile',
     templateUrl: './user-profile.component.html',
-    styleUrls: ['./user-profile.component.scss']
+    styleUrls: ['./user-profile.component.scss'],
 })
 export class UserProfileComponent implements OnInit {
     loading: boolean = true;
@@ -57,7 +74,10 @@ export class UserProfileComponent implements OnInit {
     hederaForm = new FormGroup({
         standardRegistry: new FormControl('', [Validators.required]),
         id: new FormControl('', [Validators.required, noWhitespaceValidator()]),
-        key: new FormControl('', [Validators.required, noWhitespaceValidator()]),
+        key: new FormControl('', [
+            Validators.required,
+            noWhitespaceValidator(),
+        ]),
     });
 
     filtersForm = new FormGroup({
@@ -72,7 +92,7 @@ export class UserProfileComponent implements OnInit {
         'frozen',
         'kyc',
         'policies',
-        'tags'
+        'tags',
     ];
 
     displayedColumnsContractRequests: string[] = [
@@ -81,7 +101,7 @@ export class UserProfileComponent implements OnInit {
         'oppositeTokenId',
         'baseTokenCount',
         'oppositeTokenCount',
-        'cancel'
+        'cancel',
     ];
 
     private interval: any;
@@ -99,6 +119,12 @@ export class UserProfileComponent implements OnInit {
     private subscription = new Subscription();
     private tabs = ['account', 'tokens', 'retire'];
 
+    steps: any[] = [
+        {label: 'Standard Registries', index: 0},
+        {label: 'Hedera Credentials', index: 1},
+    ];
+    currentStep: number = 0;
+
     constructor(
         public tagsService: TagsService,
         private auth: AuthService,
@@ -113,11 +139,12 @@ export class UserProfileComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         public dialog: MatDialog,
+        public dialogService: DialogService,
         private headerProps: HeaderPropsService
     ) {
         this.hideVC = {
-            id: true
-        }
+            id: true,
+        };
         this.vcForm = new FormGroup({});
     }
 
@@ -142,7 +169,11 @@ export class UserProfileComponent implements OnInit {
 
     ngOnDestroy(): void {
         this.subscription.unsubscribe();
-        clearInterval(this.interval)
+        clearInterval(this.interval);
+    }
+
+    changeStep(next: boolean): void {
+        next ? (this.currentStep = 1) : (this.currentStep = 0);
     }
 
     update() {
@@ -165,61 +196,69 @@ export class UserProfileComponent implements OnInit {
 
         forkJoin([
             this.tokenService.getTokens(),
-            this.tagsService.getPublishedSchemas()
-        ]).subscribe((value) => {
-            const tokens: any[] = value[0];
-            const tagSchemas: any[] = value[1] || [];
+            this.tagsService.getPublishedSchemas(),
+        ]).subscribe(
+            (value) => {
+                const tokens: any[] = value[0];
+                const tagSchemas: any[] = value[1] || [];
 
-            this.tokens = tokens.map((e: any) => {
-                return {
-                    ...new Token(e),
-                    policies: e.policies,
-                    serials: e.serials,
-                    decimals: e.decimals
-                }
-            });
-            this.tagSchemas = SchemaHelper.map(tagSchemas);
+                this.tokens = tokens.map((e: any) => {
+                    return {
+                        ...new Token(e),
+                        policies: e.policies,
+                        serials: e.serials,
+                        decimals: e.decimals,
+                    };
+                });
+                this.tagSchemas = SchemaHelper.map(tagSchemas);
 
-            const ids = this.tokens.map(e => e.id);
-            this.tagsService.search(this.tagEntity, ids).subscribe((data) => {
-                if (this.tokens) {
-                    for (const token of this.tokens) {
-                        (token as any)._tags = data[token.id];
+                const ids = this.tokens.map((e) => e.id);
+                this.tagsService.search(this.tagEntity, ids).subscribe(
+                    (data) => {
+                        if (this.tokens) {
+                            for (const token of this.tokens) {
+                                (token as any)._tags = data[token.id];
+                            }
+                        }
+                        setTimeout(() => {
+                            this.loading = false;
+                        }, 500);
+                    },
+                    (e) => {
+                        console.error(e.error);
+                        this.loading = false;
                     }
-                }
+                );
+
                 setTimeout(() => {
                     this.loading = false;
-                }, 500);
-            }, (e) => {
-                console.error(e.error);
-                this.loading = false;
-            });
-
-
-            setTimeout(() => {
+                    this.headerProps.setLoading(false);
+                }, 200);
+            },
+            ({message}) => {
                 this.loading = false;
                 this.headerProps.setLoading(false);
-            }, 200)
-        }, ({ message }) => {
-            this.loading = false;
-            this.headerProps.setLoading(false);
-            console.error(message);
-        });
+                console.error(message);
+            }
+        );
     }
 
     private loadRetireData() {
         this.loading = true;
-        this.contractService.getRetireRequestsAll().subscribe((contracts) => {
-            this.contractRequests = contracts;
-            setTimeout(() => {
+        this.contractService.getRetireRequestsAll().subscribe(
+            (contracts) => {
+                this.contractRequests = contracts;
+                setTimeout(() => {
+                    this.loading = false;
+                    this.headerProps.setLoading(false);
+                }, 200);
+            },
+            ({message}) => {
                 this.loading = false;
                 this.headerProps.setLoading(false);
-            }, 200)
-        }, ({ message }) => {
-            this.loading = false;
-            this.headerProps.setLoading(false);
-            console.error(message);
-        });
+                console.error(message);
+            }
+        );
     }
 
     private loadDate() {
@@ -232,46 +271,51 @@ export class UserProfileComponent implements OnInit {
             this.profileService.getBalance(),
             this.auth.getAggregatedStandardRegistries(),
             this.schemaService.getSystemSchemasByEntity(SchemaEntity.USER),
-        ]).subscribe((value) => {
-            this.profile = value[0] as IUser;
-            this.balance = value[1] as string;
-            this.standardRegistries = value[2] || [];
-            const schema = value[3];
+        ]).subscribe(
+            (value) => {
+                this.profile = value[0] as IUser;
+                this.balance = value[1] as string;
+                this.standardRegistries = value[2] || [];
+                const schema = value[3];
 
-            this.isConfirmed = !!this.profile.confirmed;
-            this.isFailed = !!this.profile.failed;
-            this.isNewAccount = !this.profile.didDocument;
-            if (this.isConfirmed) {
-                this.didDocument = this.profile?.didDocument;
-                this.vcDocument = this.profile?.vcDocument;
-            }
-            this.owner = this.profile?.did;
+                this.isConfirmed = !!this.profile.confirmed;
+                this.isFailed = !!this.profile.failed;
+                this.isNewAccount = !this.profile.didDocument;
+                if (this.isConfirmed) {
+                    this.didDocument = this.profile?.didDocument;
+                    this.vcDocument = this.profile?.vcDocument;
+                }
+                this.owner = this.profile?.did;
 
-            this.standardRegistries = this.standardRegistries.filter(sr => !!sr.did);
-            if (schema) {
-                this.schema = new Schema(schema);
-                this.hederaForm.addControl('vc', this.vcForm);
-            } else {
-                this.schema = null;
-            }
+                this.standardRegistries = this.standardRegistries.filter(
+                    (sr) => !!sr.did
+                );
+                if (schema) {
+                    this.schema = new Schema(schema);
+                    this.hederaForm.addControl('vc', this.vcForm);
+                } else {
+                    this.schema = null;
+                }
 
-            if (this.selectedIndex === 0) {
-                this.loadAccountData();
-            } else if (this.selectedIndex === 1) {
-                this.loadTokenData();
-            } else if (this.selectedIndex === 2) {
-                this.loadRetireData();
-            } else {
-                setTimeout(() => {
-                    this.loading = false;
-                    this.headerProps.setLoading(false);
-                }, 200);
+                if (this.selectedIndex === 0) {
+                    this.loadAccountData();
+                } else if (this.selectedIndex === 1) {
+                    this.loadTokenData();
+                } else if (this.selectedIndex === 2) {
+                    this.loadRetireData();
+                } else {
+                    setTimeout(() => {
+                        this.loading = false;
+                        this.headerProps.setLoading(false);
+                    }, 200);
+                }
+            },
+            ({message}) => {
+                this.loading = false;
+                this.headerProps.setLoading(false);
+                console.error(message);
             }
-        }, ({ message }) => {
-            this.loading = false;
-            this.headerProps.setLoading(false);
-            console.error(message);
-        });
+        );
     }
 
     onHederaSubmit() {
@@ -289,47 +333,53 @@ export class UserProfileComponent implements OnInit {
             hederaAccountId: data.id?.trim(),
             hederaAccountKey: data.key?.trim(),
             parent: data.standardRegistry,
-        }
+        };
         if (vcDocument) {
             profile.vcDocument = vcDocument;
         }
 
-        this.profileService.pushSetProfile(profile).subscribe((result) => {
-            const { taskId, expectation } = result;
-            this.taskId = taskId;
-            this.router.navigate(['task', taskId], {
-                queryParams: {
-                    last: btoa(location.href)
-                }
-            });
-        }, ({ message }) => {
-            this.loading = false;
-            this.headerProps.setLoading(false);
-            console.error(message);
-        });
+        this.profileService.pushSetProfile(profile).subscribe(
+            (result) => {
+                const {taskId, expectation} = result;
+                this.taskId = taskId;
+                this.router.navigate(['task', taskId], {
+                    queryParams: {
+                        last: btoa(location.href),
+                    },
+                });
+            },
+            ({message}) => {
+                this.loading = false;
+                this.headerProps.setLoading(false);
+                console.error(message);
+            }
+        );
     }
 
     randomKey() {
         this.loading = true;
         const value: any = {
             standardRegistry: this.hederaForm.value.standardRegistry,
-        }
+        };
         if (this.hederaForm.value.vc) {
             value.vc = this.hederaForm.value.vc;
         }
 
-        this.otherService.pushGetRandomKey().subscribe((result) => {
-            const { taskId, expectation } = result;
-            this.taskId = taskId;
-            this.expectedTaskMessages = expectation;
-            this.operationMode = OperationMode.Generate;
-            this.value = value;
-        }, (e) => {
-            this.loading = false;
-            value.id = '';
-            value.key = '';
-            this.hederaForm.setValue(value);
-        });
+        this.otherService.pushGetRandomKey().subscribe(
+            (result) => {
+                const {taskId, expectation} = result;
+                this.taskId = taskId;
+                this.expectedTaskMessages = expectation;
+                this.operationMode = OperationMode.Generate;
+                this.value = value;
+            },
+            (e) => {
+                this.loading = false;
+                value.id = '';
+                value.key = '';
+                this.hederaForm.setValue(value);
+            }
+        );
     }
 
     getColor(status: string, reverseLogic: boolean) {
@@ -356,38 +406,38 @@ export class UserProfileComponent implements OnInit {
     }
 
     openVCDocument(document: any, title: string) {
-        const dialogRef = this.dialog.open(VCViewerDialog, {
-            width: '850px',
-            panelClass: 'g-dialog',
-            disableClose: true,
+        const dialogRef = this.dialogService.open(VCViewerDialog, {
+            width: '65vw',
+            closable: true,
+            header: 'VC',
             data: {
                 id: document.id,
                 dryRun: !!document.dryRunId,
                 document: document.document,
                 title: title,
                 type: 'VC',
-                viewDocument: true
-            }
+                viewDocument: true,
+            },
         });
-        dialogRef.afterClosed().subscribe(async (result) => {
+        dialogRef.onClose.subscribe(async (result) => {
         });
     }
 
     openDIDDocument(document: any, title: string) {
-        const dialogRef = this.dialog.open(VCViewerDialog, {
-            width: '850px',
-            panelClass: 'g-dialog',
-            disableClose: true,
+        const dialogRef = this.dialogService.open(VCViewerDialog, {
+            width: '65vw',
+            closable: true,
+            header: 'DID',
             data: {
                 id: document.id,
                 dryRun: !!document.dryRunId,
                 document: document.document,
-                title: title,
+                title,
                 type: 'JSON',
-            }
+            },
         });
 
-        dialogRef.afterClosed().subscribe(async (result) => {
+        dialogRef.onClose.subscribe(async (result) => {
         });
     }
 
@@ -395,7 +445,7 @@ export class UserProfileComponent implements OnInit {
         this.isConfirmed = false;
         this.isFailed = false;
         this.isNewAccount = true;
-        clearInterval(this.interval)
+        clearInterval(this.interval);
     }
 
     getPoliciesInfo(policies: string[]): string {
@@ -435,13 +485,15 @@ export class UserProfileComponent implements OnInit {
         let dialogRef;
         if (this.innerWidth <= 810) {
             const bodyStyles = window.getComputedStyle(document.body);
-            const headerHeight: number = parseInt(bodyStyles.getPropertyValue('--header-height'));
+            const headerHeight: number = parseInt(
+                bodyStyles.getPropertyValue('--header-height')
+            );
             dialogRef = this.dialog.open(RetireTokenDialogComponent, {
                 width: `${this.innerWidth.toString()}px`,
                 maxWidth: '100vw',
                 height: `${this.innerHeight - headerHeight}px`,
                 position: {
-                    'bottom': '0'
+                    bottom: '0',
                 },
                 panelClass: 'g-dialog',
                 hasBackdrop: true, // Shadows beyond the dialog
@@ -488,18 +540,19 @@ export class UserProfileComponent implements OnInit {
     }
 
     viewRetireRequest(document: any) {
-        this.dialog.open(VCViewerDialog, {
-            width: '850px',
-            panelClass: 'g-dialog',
-            disableClose: true,
+        this.dialogService.open(VCViewerDialog, {
+            width: '600px',
+            closable: true,
+            header: 'Retire request result',
+            styleClass: 'custom-dialog',
             data: {
                 id: document.id,
                 dryRun: !!document.dryRunId,
                 document: document.document,
                 title: 'View Retire Request Result',
                 type: 'VC',
-                viewDocument: true
-            }
+                viewDocument: true,
+            },
         });
     }
 
@@ -540,7 +593,7 @@ export class UserProfileComponent implements OnInit {
     onChange(event: any) {
         this.selectedIndex = event;
         this.router.navigate(['/user-profile'], {
-            queryParams: { tab: this.tabs[this.selectedIndex] }
+            queryParams: {tab: this.tabs[this.selectedIndex]},
         });
         if (this.selectedIndex === 0) {
             this.loadAccountData();

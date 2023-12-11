@@ -1,4 +1,4 @@
-import { IDidObject, IVCDocument, MessageAPI, PolicyType, } from '@guardian/interfaces';
+import { IDidObject, IVCDocument, MessageAPI, PolicyType } from '@guardian/interfaces';
 import { ApiResponse } from '@api/helpers/api-response';
 import { DataBaseHelper, DidDocument, MessageError, MessageResponse, Policy, VcDocument, VpDocument } from '@guardian/common';
 

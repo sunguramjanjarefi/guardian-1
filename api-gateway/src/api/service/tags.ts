@@ -12,7 +12,7 @@ export class TagsApi {
     @Post('/')
     @HttpCode(HttpStatus.CREATED)
     async setTags(@Req() req, @Response() res): Promise<any> {
-        await checkPermission(UserRole.STANDARD_REGISTRY)(req.user);
+        await checkPermission(UserRole.STANDARD_REGISTRY, UserRole.USER)(req.user);
         try {
             if (!req.headers.authorization || !req.user || !req.user.did) {
                 throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED)

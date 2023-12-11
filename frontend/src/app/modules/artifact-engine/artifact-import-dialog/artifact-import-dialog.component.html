@@ -15,7 +15,13 @@
             <app-file-drag-n-drop fileExtension="*" [multiple]="true" (onFileLoaded)="importFiles($event)"
                 dropZoneLabel="Import Artifacts"></app-file-drag-n-drop>
             <div mat-dialog-actions>
-                <button mat-button type="button" [mat-dialog-close]>Cancel</button>
+                <div class="cancel-button">
+                    <p-button
+                            label="Cancel"
+                            styleClass="p-button-outlined"
+                            (click)="onNoClick()"
+                    ></p-button>
+                </div>
             </div>
         </form>
     </div>

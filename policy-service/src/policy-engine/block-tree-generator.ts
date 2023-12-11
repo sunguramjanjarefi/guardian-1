@@ -1,4 +1,4 @@
-import { IPolicyBlock, IPolicyInstance, IPolicyInterfaceBlock } from './policy-engine.interface';
+import { IPolicyBlock, IPolicyInstance, IPolicyInterfaceBlock, IPolicyNavigationStep } from './policy-engine.interface';
 import { PolicyComponentsUtils } from './policy-components-utils';
 import { GenerateUUIDv4, IUser, PolicyEvents, UserRole } from '@guardian/interfaces';
 import { DatabaseServer, Logger, MessageError, MessageResponse, NatsService, Policy, Singleton, Users, } from '@guardian/common';
@@ -221,6 +221,13 @@ export class BlockTreeGenerator extends NatsService {
             return new MessageResponse({ id: block.uuid });
         });
 
+        this.getPolicyMessages(PolicyEvents.GET_POLICY_NAVIGATION, policyId, async (msg: any) => {
+            const {user} = msg;
+            const userFull = await this.getUser(policyInstance, user);
+            const navigation = PolicyComponentsUtils.GetNavigation<IPolicyNavigationStep[]>(policyId, userFull);
+            return new MessageResponse(navigation);
+        });
+
         this.getPolicyMessages(PolicyEvents.GET_BLOCK_PARENTS, policyId, async (msg: any) => {
             const { blockId } = msg;
             const block = PolicyComponentsUtils.GetBlockByUUID<IPolicyInterfaceBlock>(blockId);
@@ -285,6 +292,8 @@ export class BlockTreeGenerator extends NatsService {
                 this.models.set(policyId, rootInstance);
             }
             await this.initPolicyEvents(policyId, rootInstance);
+
+            await PolicyComponentsUtils.RegisterNavigation(policyId, policy.policyNavigation);
 
             return rootInstance;
         } catch (error) {

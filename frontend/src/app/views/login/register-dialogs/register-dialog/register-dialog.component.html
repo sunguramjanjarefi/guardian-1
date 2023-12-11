@@ -1,0 +1,66 @@
+<div class="dialog-body">
+    <form [formGroup]="registerFormGroup" (ngSubmit)="onSubmit()">
+        <div class="form-input-container">
+            <label class="p-field-label" for="username">Username</label>
+            <input placeholder="Username" type="text" id="username" pInputText formControlName="username"
+                   class="p-field-input"/>
+            <span class="danger-text"
+                  *ngIf="
+                  registerFormGroup.controls['username'].value.includes(' ')">
+                Login has a whitespace symbols
+            </span>
+        </div>
+        <div class="form-input-container">
+            <label class="p-field-label" for="email">Email</label>
+            <input placeholder="Contact Email" type="text" id="email" pInputText formControlName="email"
+                   class="p-field-input"/>
+            <span class="danger-text"
+                  *ngIf="
+                  registerFormGroup.controls['email'].value.includes(' ')">
+                Email has a whitespace symbols
+            </span>
+            <span class="danger-text"
+                  *ngIf="registerFormGroup.controls['email'].value.length !== 0 && !
+                  registerFormGroup.controls['email'].value.match('([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9_-]+)')">
+                Wrong Email
+            </span>
+        </div>
+        <div class="form-input-container">
+            <label class="p-field-label" for="password">Password</label>
+            <input placeholder="Password" type="password" id="password" pInputText formControlName="password"
+                   class="p-field-input"/>
+            <span class="danger-text"
+                  *ngIf="
+                  registerFormGroup.controls['password'].value.includes(' ')">
+                Password has a whitespace symbols
+            </span>
+        </div>
+        <div class="form-input-container">
+            <label class="p-field-label" for="confirmPassword">Password</label>
+            <input placeholder="Confirm password" type="password" id="confirmPassword" pInputText
+                   formControlName="confirmPassword" class="p-field-input"/>
+            <span class="danger-text"
+                  *ngIf="
+                  registerFormGroup.controls['confirmPassword'].value &&
+                  registerFormGroup.controls['password'].value !== registerFormGroup.controls['confirmPassword'].value">
+                Passwords are different
+            </span>
+        </div>
+    </form>
+</div>
+<div class="dialog-footer">
+    <div class="action-buttons">
+        <div class="cancel-button">
+            <button pButton
+                    label="Cancel"
+                    class="button secondary"
+                    (click)="onNoClick()"
+            ></button>
+        </div>
+        <div>
+            <button pButton class="button" label="Request Access"
+                    [disabled]="registerFormGroup.invalid || registerFormGroup.controls['password'].value !== registerFormGroup.controls['confirmPassword'].value"
+                    (click)="onSubmit()"></button>
+        </div>
+    </div>
+</div>

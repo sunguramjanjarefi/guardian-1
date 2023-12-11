@@ -98,6 +98,27 @@ services:
             - ./:/app
         command: npm run dev:docker --prefix /app/api-gateway
 
+    ai-service:
+      env_file:
+        - ./configs/.env.${GUARDIAN_ENV}.guardian.system
+      build:
+      context: .
+      dockerfile: ./ai-service/Dockerfile
+      expose:
+        - 3013
+      depends_on:
+        - mongo
+        - message-broker
+        - guardian-service
+        - logger-service
+      volumes:
+        - ./ai-service/data:/usr/local/ai-service/data:rw
+      environment:
+        - GUARDIAN_ENV=${GUARDIAN_ENV}
+        - OPENAI_API_KEY=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
+        - VECTOR_STORAGE_PATH=./faiss-vector
+        - DOCS_STORAGE_PATH=./data/generated-data
+
     topic-viewer:
         image: guardian-development
         restart: always
@@ -133,6 +154,7 @@ services:
             - OPERATOR_ID=${OPERATOR_ID}
             - OPERATOR_KEY=${OPERATOR_KEY}
             - INITIALIZATION_TOPIC_ID=${INITIALIZATION_TOPIC_ID}
+            - POLICY_PROPERTIES_FILE_PATH=policy_properties.csv
         volumes:
             - ./:/app
         command: npm run dev:docker --prefix /app/guardian-service

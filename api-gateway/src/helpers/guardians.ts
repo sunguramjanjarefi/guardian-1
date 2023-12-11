@@ -121,7 +121,7 @@ export class Guardians extends NatsService {
      *
      * @returns {IToken[]} - tokens
      */
-    public async getTokens(params?: IFilter): Promise<IToken[]> {
+    public async getTokens(params?: IFilter): Promise<any> {
         return await this.sendMessage(MessageAPI.GET_TOKENS, params);
     }
 
@@ -389,8 +389,8 @@ export class Guardians extends NatsService {
      * Get associated tokens
      * @param did
      */
-    public async getAssociatedTokens(did: string): Promise<ITokenInfo[]> {
-        return await this.sendMessage(MessageAPI.GET_ASSOCIATED_TOKENS, { did });
+    public async getAssociatedTokens(did: string, pageIndex: number, pageSize: number): Promise<any> {
+        return await this.sendMessage(MessageAPI.GET_ASSOCIATED_TOKENS, {did, pageIndex, pageSize});
     }
 
     /**
@@ -914,8 +914,40 @@ export class Guardians extends NatsService {
         propLvl: any,
         childrenLvl: any,
         idLvl: any,
+        refLvl: any
     ) {
         return await this.sendMessage(MessageAPI.COMPARE_DOCUMENTS, {
+            type,
+            user,
+            ids,
+            eventsLvl,
+            propLvl,
+            childrenLvl,
+            idLvl,
+            refLvl
+        });
+    }
+
+    /**
+     * Compare tools
+     * @param user
+     * @param type
+     * @param ids
+     * @param eventsLvl
+     * @param propLvl
+     * @param childrenLvl
+     * @param idLvl
+     */
+    public async compareTools(
+        user: any,
+        type: any,
+        ids: string[],
+        eventsLvl: any,
+        propLvl: any,
+        childrenLvl: any,
+        idLvl: any,
+    ) {
+        return await this.sendMessage(MessageAPI.COMPARE_TOOLS, {
             type,
             user,
             ids,
@@ -1881,5 +1913,19 @@ export class Guardians extends NatsService {
             MessageAPI.GET_SUGGESTIONS_CONFIG,
             { user }
         );
+    }
+
+    /**
+     * Search same blocks
+     * @param config
+     * @param blockId
+     * @param user
+     */
+    public async searchBlocks(
+        config: any,
+        blockId: string,
+        user: any
+    ): Promise<any[]> {
+        return await this.sendMessage(MessageAPI.SEARCH_BLOCKS, {config, blockId, user});
     }
 }

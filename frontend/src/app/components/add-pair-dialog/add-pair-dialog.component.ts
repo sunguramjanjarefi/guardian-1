@@ -1,5 +1,4 @@
-import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject, Input } from '@angular/core';
 import {
     AbstractControl,
     FormControl,
@@ -10,13 +9,14 @@ import { ContractService } from 'src/app/services/contract.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { moreThanZeroValidator } from 'src/app/validators/more-than-zero.validator';
+import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 /**
  * Dialog for creating pair.
  */
 @Component({
     selector: 'add-pair-dialog',
     templateUrl: './add-pair-dialog.component.html',
-    styleUrls: ['./add-pair-dialog.component.css'],
+    styleUrls: ['./add-pair-dialog.component.scss'],
 })
 export class AddPairDialogComponent {
     baseTokenId = new FormControl('', Validators.required);
@@ -45,14 +45,16 @@ export class AddPairDialogComponent {
     destroy$: Subject<boolean> = new Subject<boolean>();
 
     constructor(
-        public dialogRef: MatDialogRef<AddPairDialogComponent>,
         private contractService: ContractService,
-        @Inject(MAT_DIALOG_DATA) public data: any
+        public ref: DynamicDialogRef,
+        public config: DynamicDialogConfig,
     ) {
-        this.tokens = data?.tokens || [];
+        this.tokens = this.config.data?.tokens || [];
+        console.log(this.config.data);
+
         this.baseTokens = this.tokens;
         this.oppositeTokens = this.tokens;
-        this.contractId.patchValue(data?.contractId || '');
+        this.contractId.patchValue(this.config.data?.contractId || '');
         this.baseTokenId.valueChanges
             .pipe(takeUntil(this.destroy$))
             .subscribe(this.onTokenChange(this.oppositeTokenId));
@@ -62,6 +64,7 @@ export class AddPairDialogComponent {
     }
 
     onTokenChange(control: AbstractControl, isOppositeToken: boolean = false) {
+
         return (value: any) => {
             const tokenId = control.value;
             if (isOppositeToken) {
@@ -114,11 +117,14 @@ export class AddPairDialogComponent {
     ngOnInit() {}
 
     onNoClick(): void {
-        this.dialogRef.close(null);
+        this.ref.close(null);
     }
 
-    onCreate() {
-        this.dialogRef.close(this.dataForm.value);
+    onSubmit() {
+        if (this.dataForm.valid) {
+            const data = this.dataForm.value;
+            this.ref.close(data);
+        }
     }
 
     ngOnDestroy() {

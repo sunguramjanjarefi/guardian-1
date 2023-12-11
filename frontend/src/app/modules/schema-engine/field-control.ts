@@ -1,8 +1,4 @@
-import {
-    FormArray,
-    FormControl,
-    FormGroup, ValidationErrors, ValidatorFn, Validators
-} from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { SchemaField } from '@guardian/interfaces';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -17,8 +13,10 @@ export class FieldControl {
 
     public controlKey: FormControl;
     public controlTitle: FormControl;
+    public hidden: FormControl;
     public controlDescription: FormControl;
     public controlType: FormControl;
+    public property: FormControl;
     public controlRequired: FormControl;
     public controlArray: FormControl;
     public controlUnit: FormControl;
@@ -61,6 +59,8 @@ export class FieldControl {
             this.controlRemoteLink = new FormControl(field.remoteLink);
             this.controlPrivate = new FormControl(field.isPrivate || false);
             this.controlEnum = new FormArray([]);
+            this.hidden = new FormControl(!!field.hidden);
+            this.property = new FormControl(field.property || '');
             field.enum?.forEach(item => {
                 this.controlEnum.push(new FormControl(item))
             });
@@ -90,12 +90,19 @@ export class FieldControl {
             this.controlBold = new FormControl(false);
             this.controlPrivate = new FormControl(false);
             this.controlPattern = new FormControl('');
+            this.hidden = new FormControl(false);
+            this.property = new FormControl('');
         }
         if (this._entityType) {
             this._entityType.valueChanges
                 .pipe(takeUntil(destroyEvent))
                 .subscribe(() => this.controlKey.updateValueAndValidity());
         }
+        // this.hidden.valueChanges.subscribe(value => {
+        //     if (value === true) {
+        //         this.controlRequired.setValue(false);
+        //     }
+        // })
     }
 
     private trimFormControlValue(value: string) {
@@ -168,6 +175,8 @@ export class FieldControl {
             controlBold: this.controlBold,
             controlPrivate: this.controlPrivate,
             controlPattern: this.controlPattern,
+            hidden: this.hidden,
+            property: this.property,
         });
     }
 
@@ -190,6 +199,8 @@ export class FieldControl {
             const textBold = group.controlBold;
             const isPrivate = group.controlPrivate;
             const pattern = group.controlPattern;
+            const hidden = group.hidden;
+            const property = group.property;
             return {
                 key,
                 title,
@@ -205,6 +216,8 @@ export class FieldControl {
                 textBold,
                 isPrivate,
                 pattern,
+                hidden,
+                property
             };
         } else {
             return null;

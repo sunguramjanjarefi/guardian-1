@@ -37,8 +37,8 @@ export class SchemaService {
     }
 
     public newVersion(category: SchemaCategory, schema: ISchema, id?: string): Observable<ITask> {
-        const data = Object.assign({}, schema, { id: id || schema.id });
         schema.category = category;
+        const data = Object.assign({}, schema, {id: id || schema.id});
         return this.http.post<ITask>(`${this.url}/push/${data.topicId}`, data);
     }
 
@@ -167,5 +167,9 @@ export class SchemaService {
 
     public getSchemaParents(id: string): Observable<ISchema[]> {
         return this.http.get<ISchema[]>(`${this.singleSchemaUrl}/${id}/parents`);
+    }
+
+    public properties(): Observable<any[]> {
+        return this.http.get<any>(`${API_BASE_URL}/projects/properties`);
     }
 }

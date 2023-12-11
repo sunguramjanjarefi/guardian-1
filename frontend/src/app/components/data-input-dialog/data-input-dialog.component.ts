@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { DynamicDialogRef, DynamicDialogConfig } from 'primeng/dynamicdialog';
 
 /**
  * Dialog for creating policy.
@@ -8,7 +9,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 @Component({
     selector: 'data-input-dialog',
     templateUrl: './data-input-dialog.component.html',
-    styleUrls: ['./data-input-dialog.component.css'],
+    styleUrls: ['./data-input-dialog.component.scss'],
 })
 export class DataInputDialogComponent {
     dataForm = new FormGroup({});
@@ -18,14 +19,15 @@ export class DataInputDialogComponent {
     fieldsConfig: any = [];
 
     constructor(
-        public dialogRef: MatDialogRef<DataInputDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any
+        public ref: DynamicDialogRef,
+        public config: DynamicDialogConfig,
     ) {
-        if (!data) {
+        if (!config) {
             return;
         }
-        this.title = data.title;
-        this.fieldsConfig = data.fieldsConfig;
+
+        this.title = config.data.title;
+        this.fieldsConfig = config.data.fieldsConfig;
         this.fieldsConfig.forEach((item: any) => {
             this.dataForm.addControl(
                 item.name,
@@ -38,6 +40,13 @@ export class DataInputDialogComponent {
     }
 
     onNoClick(): void {
-        this.dialogRef.close(null);
+        this.ref.close(null);
+    }
+
+    onSubmit() {
+        if (this.dataForm.valid) {
+            const data = this.dataForm.value;
+            this.ref.close(data);
+        }
     }
 }

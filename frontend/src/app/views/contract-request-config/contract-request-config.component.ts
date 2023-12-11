@@ -5,6 +5,7 @@ import { ContractService } from '../../services/contract.service';
 import { forkJoin } from 'rxjs';
 import { VCViewerDialog } from '../../modules/schema-engine/vc-dialog/vc-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { DialogService } from 'primeng/dynamicdialog';
 
 /**
  * Component for working with contract requests
@@ -32,10 +33,11 @@ export class ContractRequestConfigComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private router: Router,
         private dialog: MatDialog,
+        private dialogService: DialogService,
     ) {
         this.requests = null;
         this.pageIndex = 0;
-        this.pageSize = 100;
+        this.pageSize = 10;
         this.requestsCount = 0;
         this.columns = [
             'contractId',
@@ -142,9 +144,11 @@ export class ContractRequestConfigComponent implements OnInit, OnDestroy {
     }
 
     viewRetireRequest(document: any) {
-        this.dialog.open(VCViewerDialog, {
-            width: '850px',
-            panelClass: 'g-dialog',
+        this.dialogService.open(VCViewerDialog, {
+            width: '600px',
+            closable: true,
+            header: 'Retire request',
+            styleClass: 'custom-dialog',
             data: {
                 id: document.id,
                 dryRun: !!document.dryRunId,
@@ -152,8 +156,7 @@ export class ContractRequestConfigComponent implements OnInit, OnDestroy {
                 title: 'View Retire Request Result',
                 type: 'VC',
                 viewDocument: true
-            },
-            disableClose: true,
+            }
         });
     }
 }

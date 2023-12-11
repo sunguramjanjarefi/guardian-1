@@ -1,42 +1,141 @@
-<div class="g-dialog-content">
-    <div class="g-dialog-header">
-        <div class="g-dialog-cancel">
-            <div class="g-dialog-cancel-btn" (click)="onNoClick()">
-                <mat-icon>close</mat-icon>
-            </div>
+<div class="dialog-body">
+    <form [formGroup]="dataForm" (ngSubmit)="onSubmit()">
+        <div class="form-input-container">
+            <label class="form-label" htmlFor="name">* Name</label>
+            <input type="text" id="name" pInputText formControlName="name"/>
         </div>
-        <div class="g-dialog-title">
-            New Policy
+        <div class="form-input-container">
+            <label class="form-label" htmlFor="sectoralScope">Sectoral scope</label>
+            <p-dropdown
+                    formControlName="sectoralScope"
+                    id="sectoralScope"
+                    #operationDropdown
+                    [options]="sectoralScopeOptions"
+                    placeholder="Not selected"
+                    optionLabel="name"
+                    optionValue="id"
+            >
+            </p-dropdown>
         </div>
-        <div class="g-dialog-actions">
-            <div class="g-dialog-actions-btn" (click)="onSubmit()" [attr.disabled]="!dataForm.valid">
-                Create
-            </div>
+        <div class="form-input-container">
+            <label class="form-label" htmlFor="projectScale">Project Scale</label>
+            <p-dropdown
+                    formControlName="projectScale"
+                    id="projectScale"
+                    #operationDropdown
+                    [options]="projectScaleOptions"
+                    placeholder="Not selected"
+                    optionLabel="name"
+                    optionValue="id"
+            >
+            </p-dropdown>
         </div>
-    </div>
-    <div class="g-dialog-body">
-        <div class="context">
-            <form [formGroup]="dataForm" (ngSubmit)="onSubmit()">
-                <mat-form-field class="example-full-width" appearance="outline">
-                    <mat-label>* NAME:</mat-label>
-                    <input matInput type="text" placeholder="Policy name" formControlName="name">
-                </mat-form-field>
-        
-                <mat-form-field class="example-full-width" appearance="outline">
-                    <mat-label>* TAG:</mat-label>
-                    <input matInput type="text" placeholder="policyTag" formControlName="policyTag">
-                </mat-form-field>
-        
-                <mat-form-field class="example-full-width" appearance="outline">
-                    <mat-label>TOPIC DESCRIPTION:</mat-label>
-                    <input matInput type="text" placeholder="Topic description" formControlName="topicDescription" maxlength="50">
-                </mat-form-field>
-        
-                <mat-form-field class="example-full-width" appearance="outline">
-                    <mat-label>DESCRIPTION:</mat-label>
-                    <textarea matInput type="text" placeholder="Description" formControlName="description"></textarea>
-                </mat-form-field>
-            </form>
+        <div class="form-input-container">
+            <label class="form-label" htmlFor="applicabilityConditions">Conditions for applicability</label>
+            <input type="text" id="applicabilityConditions" pInputText formControlName="applicabilityConditions"/>
+        </div>
+        <div class="form-input-container">
+            <label class="form-label" htmlFor="detailsUrl">URL on policy details page</label>
+            <input type="text" id="detailsUrl" pInputText formControlName="detailsUrl"/>
+        </div>
+        <div class="form-input-container">
+            <label htmlFor="tag">* Tag</label>
+            <input
+                    type="text"
+                    id="tag"
+                    pInputText
+                    formControlName="policyTag"
+            />
+        </div>
+        <div class="form-input-container">
+            <label class="form-label" htmlFor="typicalProjects">Typical project(s)</label>
+            <input type="text" id="typicalProjects" pInputText formControlName="typicalProjects"/>
+        </div>
+        <div class="form-input-container">
+            <label class="form-label" htmlFor="topicDescription">Topic Description</label>
+            <input
+                    type="text"
+                    id="topicDescription"
+                    pInputText
+                    formControlName="topicDescription"
+            />
+        </div>
+        <div class="form-input-container">
+            <label class="form-label" for="description">Description</label>
+            <textarea
+                    id="description"
+                    rows="3"
+                    cols="30"
+                    pInputTextarea
+                    formControlName="description"
+            ></textarea>
+        </div>
+
+        <h3>Categorization</h3>
+        <div class="form-input-container">
+            <label class="form-label" htmlFor="appliedTechnologyType">Applied Technology Type/Measure</label>
+            <p-dropdown
+                    formControlName="appliedTechnologyType"
+                    id="appliedTechnologyType"
+                    #operationDropdown
+                    [options]="appliedTechnologyTypeOptions"
+                    placeholder="Not selected"
+                    optionLabel="name"
+                    optionValue="id"
+            >
+            </p-dropdown>
+        </div>
+        <div class="form-input-container">
+            <label class="form-label" htmlFor="migrationActivityType">Mitigation Activity Type</label>
+            <p-multiSelect
+                    formControlName="migrationActivityType"
+                    id="migrationActivityType"
+                    #operationDropdown
+                    [options]="migrationActivityTypeOptions"
+                    defaultLabel="Not selected"
+                    optionLabel="name"
+                    optionValue="id"
+                    display="chip"
+            >
+            </p-multiSelect>
+        </div>
+        <div class="form-input-container">
+            <label class="form-label" htmlFor="subType">Sub Type</label>
+            <p-multiSelect
+                    formControlName="subType"
+                    id="subType"
+                    #operationDropdown
+                    [options]="subTypeOptions"
+                    defaultLabel="Not selected"
+                    optionLabel="name"
+                    optionValue="id"
+                    display="chip"
+            >
+            </p-multiSelect>
+        </div>
+
+        <h3>Important parameters</h3>
+        <div class="form-input-container">
+            <label class="form-label" htmlFor="atValidation">At validation</label>
+            <input type="text" id="atValidation" pInputText formControlName="atValidation"/>
+        </div>
+        <div class="form-input-container">
+            <label class="form-label" htmlFor="monitored">Monitored</label>
+            <input type="text" id="monitored" pInputText formControlName="monitored"/>
+        </div>
+    </form>
+</div>
+<div class="dialog-footer">
+    <div class="action-buttons">
+        <div class="cancel-button">
+            <p-button
+                    label="Cancel"
+                    styleClass="p-button-outlined"
+                    (click)="onNoClick()"
+            ></p-button>
+        </div>
+        <div>
+            <p-button label="Create" (click)="onSubmit()" [disabled]="!dataForm.valid"></p-button>
         </div>
     </div>
 </div>
