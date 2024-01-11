@@ -1,16 +1,19 @@
-import { Web3Storage } from 'web3.storage';
-import Blob from 'cross-blob';
 import axios from 'axios';
 import { create } from 'ipfs-client'
+import { CarReader } from '@ipld/car';
+import * as Delegation from '@ucanto/core/delegation';
+import * as Signer from '@ucanto/principal/ed25519';
+import * as Client from '@web3-storage/w3up-client';
 
 /**
  * Providers type
  */
 type IpfsProvider = 'web3storage' | 'local';
+
 /**
  * IPFS Client helper
  */
-export class IpfsClient {
+export class IpfsClientClass {
 
     /**
      * IPFS provider
@@ -28,35 +31,41 @@ export class IpfsClient {
      * Web3storage instance
      * @private
      */
-    private readonly client: Web3Storage | any;
+    private client: any;
 
     /**
      * Client options
      * @private
      */
-    private readonly options: {[key: string]: any} = {};
+    private readonly options: { [key: string]: any } = {};
 
-    constructor(token?: string) {
-        this.options.token = token;
+    constructor(
+        w3sKey?: string,
+        w3sProof?: string
+    ) {
         this.options.nodeAddress = process.env.IPFS_NODE_ADDRESS;
-
-        this.client = this.createClient();
+        if (w3sKey && w3sProof) {
+            this.options.w3s = {
+                key: w3sKey,
+                proof: w3sProof
+            }
+        }
     }
 
     /**
      * Create ipfs client
      * @private
      */
-    private createClient(): Web3Storage | unknown {
+    public async createClient(): Promise<any> {
         let client;
 
         switch (this.IPFS_PROVIDER) {
             case 'web3storage': {
-                if (!this.options.token) {
-                    throw new Error('Web3Storage token is not set')
-                }
-                client = new Web3Storage({ token: this.options.token } as any);
-
+                const principal = Signer.parse(this.options.w3s.key);
+                client = await Client.create({principal});
+                const proof = await this.parseProof(this.options.w3s.proof);
+                const space = await client.addSpace(proof);
+                await client.setCurrentSpace(space.did());
                 break;
             }
 
@@ -75,7 +84,7 @@ export class IpfsClient {
                 throw new Error(`${this.IPFS_PROVIDER} provider is unknown`);
         }
 
-        return client;
+        this.client = client;
     }
 
     /**
@@ -83,16 +92,20 @@ export class IpfsClient {
      * @param file
      * @param beforeCallback
      */
-    public async addFile(file: Blob): Promise<string> {
+    public async addFile(file: Buffer): Promise<string> {
         let cid;
         switch (this.IPFS_PROVIDER) {
             case 'web3storage': {
-                cid = await this.client.put([file] as any, { wrapWithDirectory: false });
+                const result = await this.client.uploadFile(
+                    new Blob([file])
+                );
+
+                cid = result.toString()
                 break;
             }
 
             case 'local': {
-                const { path } = await this.client.add(await file.arrayBuffer());
+                const {path} = await this.client.add(file);
                 cid = path;
                 break;
             }
@@ -117,5 +130,14 @@ export class IpfsClient {
             }
         );
         return fileRes.data;
+    }
+
+    private async parseProof(data) {
+        const blocks = [];
+        const reader = await CarReader.fromBytes(Buffer.from(data, 'base64'));
+        for await (const block of reader.blocks()) {
+            blocks.push(block);
+        }
+        return Delegation.importDAG(blocks);
     }
 }
